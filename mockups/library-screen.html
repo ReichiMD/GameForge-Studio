@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=375, height=812, initial-scale=1.0">
+    <title>GameForge Studio - LibraryScreen Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #111827;
+            color: #F9FAFB;
+            min-height: 100vh;
+        }
+
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: #111827;
+            border-radius: 40px;
+            border: 3px solid #374151;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Header */
+        .header {
+            background: #1F2937;
+            padding: 16px 20px;
+            border-bottom: 1px solid #374151;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .back-btn {
+            width: 44px;
+            height: 44px;
+            background: #374151;
+            border: none;
+            border-radius: 12px;
+            color: #F9FAFB;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: #374151;
+            border-radius: 12px;
+            padding: 12px 16px;
+            gap: 12px;
+        }
+
+        .search-icon {
+            font-size: 18px;
+            color: #9CA3AF;
+        }
+
+        .search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #F9FAFB;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #6B7280;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 16px 20px;
+            overflow-x: auto;
+        }
+
+        .filter-tab {
+            padding: 10px 18px;
+            background: #1F2937;
+            border: 1px solid #374151;
+            border-radius: 20px;
+            color: #9CA3AF;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .filter-tab:hover {
+            background: #374151;
+        }
+
+        .filter-tab.active {
+            background: #8B5CF6;
+            border-color: #8B5CF6;
+            color: white;
+        }
+
+        /* Content Grid */
+        .content {
+            flex: 1;
+            padding: 0 20px 20px;
+            overflow-y: auto;
+        }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        /* Item Card */
+        .item-card {
+            background: #1F2937;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .item-card:active {
+            border-color: #8B5CF6;
+        }
+
+        .item-preview {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, #374151 0%, #1F2937 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px;
+            position: relative;
+        }
+
+        .item-rarity {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .rarity-common {
+            background: #6B7280;
+            color: white;
+        }
+
+        .rarity-rare {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .rarity-epic {
+            background: #8B5CF6;
+            color: white;
+        }
+
+        .rarity-legendary {
+            background: linear-gradient(135deg, #F59E0B, #EF4444);
+            color: white;
+        }
+
+        .item-info {
+            padding: 12px;
+        }
+
+        .item-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-type {
+            font-size: 12px;
+            color: #9CA3AF;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Add Button on Card */
+        .item-add-btn {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 36px;
+            height: 36px;
+            background: #10B981;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .item-add-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: #1F2937;
+            padding: 12px 20px 24px;
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid #374151;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+
+        .nav-item:hover {
+            background: #374151;
+        }
+
+        .nav-item.active {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            color: #9CA3AF;
+        }
+
+        .nav-item.active .nav-label {
+            color: #8B5CF6;
+        }
+
+        /* Info */
+        .design-info {
+            max-width: 375px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1F2937;
+            border-radius: 12px;
+            color: #9CA3AF;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .design-info h3 {
+            color: #F9FAFB;
+            margin-bottom: 12px;
+        }
+
+        .design-info ul {
+            margin-left: 20px;
+        }
+
+        .design-info li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <button class="back-btn">←</button>
+                <div class="page-title">📚 Item Bibliothek</div>
+                <div style="width: 44px;"></div>
+            </div>
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Suche Items...">
+            </div>
+        </header>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="filter-tab active">✨ Alle</button>
+            <button class="filter-tab">⚔️ Waffen</button>
+            <button class="filter-tab">🛡️ Rüstung</button>
+            <button class="filter-tab">🧪 Tränke</button>
+            <button class="filter-tab">🍎 Essen</button>
+            <button class="filter-tab">🧱 Blöcke</button>
+        </div>
+
+        <!-- Content Grid -->
+        <main class="content">
+            <div class="item-grid">
+                <!-- Item 1 -->
+                <div class="item-card">
+                    <div class="item-preview">
+                        ⚔️
+                        <span class="item-rarity rarity-legendary">Legendär</span>
+                        <button class="item-add-btn">+</button>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-name">Drachenschwert</div>
+                        <div class="item-type">⚔️ Waffe • 50 DMG</div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="item-card">
+                    <div class="item-preview">
+                        🛡️
+                        <span class="item-rarity rarity-epic">Episch</span>
+                        <button class="item-add-btn">+</button>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-name">Diamant Schild</div>
+                        <div class="item-type">🛡️ Rüstung • +20 DEF</div>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="item-card">
+                    <div class="item-preview">
+                        🧪
+                        <span class="item-rarity rarity-rare">Selten</span>
+                        <button class="item-add-btn">+</button>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-name">Heiltrank</div>
+                        <div class="item-type">🧪 Trank • +10 HP</div>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="item-card">
+                    <div class="item-preview">
+                        🗡️
+                        <span class="item-rarity rarity-rare">Selten</span>
+                        <button class="item-add-btn">+</button>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-name">Eis Klinge</div>
+                        <div class="item-type">⚔️ Waffe • 25 DMG</div>
+                    </div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="item-card">
+                    <div class="item-preview">
+                        👑
+                        <span class="item-rarity rarity-legendary">Legendär</span>
+                        <button class="item-add-btn">+</button>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-name">König Helm</div>
+                        <div class="item-type">🛡️ Rüstung • +15 DEF</div>
+                    </div>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="item-card">
+                    <div class="item-preview">
+                        🍎
+                        <span class="item-rarity rarity-common">Normal</span>
+                        <button class="item-add-btn">+</button>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-name">Goldener Apfel</div>
+                        <div class="item-type">🍎 Essen • +5 HP</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-item active">
+                <span class="nav-icon">📚</span>
+                <span class="nav-label">Bibliothek</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">🔧</span>
+                <span class="nav-label">Workshop</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Design Info -->
+    <div class="design-info">
+        <h3>📚 LibraryScreen Features</h3>
+        <ul>
+            <li>🔍 <strong>Suche:</strong> Items schnell finden</li>
+            <li>🏷️ <strong>Filter:</strong> Nach Kategorie filtern</li>
+            <li>🎨 <strong>Rarity:</strong> Farbcodierte Seltenheit</li>
+            <li>➕ <strong>Quick-Add:</strong> Item direkt hinzufügen</li>
+            <li>📱 <strong>Grid:</strong> 2-spaltige Übersicht</li>
+        </ul>
+        <br>
+        <p><strong>Rarity Farben:</strong></p>
+        <ul>
+            <li>⬜ Normal (Grau)</li>
+            <li>🔵 Selten (Blau)</li>
+            <li>🟣 Episch (Lila)</li>
+            <li>🟠 Legendär (Orange-Gold Gradient)</li>
+        </ul>
+    </div>
+</body>
+</html>
