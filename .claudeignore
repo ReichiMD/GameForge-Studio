@@ -1,0 +1,277 @@
+# .claudeignore - Token-Optimierung für Claude Code
+# Diese Datei definiert, welche Dateien und Ordner Claude ignorieren soll,
+# um Tokens zu sparen und die Performance zu verbessern.
+
+# ============================================================================
+# Dependencies & Package Management
+# ============================================================================
+node_modules/
+bower_components/
+jspm_packages/
+vendor/
+.pnp/
+.pnp.js
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ============================================================================
+# Build Outputs & Compiled Files
+# ============================================================================
+dist/
+build/
+out/
+.next/
+.nuxt/
+.vuepress/dist/
+.serverless/
+.cache/
+*.min.js
+*.min.css
+*.bundle.js
+*.chunk.js
+
+# ============================================================================
+# Test Coverage & Reports
+# ============================================================================
+coverage/
+.nyc_output/
+*.lcov
+.coverage/
+htmlcov/
+.pytest_cache/
+.jest/
+
+# ============================================================================
+# Logs & Temporary Files
+# ============================================================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.tmp/
+temp/
+tmp/
+
+# ============================================================================
+# IDE & Editor Files
+# ============================================================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.vs/
+*.code-workspace
+
+# ============================================================================
+# Environment & Secrets
+# ============================================================================
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*.local
+secrets/
+*.key
+*.pem
+*.cert
+
+# ============================================================================
+# Assets & Media (Large Files)
+# ============================================================================
+# Große Binary-Dateien die nicht für Code-Analyse benötigt werden
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.svg
+*.webp
+*.mp4
+*.mp3
+*.wav
+*.ogg
+*.webm
+*.mov
+*.avi
+*.flv
+*.woff
+*.woff2
+*.ttf
+*.eot
+*.otf
+*.pdf
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+
+# Jedoch: Kleine Icons und Logos könnten wichtig sein
+# Falls benötigt, spezifisch mit ! freigeben:
+# !assets/logo.svg
+# !public/favicon.ico
+
+# ============================================================================
+# Documentation Assets
+# ============================================================================
+docs/images/
+docs/screenshots/
+docs/videos/
+*.docx
+*.xlsx
+*.pptx
+
+# ============================================================================
+# Database Files
+# ============================================================================
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+*.dump
+
+# ============================================================================
+# Large Data Files
+# ============================================================================
+data/
+datasets/
+*.csv
+*.json.gz
+*.parquet
+
+# ============================================================================
+# Generated Files
+# ============================================================================
+# Auto-generated code
+*.generated.ts
+*.generated.js
+*.g.ts
+*.g.js
+*_pb.ts
+*_pb.js
+
+# API documentation
+api-docs/
+swagger.json
+openapi.json
+
+# ============================================================================
+# Git & Version Control
+# ============================================================================
+.git/
+.gitattributes
+.gitkeep
+.gitmodules
+
+# ============================================================================
+# CI/CD Artifacts
+# ============================================================================
+.github/workflows/artifacts/
+.gitlab-ci-artifacts/
+jenkins-artifacts/
+
+# ============================================================================
+# Framework Specific
+# ============================================================================
+# Next.js
+.next/
+next-env.d.ts
+
+# Vite
+vite.config.*.timestamp-*
+
+# React
+.react/
+
+# Vue
+.vuepress/
+
+# ============================================================================
+# OS Files
+# ============================================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ============================================================================
+# Backup Files
+# ============================================================================
+*.bak
+*.backup
+*.old
+*~
+
+# ============================================================================
+# Session & Cache Files
+# ============================================================================
+.sass-cache/
+*.css.map
+*.js.map
+.eslintcache
+.stylelintcache
+.parcel-cache/
+
+# ============================================================================
+# Exceptions (Wichtige Dateien die NICHT ignoriert werden sollen)
+# ============================================================================
+# Diese Dateien sind wichtig für Claude's Verständnis des Projekts
+!README.md
+!PROJECT_INFO.md
+!INDEX.md
+!SESSION_LOG.md
+!package.json
+!tsconfig.json
+!vite.config.js
+!vite.config.ts
+
+# Konfigurationsdateien
+!.eslintrc.*
+!.prettierrc
+!.prettierrc.*
+!.editorconfig
+
+# Documentation
+!docs/**/*.md
+!docs/**/*.txt
+
+# Source Code (alles in src/ ist relevant)
+!src/**/*.ts
+!src/**/*.tsx
+!src/**/*.js
+!src/**/*.jsx
+!src/**/*.vue
+!src/**/*.css
+!src/**/*.scss
+
+# Tests (wichtig für Verständnis)
+!tests/**/*.ts
+!tests/**/*.js
+!**/*.test.ts
+!**/*.test.js
+!**/*.spec.ts
+!**/*.spec.js
+
+# ============================================================================
+# Hinweise für Optimierung
+# ============================================================================
+# 1. Binary-Dateien werden ignoriert, da sie keine Code-Analyse benötigen
+# 2. Build-Outputs werden ignoriert, da nur Source-Code relevant ist
+# 3. Dependencies werden ignoriert - nur package.json ist wichtig
+# 4. Logs und temporäre Dateien werden ignoriert
+# 5. IDE-spezifische Dateien werden ignoriert
+#
+# Bei Bedarf können spezifische Dateien mit ! wieder freigegeben werden.
