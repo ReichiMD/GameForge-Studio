@@ -415,16 +415,120 @@ GameForge-Studio/
 
 ---
 
+### Session #3 - 2026-02-05 - App Design & Implementation
+
+**Branch:** `claude/design-app-interface-QKLA5`
+**Dauer:** ~2 Stunden
+**Entwickler:** Claude (AI Assistant)
+**Ziel:** UI Design erstellen und komplette Expo App implementieren
+
+#### Durchgeführte Arbeiten
+- [x] HTML-Mockups für alle Screens erstellt
+- [x] Expo React Native App initialisiert
+- [x] Theme-System (Farben, Spacing) implementiert
+- [x] Bottom Tab Navigation eingerichtet
+- [x] HomeScreen mit Projektliste gebaut
+- [x] LibraryScreen mit Item-Galerie gebaut
+- [x] WorkshopScreen mit Slider-Editor gebaut
+- [x] SettingsScreen mit GitHub Token Config gebaut
+- [x] GitHub Actions Workflow für APK-Build erstellt
+
+#### Erstellte Dateien
+
+**Mockups (HTML):**
+- `mockups/home-screen.html` - HomeScreen Design
+- `mockups/library-screen.html` - LibraryScreen Design
+- `mockups/workshop-screen.html` - WorkshopScreen Design
+
+**App Code:**
+- `app/` - Komplette Expo App
+- `app/src/screens/` - Alle 4 Screens
+- `app/src/theme/` - Farben & Spacing
+- `app/src/navigation/` - Bottom Tabs
+
+**CI/CD:**
+- `.github/workflows/build-apk.yml` - Automatischer APK-Build
+
+#### Wichtige Entscheidungen
+
+**1. React Native/Expo statt Flutter**
+- User fragte nach Flutter wegen Web-Preview
+- Entscheidung: Bei Expo bleiben, da Code bereits geschrieben
+- Expo kann auch Web exportieren (GitHub Pages - TODO)
+
+**2. GitHub Actions für APK statt EAS Build**
+- User hat keinen Expo Account
+- User will keinen zusätzlichen Account
+- GitHub Actions ist kostenlos für öffentliche Repos
+
+**3. Kinderfreundliches Design**
+- Dark Mode als Standard
+- Große Touch-Targets (60px)
+- Emojis statt viel Text
+- Minecraft-inspirierte Farben (Purple, Green, Blue)
+
+#### Probleme & Lösungen
+
+| Problem | Lösung | Status |
+|---------|--------|--------|
+| User hat keinen PC für Entwicklung | GitHub Actions für APK-Build | ✅ |
+| Expo Tunnel funktioniert nicht in Cloud | APK-Build als Alternative | ✅ |
+| User will Live-Preview ohne PC | GitHub Pages Web-Export (TODO) | ⏳ |
+| SDK 55 Warnung in Expo Go | SDK 54 funktioniert noch, später upgraden | ⏳ |
+
+#### Geplant für später (TODO)
+
+1. **GitHub Pages Web-Preview**
+   - Expo Web-Export
+   - Automatischer Deploy via GitHub Actions
+   - User kann App im Browser anschauen
+   - Keine APK nötig für schnelle Tests
+
+#### Nächste Schritte
+
+1. User testet APK auf Handy
+2. User gibt Feedback/Änderungen (als Liste)
+3. GitHub Pages Web-Preview einrichten
+4. Design-Anpassungen nach Feedback
+
+#### Tipps für nächste Session
+
+**Änderungen effizient geben:**
+```
+Änderungen:
+1. HomeScreen: Button größer machen
+2. Farbe ändern
+3. Text anpassen
+```
+→ Alles auf einmal als Liste = weniger Token
+
+#### Code-Statistiken
+
+- **Dateien erstellt:** 15+
+- **Zeilen Code:** ~1500 (TypeScript/TSX)
+- **Zeilen Dokumentation:** ~200
+- **Tests geschrieben:** 0
+- **APK-Build:** GitHub Actions eingerichtet
+
+#### Notizen
+
+- User arbeitet hauptsächlich mobil (Handy auf Arbeit)
+- Kein PC-Zugang während der Arbeit
+- Braucht Lösung die ohne PC funktioniert
+- GitHub Pages Web-Preview ist die beste Langzeit-Lösung
+
+---
+
 ## 📊 Gesamt-Statistiken
 
 | Metrik | Wert |
 |--------|------|
-| Gesamt-Sessions | 2 |
-| Gesamt-Commits | 2 (Session #1 + #2 Korrektur) |
-| Implementierte Features | 0 |
-| Dokumentierte Module | 30+ (Mobile App) |
+| Gesamt-Sessions | 3 |
+| Gesamt-Commits | 8+ |
+| Implementierte Features | 4 Screens |
+| Zeilen Code | ~1500 |
 | Test Coverage | 0% |
-| Offene TODOs | ~40+ |
+| APK-Build | GitHub Actions ✅ |
 
 ---
 
@@ -432,6 +536,7 @@ GameForge-Studio/
 
 - [Session #1 - Projekt-Setup](#session-1---2026-02-05---projekt-setup--grundstruktur) (falsche Richtung: Game Engine)
 - [Session #2 - Korrektur](#session-2---2026-02-05---korrektur-mobile-app-statt-game-engine) (korrigiert: Mobile App)
+- [Session #3 - App Design](#session-3---2026-02-05---app-design--implementation) (komplette App gebaut)
 
 ---
 
@@ -465,6 +570,6 @@ GameForge-Studio/
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-05
-**Nächste geplante Session:** TBD
+**Letzte Aktualisierung:** 2026-02-05 (Session #3)
+**Nächste geplante Session:** Feedback & Änderungen nach APK-Test
 **Verantwortlich für Updates:** Projekt-Team
