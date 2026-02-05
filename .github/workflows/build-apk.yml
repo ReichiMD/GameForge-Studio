@@ -1,0 +1,58 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:  # Manuell auslösen
+  push:
+    branches:
+      - main
+      - 'claude/*'
+    paths:
+      - 'app/**'
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: app/package-lock.json
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        working-directory: ./app
+        run: npm ci
+
+      - name: Generate native projects
+        working-directory: ./app
+        run: npx expo prebuild --platform android --clean
+
+      - name: Build APK
+        working-directory: ./app/android
+        run: ./gradlew assembleRelease
+
+      - name: Rename APK
+        run: |
+          mv app/android/app/build/outputs/apk/release/app-release.apk app/android/app/build/outputs/apk/release/GameForge-Studio.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GameForge-Studio-APK
+          path: app/android/app/build/outputs/apk/release/GameForge-Studio.apk
+          retention-days: 30
