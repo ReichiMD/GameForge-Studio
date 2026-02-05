@@ -2,170 +2,199 @@
 
 ## 📚 Übersicht
 
-Dieses Dokument dient als zentrales Verzeichnis aller Module, Komponenten und wichtigen Dateien im GameForge Studio Projekt.
+Dieses Dokument dient als zentrales Verzeichnis aller Module, Screens, Services und Komponenten der **GameForge Studio Mobile App** (React Native).
+
+**Projekt-Typ:** Mobile App für Minecraft Addon-Erstellung
+**Zielgruppe:** 7-jähriges Kind + Vater
+**Platform:** Android (React Native + Expo)
 
 ---
 
 ## 🗂️ Hauptverzeichnisse
 
 ### `/src` - Source Code
-Enthält den gesamten Quellcode des Projekts.
+Gesamter App-Code (Screens, Components, Services)
+
+### `/src/screens` - Screen-Komponenten
+Die 5 Haupt-Screens der App
+
+### `/src/components` - UI-Komponenten
+Wiederverwendbare React Native Komponenten
+
+### `/src/services` - Business Logic
+Services für GitHub, Projekte, Library etc.
 
 ### `/docs` - Dokumentation
-Alle projektbezogene Dokumentation, Guides und API-Referenzen.
+Projekt-Dokumentation, Guides, API-Referenzen
 
-### `/tests` - Tests
-Unit-, Integration- und E2E-Tests.
-
-### `/examples` - Beispiele
-Demo-Projekte und Code-Beispiele.
-
-### `/tools` - Tools
-Build-Tools, Scripts und Entwickler-Utilities.
+### `/assets` - Assets
+Icons, Bilder, Fonts (nicht unter src/)
 
 ---
 
-## 🎮 Core Module
+## 📱 Screens (Haupt-Bildschirme)
 
-### Engine Core
-| Modul | Pfad | Beschreibung | Status |
-|-------|------|--------------|--------|
-| Engine | `src/core/engine/` | Haupt-Engine-Klasse | 🔴 Geplant |
-| Game Loop | `src/core/loop/` | Game Loop Implementation | 🔴 Geplant |
-| Time Manager | `src/core/time/` | Zeit- und Frame-Management | 🔴 Geplant |
-| Event System | `src/core/events/` | Event-Bus und Messaging | 🔴 Geplant |
-
-### Scene Management
-| Modul | Pfad | Beschreibung | Status |
-|-------|------|--------------|--------|
-| Scene Manager | `src/core/scenes/` | Scene-Verwaltung und Lifecycle | 🔴 Geplant |
-| Scene Graph | `src/core/scenegraph/` | Hierarchische Szenen-Struktur | 🔴 Geplant |
-| Camera | `src/core/camera/` | Kamera-System | 🔴 Geplant |
-
-### Entity Component System (ECS)
-| Modul | Pfad | Beschreibung | Status |
-|-------|------|--------------|--------|
-| Entity Manager | `src/core/ecs/entities/` | Entity-Verwaltung | 🔴 Geplant |
-| Component System | `src/core/ecs/components/` | Component-Architektur | 🔴 Geplant |
-| System Manager | `src/core/ecs/systems/` | System-Processing | 🔴 Geplant |
+| Screen | Datei | Beschreibung | Features | Status |
+|--------|-------|--------------|----------|--------|
+| **Home** | `screens/HomeScreen.jsx` | Projektliste, neues Projekt erstellen | Projektliste, Erstellen, Löschen, GitHub Push | 🔴 Geplant |
+| **Library** | `screens/LibraryScreen.jsx` | Item-Galerie aus fabrik-library | Grid-View, Filter, Suche, Item-Details | 🔴 Geplant |
+| **Workshop** | `screens/WorkshopScreen.jsx` | Item-Editor mit Schiebereglern | Eigenschaften-Editor, Texture-Auswahl | 🔴 Geplant |
+| **Preview** | `screens/PreviewScreen.jsx` | Item-Übersicht im Projekt | Item-Liste, Eigenschaften, Bearbeiten | 🔴 Geplant |
+| **Settings** | `screens/SettingsScreen.jsx` | App-Einstellungen | GitHub Token, Sprache, Theme | 🔴 Geplant |
 
 ---
 
-## 🎨 Editor Module
+## 🧩 Components (UI-Komponenten)
 
-### Editor Core
-| Modul | Pfad | Beschreibung | Status |
-|-------|------|--------------|--------|
-| Editor App | `src/editor/app/` | Haupt-Editor-Anwendung | 🔴 Geplant |
-| Viewport | `src/editor/viewport/` | 3D/2D Vorschau-Bereich | 🔴 Geplant |
-| Inspector | `src/editor/inspector/` | Eigenschaften-Editor | 🔴 Geplant |
-| Hierarchy | `src/editor/hierarchy/` | Szenen-Hierarchie-View | 🔴 Geplant |
+### Common Components
+| Komponente | Pfad | Beschreibung | Status |
+|------------|------|--------------|--------|
+| Button | `components/common/Button.jsx` | Große Touch-Buttons (60x60px) | 🔴 Geplant |
+| Card | `components/common/Card.jsx` | Projekt/Item-Karten | 🔴 Geplant |
+| Input | `components/common/Input.jsx` | Text-Eingabefelder | 🔴 Geplant |
+| Slider | `components/common/Slider.jsx` | Schieberegler für Eigenschaften | 🔴 Geplant |
+| IconButton | `components/common/IconButton.jsx` | Icon-basierte Buttons | 🔴 Geplant |
 
-### Editor Tools
-| Modul | Pfad | Beschreibung | Status |
-|-------|------|--------------|--------|
-| Asset Browser | `src/editor/assets/` | Asset-Management-UI | 🔴 Geplant |
-| Script Editor | `src/editor/scripting/` | Code-Editor Integration | 🔴 Geplant |
-| Console | `src/editor/console/` | Debug-Konsole | 🔴 Geplant |
-| Profiler | `src/editor/profiler/` | Performance-Profiling | 🔴 Geplant |
+### Item Components
+| Komponente | Pfad | Beschreibung | Status |
+|------------|------|--------------|--------|
+| ItemCard | `components/item/ItemCard.jsx` | Item-Karte in Galerie | 🔴 Geplant |
+| ItemPreview | `components/item/ItemPreview.jsx` | Item-Vorschau mit Texture | 🔴 Geplant |
+| ItemProperty | `components/item/ItemProperty.jsx` | Einzelne Item-Eigenschaft | 🔴 Geplant |
+| PropertySlider | `components/item/PropertySlider.jsx` | Schieberegler für Item-Werte | 🔴 Geplant |
 
----
+### Navigation Components
+| Komponente | Pfad | Beschreibung | Status |
+|------------|------|--------------|--------|
+| BottomNav | `components/navigation/BottomNav.jsx` | Bottom Tab Navigation | 🔴 Geplant |
+| BurgerMenu | `components/navigation/BurgerMenu.jsx` | Seitenmenü (Multi-Game) | 🔴 Geplant |
+| Header | `components/navigation/Header.jsx` | Screen-Header mit Back-Button | 🔴 Geplant |
 
-## 🎯 Runtime Module
-
-### Game Systems
-| Modul | Pfad | Beschreibung | Status |
-|-------|------|--------------|--------|
-| Input System | `src/runtime/input/` | Keyboard, Mouse, Gamepad | 🔴 Geplant |
-| Audio System | `src/runtime/audio/` | Sound & Musik-Management | 🔴 Geplant |
-| Physics | `src/runtime/physics/` | Physik-Engine Integration | 🔴 Geplant |
-| Animation | `src/runtime/animation/` | Animation-System | 🔴 Geplant |
-
-### Rendering
-| Modul | Pfad | Beschreibung | Status |
-|-------|------|--------------|--------|
-| Renderer | `src/runtime/renderer/` | Rendering-Pipeline | 🔴 Geplant |
-| Material System | `src/runtime/materials/` | Material & Shader | 🔴 Geplant |
-| Lighting | `src/runtime/lighting/` | Beleuchtungs-System | 🔴 Geplant |
-| Post-Processing | `src/runtime/postfx/` | Post-Processing-Effekte | 🔴 Geplant |
+### Project Components
+| Komponente | Pfad | Beschreibung | Status |
+|------------|------|--------------|--------|
+| ProjectCard | `components/project/ProjectCard.jsx` | Projekt-Karte in Liste | 🔴 Geplant |
+| ProjectHeader | `components/project/ProjectHeader.jsx` | Projekt-Info-Header | 🔴 Geplant |
 
 ---
 
-## 🔧 Utility Module
+## 🔧 Services (Business Logic)
 
-### Core Utils
-| Modul | Pfad | Beschreibung | Status |
-|-------|------|--------------|--------|
-| Math Utils | `src/utils/math/` | Mathematische Hilfsfunktionen | 🔴 Geplant |
-| File System | `src/utils/fs/` | Datei-Operationen | 🔴 Geplant |
-| Logger | `src/utils/logger/` | Logging-System | 🔴 Geplant |
-| Config | `src/utils/config/` | Konfigurations-Management | 🔴 Geplant |
+### Core Services
+| Service | Datei | Beschreibung | PWA-Modul | Status |
+|---------|-------|--------------|-----------|--------|
+| **ProjectService** | `services/ProjectService.js` | Projekt-CRUD, Speicherung | `project_manager.js` | 🔴 Geplant |
+| **GitHubService** | `services/GitHubService.js` | GitHub API Integration | `github_api.js` | 🔴 Geplant |
+| **LibraryService** | `services/LibraryService.js` | fabrik-library API | `ui_library.js` | 🔴 Geplant |
+| **TranslationService** | `services/TranslationService.js` | i18n (DE/EN) | `dictionary.js` | 🔴 Geplant |
 
-### Asset Pipeline
-| Modul | Pfad | Beschreibung | Status |
-|-------|------|--------------|--------|
-| Asset Loader | `src/utils/assets/loader/` | Asset-Loading-System | 🔴 Geplant |
-| Asset Cache | `src/utils/assets/cache/` | Asset-Caching | 🔴 Geplant |
-| Image Processor | `src/utils/assets/images/` | Bild-Verarbeitung | 🔴 Geplant |
-| Model Importer | `src/utils/assets/models/` | 3D-Model-Import | 🔴 Geplant |
-
----
-
-## 🔌 Plugin System
-
-| Modul | Pfad | Beschreibung | Status |
-|-------|------|--------------|--------|
-| Plugin Manager | `src/plugins/manager/` | Plugin-Verwaltung | 🔴 Geplant |
-| Plugin API | `src/plugins/api/` | Plugin-Entwickler-API | 🔴 Geplant |
-| Core Plugins | `src/plugins/core/` | Standard-Plugins | 🔴 Geplant |
+### Helper Services
+| Service | Datei | Beschreibung | Status |
+|---------|-------|--------------|--------|
+| StorageService | `services/StorageService.js` | AsyncStorage Wrapper | 🔴 Geplant |
+| ValidationService | `services/ValidationService.js` | Input-Validierung | 🔴 Geplant |
+| NotificationService | `services/NotificationService.js` | Push-Benachrichtigungen | 🔴 Geplant |
 
 ---
 
-## 📦 Package Structure
+## 🎣 Custom Hooks
 
-### Main Packages
-- **@gameforge/core** - Core Engine
-- **@gameforge/editor** - Editor Application
-- **@gameforge/runtime** - Game Runtime
-- **@gameforge/utils** - Shared Utilities
-- **@gameforge/plugins** - Plugin System
+| Hook | Datei | Beschreibung | Status |
+|------|-------|--------------|--------|
+| useProjects | `hooks/useProjects.js` | Projekt-State Management | 🔴 Geplant |
+| useLibrary | `hooks/useLibrary.js` | Library-Items laden | 🔴 Geplant |
+| useGitHub | `hooks/useGitHub.js` | GitHub API Calls | 🔴 Geplant |
+| useTheme | `hooks/useTheme.js` | Theme (Dark/Light) | 🔴 Geplant |
+
+---
+
+## 🌐 Context (Global State)
+
+| Context | Datei | Beschreibung | Status |
+|---------|-------|--------------|--------|
+| ProjectContext | `context/ProjectContext.js` | Aktuelle Projekte | 🔴 Geplant |
+| SettingsContext | `context/SettingsContext.js` | App-Einstellungen | 🔴 Geplant |
+| ThemeContext | `context/ThemeContext.js` | Dark/Light Mode | 🔴 Geplant |
+
+---
+
+## 🛠️ Utils (Hilfsfunktionen)
+
+| Utility | Datei | Beschreibung | Status |
+|---------|-------|--------------|--------|
+| colors | `utils/colors.js` | Farb-Konstanten (Purple, Green, Blue) | 🔴 Geplant |
+| formatters | `utils/formatters.js` | Text-Formatierung | 🔴 Geplant |
+| validators | `utils/validators.js` | Input-Validierung | 🔴 Geplant |
+| api | `utils/api.js` | Axios-Konfiguration | 🔴 Geplant |
+
+---
+
+## 📦 Constants (Konstanten)
+
+| Konstante | Datei | Beschreibung | Status |
+|-----------|-------|--------------|--------|
+| screens | `constants/screens.js` | Screen-Namen | 🔴 Geplant |
+| colors | `constants/colors.js` | Farbschema | 🔴 Geplant |
+| config | `constants/config.js` | App-Konfiguration | 🔴 Geplant |
+| api | `constants/api.js` | API-Endpoints | 🔴 Geplant |
+
+---
+
+## 🔗 Externe Repositories
+
+### Werkstatt-Minecraft-Addon (Backend)
+**URL:** https://github.com/ReichiMD/Werkstatt-Minecraft-Addon
+**Funktion:** GitHub Actions + Gemini AI → .mcaddon generieren
+**Integration:** App pusht project.json, triggert Action
+
+### fabrik-library (Daten)
+**URL:** https://github.com/ReichiMD/fabrik-library
+**Funktion:** Mojang Items, Texturen, Modelle
+**Integration:** App lädt Items via GitHub Raw Content API
+
+### Fabrik-OS-Zentrale (PWA)
+**Status:** Existierende PWA mit ähnlichen Features
+**Wiederverwendung:** Module portieren (siehe Services-Tabelle)
 
 ---
 
 ## 📄 Wichtige Dateien
 
-### Dokumentation
-- `README.md` - Projekt-Hauptdokumentation
-- `PROJECT_INFO.md` - Detaillierte Projektinformationen
-- `INDEX.md` - Dieses Modul-Verzeichnis
-- `SESSION_LOG.md` - Entwicklungs-Session-Logs
+### Root-Level
+- **README.md** - Projekt-Hauptdokumentation
+- **PROJECT_INFO.md** - Detaillierte Projektinformationen
+- **INDEX.md** - Dieses Modul-Verzeichnis
+- **SESSION_LOG.md** - Development Session Logs
+- **.claudeignore** - Token-Optimierung für Claude
 
-### Konfiguration
-- `package.json` - NPM Dependencies & Scripts
-- `tsconfig.json` - TypeScript Konfiguration
-- `vite.config.js` - Vite Build-Konfiguration
-- `.eslintrc.js` - ESLint Code-Style
-- `.prettierrc` - Prettier Formatting
+### React Native Konfiguration
+- **package.json** - Dependencies & Scripts
+- **app.json** - Expo-Konfiguration
+- **babel.config.js** - Babel-Setup
+- **.eslintrc.js** - Code-Style
+- **.prettierrc** - Formatting
 
-### CI/CD
-- `.github/workflows/` - GitHub Actions
-- `.gitlab-ci.yml` - GitLab CI (falls verwendet)
+### Entry Point
+- **App.js** - Haupt-App-Komponente
+- **app/_layout.jsx** - Expo Router Layout (falls Expo Router)
+- **index.js** - App-Entry (falls Standard RN)
 
 ---
 
 ## 🔍 Schnellzugriff
 
-### Häufig genutzte Module
-1. **Engine Init:** `src/core/engine/Engine.ts`
-2. **Editor Entry:** `src/editor/app/App.tsx`
-3. **Main Config:** `src/config/main.ts`
-4. **Utils Index:** `src/utils/index.ts`
+### Häufig genutzte Dateien
+1. **App Entry:** `App.js` oder `app/_layout.jsx`
+2. **Home Screen:** `src/screens/HomeScreen.jsx`
+3. **Workshop Screen:** `src/screens/WorkshopScreen.jsx`
+4. **Project Service:** `src/services/ProjectService.js`
+5. **GitHub Service:** `src/services/GitHubService.js`
 
-### Wichtige Interfaces
-1. **IEngine:** `src/core/engine/IEngine.ts`
-2. **IComponent:** `src/core/ecs/IComponent.ts`
-3. **ISystem:** `src/core/ecs/ISystem.ts`
-4. **IPlugin:** `src/plugins/IPlugin.ts`
+### Wichtige Configs
+1. **Expo Config:** `app.json`
+2. **Package Config:** `package.json`
+3. **Theme Config:** `src/constants/colors.js`
+4. **API Config:** `src/constants/api.js`
 
 ---
 
@@ -175,19 +204,90 @@ Build-Tools, Scripts und Entwickler-Utilities.
 - 🟡 In Entwicklung
 - 🟠 Geplant (nächster Sprint)
 - 🔴 Geplant (Backlog)
+- 🔄 Wird portiert aus PWA
 - ⚪ Optional / Nice-to-have
+
+---
+
+## 🔄 PWA-Portierung Mapping
+
+| PWA-Datei | App-Ziel | Änderungen nötig | Status |
+|-----------|----------|------------------|--------|
+| `ui_library.js` | `screens/LibraryScreen.jsx` | React Native Components | 🔄 Portieren |
+| `ui_workshop.js` | `screens/WorkshopScreen.jsx` | React Native Sliders | 🔄 Portieren |
+| `project_manager.js` | `services/ProjectService.js` | AsyncStorage statt localStorage | 🔄 Portieren |
+| `github_api.js` | `services/GitHubService.js` | Axios statt fetch | 🔄 Portieren |
+| `dictionary.js` | `services/TranslationService.js` | i18n-Integration | 🔄 Portieren |
+
+---
+
+## 🎮 Feature-Module Mapping
+
+### HomeScreen Features
+- Projektliste → ProjectService.getAll()
+- Neues Projekt → ProjectService.create()
+- GitHub Push → GitHubService.push()
+- Projekt löschen → ProjectService.delete()
+
+### LibraryScreen Features
+- Item-Galerie → LibraryService.getItems()
+- Filter → LibraryService.filter()
+- Suche → LibraryService.search()
+- Item hinzufügen → ProjectService.addItem()
+
+### WorkshopScreen Features
+- Item-Editor → ItemEditor Component
+- Schieberegler → PropertySlider Component
+- Speichern → ProjectService.updateItem()
+- Texture-Auswahl → TexturePicker Component
+
+### PreviewScreen Features
+- Item-Liste → ProjectService.getItems()
+- Bearbeiten → Navigation zu Workshop
+- Löschen → ProjectService.deleteItem()
+
+### SettingsScreen Features
+- GitHub Token → StorageService.setToken()
+- Sprache → TranslationService.setLanguage()
+- Theme → ThemeContext.toggle()
 
 ---
 
 ## 🔄 Letzte Updates
 
-| Datum | Modul | Änderung |
-|-------|-------|----------|
-| 2026-02-05 | INDEX.md | Initiale Erstellung |
+| Datum | Bereich | Änderung |
+|-------|---------|----------|
+| 2026-02-05 | INDEX.md | Komplett neu strukturiert für React Native App |
+| 2026-02-05 | Screens | 5 Haupt-Screens definiert |
+| 2026-02-05 | Services | PWA-Mapping erstellt |
 
 ---
 
-**Hinweis:** Dieses Dokument wird kontinuierlich aktualisiert, wenn neue Module hinzugefügt oder bestehende Module geändert werden.
+## 💡 Naming Conventions
 
-**Version:** 1.0
+### Screens
+- **Format:** `<Name>Screen.jsx`
+- **Beispiel:** `HomeScreen.jsx`, `LibraryScreen.jsx`
+
+### Components
+- **Format:** `<Name>.jsx` (PascalCase)
+- **Beispiel:** `Button.jsx`, `ItemCard.jsx`
+
+### Services
+- **Format:** `<Name>Service.js`
+- **Beispiel:** `ProjectService.js`, `GitHubService.js`
+
+### Hooks
+- **Format:** `use<Name>.js`
+- **Beispiel:** `useProjects.js`, `useTheme.js`
+
+### Constants
+- **Format:** `<name>.js` (lowercase)
+- **Beispiel:** `colors.js`, `screens.js`
+
+---
+
+**Hinweis:** Dieses Dokument wird kontinuierlich aktualisiert während der Entwicklung.
+
+**Version:** 2.0 (Korrigiert für React Native Mobile App)
 **Letzte Aktualisierung:** 2026-02-05
