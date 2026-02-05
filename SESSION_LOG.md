@@ -311,9 +311,59 @@ GameForge-Studio/
 5. SettingsScreen - GitHub Token
 
 **NICHT einbauen:**
-- Kein Explorer (wie in PWA)
-- Keine 3D-Preview
-- Keine KI direkt in der App
+- Kein Explorer (wie in PWA - war nur für PWA-Entwicklung)
+- Keine 3D-Preview (Preview = nur Item-Übersicht)
+- Keine KI direkt in der App (läuft im Backend/Werkstatt)
+
+#### Testing & Deployment
+
+**Expo Go (Live-Testing):**
+- Kostenlos
+- User scannt QR-Code
+- App läuft sofort auf Handy
+- Jede Änderung live sichtbar (Hot Reload)
+
+**APK-Build (EAS Build):**
+- Kostenlos für Open Source
+- GitHub Actions kann APK automatisch bauen
+- Alternative: Lokaler Build möglich
+- Für Release-Versionen
+
+#### Projekt-Phase & Zielsetzung
+
+**WICHTIG: Dies ist eine MINI-VERSION / LITE zum Testen!**
+
+- **Ziel:** Nach 1 Woche testen ob Native besser als PWA
+- **Wenn gefällt:** → Vollversion entwickeln (3-4 Wochen)
+- **Wenn nicht:** → PWA optimieren stattdessen
+- **Status Werkstatt:** Noch nicht fertig (Phase 1)
+- **Strategie:** App nutzt nur was Werkstatt JETZT schon kann
+
+#### Token-Strategie (Claude Pro)
+
+**User hat Claude Pro (limitiert) - Effizient arbeiten!**
+
+- ✅ Kleine Commits bevorzugen
+- ✅ Kein Code im Chat zeigen
+- ✅ Fokussiert arbeiten (nur betroffene Dateien laden)
+- ✅ Session-Ende: Nur SESSION_LOG.md updaten
+- ❌ Keine großen Code-Blöcke im Chat
+- ❌ Nicht alle Dateien auf einmal laden
+
+#### Arbeitsweise & Setup
+
+**User-Kontext:**
+- 95% mobil (Android App)
+- Kein Programmierer → Einfache Erklärungen
+- Dieser Chat (Android) = Planung & Fragen
+- Claude Code Chat = Repository-Arbeit
+- Beide Chats parallel nutzen ist OK
+
+**Design-Prozess:**
+- Mobbin Design-Recherche läuft
+- 2-3 Screenshots kommen später
+- Dann HTML-Mockups erstellen
+- Sohn (7 Jahre) entscheidet mit über Design
 
 #### Nächste Schritte
 
