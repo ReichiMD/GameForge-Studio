@@ -1,44 +1,77 @@
 # 🎮 GameForge Studio
 
-> **Ein modernes, modulares Framework für die Spieleentwicklung**
+> **Mobile App für kinderfreundliche Minecraft Addon-Erstellung**
 
-GameForge Studio ist ein leistungsstarkes und flexibles Game Development Framework, das Entwicklern ermöglicht, schnell und effizient hochwertige Spiele zu erstellen. Mit einer intuitiven Editor-Oberfläche, einem robusten Entity-Component-System und einem erweiterbaren Plugin-System bietet GameForge Studio alles, was moderne Spieleentwickler benötigen.
+GameForge Studio ist eine **React Native Mobile App**, die es einem 7-jährigen Kind (zusammen mit Papa) ermöglicht, **Minecraft Bedrock Addons** zu erstellen - ganz **ohne Programmieren**! Mit großen Buttons, Emojis und Schiebereglern können custom Waffen, Items und Blöcke erstellt werden.
+
+**Platform:** Android (React Native + Expo)
+**Zielgruppe:** Kinder & Hobby-Creators
+**Backend:** GitHub Actions + Gemini AI
 
 ---
 
 ## ✨ Features
 
-### 🎯 Core Engine
-- **High-Performance Game Loop** - Optimiert für 60+ FPS
-- **Entity Component System (ECS)** - Flexibles und skalierbares Design-Pattern
-- **Scene Management** - Hierarchische Szenen-Verwaltung mit Lifecycle-Hooks
-- **Event System** - Reaktives Messaging-System für lose Kopplung
+### 🏠 HomeScreen - Projektliste
+- Alle Projekte auf einen Blick
+- Neues Projekt mit einem Tap erstellen
+- Direkt zu GitHub pushen
+- Projekt-Status: Draft oder Published
 
-### 🎨 Visual Editor
-- **Intuitive UI** - React-basierte moderne Benutzeroberfläche
-- **Real-time Preview** - Sofortiges Feedback während der Entwicklung
-- **Asset Browser** - Zentrales Asset-Management-System
-- **Inspector Panel** - Detaillierte Eigenschaften-Bearbeitung
-- **Hierarchy View** - Übersichtliche Szenen-Hierarchie
+### 📚 LibraryScreen - Item-Galerie
+- Items aus **fabrik-library** durchstöbern
+- Filter: Waffen, Tools, Blöcke
+- Suche nach Namen
+- Items zum Projekt hinzufügen
 
-### 🚀 Runtime Features
-- **Input System** - Unterstützung für Keyboard, Mouse, Touch & Gamepad
-- **Audio Engine** - 3D-Audio mit räumlicher Positionierung
-- **Physics Integration** - 2D/3D Physik-Engine Support
-- **Animation System** - Keyframe & Skelett-Animationen
-- **Particle System** - Hochperformante Partikel-Effekte
+### 🔨 WorkshopScreen - Item-Editor
+- **Schieberegler** für Item-Eigenschaften:
+  - ⚔️ Damage (Schaden)
+  - 🛡️ Durability (Haltbarkeit)
+  - ⚡ Speed (Geschwindigkeit)
+- Texture auswählen
+- Name & Beschreibung eingeben
+- Kinderfreundliche Bedienung
 
-### 🔧 Developer Tools
-- **TypeScript Support** - Vollständige Type-Safety
-- **Hot Module Replacement** - Schnelle Entwicklungs-Iteration
-- **Debug Console** - Integrierte Debugging-Tools
-- **Performance Profiler** - Echtzeit-Performance-Analyse
-- **Visual Script Editor** - Node-basierte Script-Erstellung (geplant)
+### 👁️ PreviewScreen - Item-Übersicht
+- Alle Items im Projekt sehen
+- Eigenschaften auf einen Blick
+- Items bearbeiten oder löschen
 
-### 🔌 Plugin System
-- **Erweiterbar** - Einfache Plugin-Entwicklung
-- **Community Plugins** - Wachsendes Ecosystem
-- **Plugin Marketplace** - Zentrale Plugin-Verwaltung (geplant)
+### ⚙️ SettingsScreen - Einstellungen
+- GitHub Token eingeben
+- Sprache wählen (🇩🇪 DE / 🇬🇧 EN)
+- Dark/Light Mode
+- Repository-Verwaltung
+
+---
+
+## 🏗️ Architektur
+
+```
+┌─────────────────────┐
+│  GameForge Studio   │  ← Diese App
+│   (Mobile App)      │     React Native + Expo
+└──────────┬──────────┘
+           │ project.json
+           ↓
+┌─────────────────────┐
+│   Werkstatt-Repo    │  ← Backend
+│  (GitHub Actions)   │     Gemini AI
+└──────────┬──────────┘
+           │ .mcaddon
+           ↓
+┌─────────────────────┐
+│    Minecraft        │  ← Spieler installiert
+│     Bedrock         │
+└─────────────────────┘
+```
+
+### Externe Repositories
+
+- **Werkstatt:** https://github.com/ReichiMD/Werkstatt-Minecraft-Addon
+- **fabrik-library:** https://github.com/ReichiMD/fabrik-library
+- **PWA (Vorlage):** Fabrik-OS-Zentrale
 
 ---
 
@@ -47,8 +80,9 @@ GameForge Studio ist ein leistungsstarkes und flexibles Game Development Framewo
 ### Voraussetzungen
 
 - **Node.js** >= 18.0.0
-- **npm** >= 9.0.0 oder **pnpm** >= 8.0.0
-- **Git** >= 2.30.0
+- **npm** oder **pnpm**
+- **Expo CLI:** `npm install -g expo-cli`
+- **Android Studio** (für Emulator) oder physisches Android-Gerät
 
 ### Installation
 
@@ -59,277 +93,170 @@ cd GameForge-Studio
 
 # Dependencies installieren
 npm install
-# oder
-pnpm install
 
-# Development Server starten
-npm run dev
+# Expo Development Server starten
+npm start
 
-# Editor öffnet sich automatisch unter http://localhost:5173
+# Auf Android-Gerät/Emulator
+# - Expo Go App auf Gerät installieren
+# - QR-Code scannen
+# ODER
+npm run android
 ```
 
-### Dein erstes Spiel
+### Entwicklung
 
-```typescript
-import { Engine, Scene, Entity } from '@gameforge/core';
+```bash
+# Development Server
+npm start
 
-// Engine initialisieren
-const engine = new Engine({
-  width: 800,
-  height: 600,
-  fps: 60
-});
+# Android Emulator
+npm run android
 
-// Scene erstellen
-const scene = new Scene('MainScene');
+# Tests
+npm test
 
-// Entity hinzufügen
-const player = new Entity('Player');
-player.addComponent('Transform', { x: 100, y: 100 });
-player.addComponent('Sprite', { texture: 'player.png' });
-player.addComponent('RigidBody', { mass: 1 });
+# Linting
+npm run lint
+```
 
-scene.addEntity(player);
+---
 
-// Scene laden und starten
-engine.loadScene(scene);
-engine.start();
+## 🎨 Design-Prinzipien
+
+### Kinderfreundlich aber nicht kindisch
+- ✅ Moderne, cleane UI
+- ✅ Große Buttons (60x60px)
+- ✅ Emojis statt viel Text
+- ✅ Intuitive Icons
+- ❌ Keine Comic-Grafiken
+- ❌ Keine Baby-Sprache
+
+### Farbschema (Minecraft)
+- **Purple:** `#8B5CF6` (Hauptaktionen)
+- **Green:** `#10B981` (Erfolg)
+- **Blue:** `#3B82F6` (Info)
+- **Dark Mode:** `#1F2937` / `#111827`
+
+---
+
+## 📁 Projekt-Struktur
+
+```
+GameForge-Studio/
+├── src/
+│   ├── screens/           # 5 Haupt-Screens
+│   ├── components/        # UI-Komponenten
+│   ├── services/          # Business Logic
+│   ├── hooks/             # Custom Hooks
+│   ├── context/           # Global State
+│   ├── utils/             # Hilfsfunktionen
+│   ├── constants/         # Konstanten
+│   └── assets/            # Icons, Bilder
+├── docs/                  # Dokumentation
+├── App.js                 # Entry Point
+├── app.json               # Expo Config
+└── package.json           # Dependencies
 ```
 
 ---
 
 ## 📚 Dokumentation
 
-- **[Getting Started](docs/getting-started.md)** - Erste Schritte mit GameForge Studio
-- **[API Reference](docs/api/README.md)** - Vollständige API-Dokumentation
-- **[Tutorials](docs/tutorials/README.md)** - Schritt-für-Schritt Anleitungen
-- **[Examples](examples/README.md)** - Beispiel-Projekte und Demos
-- **[Plugin Development](docs/plugins/README.md)** - Eigene Plugins erstellen
-- **[Architecture](docs/architecture/README.md)** - Technische Architektur-Details
-
-### Wichtige Projekt-Dokumente
-
 - **[PROJECT_INFO.md](PROJECT_INFO.md)** - Detaillierte Projektinformationen
-- **[INDEX.md](INDEX.md)** - Modul-Verzeichnis und Übersicht
-- **[SESSION_LOG.md](SESSION_LOG.md)** - Development Session Logs
+- **[INDEX.md](INDEX.md)** - Modul-Verzeichnis
+- **[SESSION_LOG.md](SESSION_LOG.md)** - Development Logs
 
 ---
 
-## 🛠️ Development
+## 🔧 Technologie-Stack
 
-### Project Structure
+### Frontend
+- **React Native** 0.73+
+- **Expo** SDK 50+
+- **React Navigation** 6
+- **React Native Paper** (UI)
+- **AsyncStorage** (Persistenz)
+- **Axios** (HTTP)
 
-```
-GameForge-Studio/
-├── src/
-│   ├── core/              # Core Engine (ECS, Scene, Events)
-│   ├── editor/            # Editor Application (React)
-│   ├── runtime/           # Game Runtime (Input, Audio, Physics)
-│   └── utils/             # Shared Utilities
-├── tests/                 # Unit & Integration Tests
-├── examples/              # Example Games & Demos
-├── docs/                  # Documentation
-└── tools/                 # Build Tools & Scripts
-```
+### Backend (extern)
+- **GitHub Actions**
+- **Google Gemini AI**
 
-### Build Commands
-
-```bash
-# Development Server (mit HMR)
-npm run dev
-
-# Production Build
-npm run build
-
-# Tests ausführen
-npm test
-
-# Test Coverage
-npm run test:coverage
-
-# Linting
-npm run lint
-
-# Type Checking
-npm run type-check
-
-# Build Documentation
-npm run docs:build
-```
-
-### Testing
-
-```bash
-# Alle Tests
-npm test
-
-# Watch Mode
-npm run test:watch
-
-# Specific Test File
-npm test -- src/core/engine/Engine.test.ts
-
-# E2E Tests
-npm run test:e2e
-```
-
----
-
-## 🤝 Contributing
-
-Wir freuen uns über Beiträge zur GameForge Studio! Ob Bug-Fixes, neue Features oder Dokumentation - jede Hilfe ist willkommen.
-
-### Contribution Guidelines
-
-1. **Fork** das Repository
-2. **Erstelle** einen Feature-Branch (`git checkout -b feature/AmazingFeature`)
-3. **Committe** deine Änderungen (`git commit -m 'Add some AmazingFeature'`)
-4. **Push** zum Branch (`git push origin feature/AmazingFeature`)
-5. **Öffne** einen Pull Request
-
-### Development Guidelines
-
-- **Code Style:** ESLint + Prettier (automatisch beim Commit)
-- **Commit Messages:** [Conventional Commits](https://www.conventionalcommits.org/)
-- **Tests:** Minimum 80% Coverage für neue Features
-- **Dokumentation:** Inline-Kommentare + API-Docs
-- **Type Safety:** Strict TypeScript Mode
-
-### Code Review Process
-
-1. Automatische Checks (Linting, Tests, Build)
-2. Review von mindestens einem Maintainer
-3. Approval + Merge
-
----
-
-## 🐛 Bug Reports & Feature Requests
-
-Nutze die [GitHub Issues](https://github.com/ReichiMD/GameForge-Studio/issues) für:
-
-- 🐛 Bug Reports
-- 💡 Feature Requests
-- 📝 Documentation Improvements
-- ❓ Questions & Discussions
-
-**Bug Report Template:**
-```markdown
-**Beschreibung:** Was ist das Problem?
-**Schritte zur Reproduktion:** Wie kann man den Bug reproduzieren?
-**Erwartetes Verhalten:** Was sollte passieren?
-**Aktuelles Verhalten:** Was passiert stattdessen?
-**Environment:** OS, Node-Version, Browser etc.
-**Screenshots:** Falls relevant
-```
+### Daten
+- **fabrik-library** (GitHub)
+- **JSON** Format
 
 ---
 
 ## 🗺️ Roadmap
 
-### Q1 2026 - Foundation
-- [x] Projekt-Setup & Dokumentation
-- [ ] Core Engine Implementation
-- [ ] Basic Scene Management
-- [ ] ECS Foundation
+### Sprint 1 (Woche 1-2) - Setup
+- [x] Projekt-Dokumentation
+- [ ] Expo/React Native Setup
+- [ ] Navigation-Struktur
+- [ ] Theme & Design-System
+- [ ] HomeScreen
 
-### Q2 2026 - Editor Development
-- [ ] React Editor UI
-- [ ] Asset Browser
-- [ ] Scene Hierarchy
-- [ ] Inspector Panel
+### Sprint 2 (Woche 3-4) - Library & Workshop
+- [ ] LibraryScreen (fabrik-library)
+- [ ] WorkshopScreen (Editor)
+- [ ] Item-Eigenschaften (Schieberegler)
+- [ ] AsyncStorage Integration
 
-### Q3 2026 - Runtime Features
-- [ ] Input System
-- [ ] Audio Engine
-- [ ] Physics Integration
-- [ ] Animation System
+### Sprint 3 (Woche 5-6) - GitHub Integration
+- [ ] GitHubService (API)
+- [ ] GitHub Token Verwaltung
+- [ ] project.json Export
+- [ ] Push zu Werkstatt
 
-### Q4 2026 - Polish & Release
-- [ ] Plugin System
-- [ ] Performance Optimization
-- [ ] Documentation Complete
-- [ ] Beta Release
-
-Siehe [PROJECT_INFO.md](PROJECT_INFO.md) für detaillierte Milestones.
+### Sprint 4 (Woche 7-8) - Polish
+- [ ] PreviewScreen
+- [ ] SettingsScreen
+- [ ] Testing & Bug-Fixes
+- [ ] Alpha Release
 
 ---
 
-## 📊 Project Status
+## 🤝 Contributing
 
-| Component | Status | Coverage | Docs |
-|-----------|--------|----------|------|
-| Core Engine | 🔴 Planned | 0% | 📝 WIP |
-| Scene Manager | 🔴 Planned | 0% | 📝 WIP |
-| ECS | 🔴 Planned | 0% | 📝 WIP |
-| Editor | 🔴 Planned | 0% | 📝 WIP |
-| Runtime | 🔴 Planned | 0% | 📝 WIP |
-| Plugins | 🔴 Planned | 0% | 📝 WIP |
+Contributions willkommen! Bitte:
 
-**Legend:** 🟢 Done | 🟡 In Progress | 🟠 Next | 🔴 Planned
+1. Fork das Repository
+2. Feature-Branch erstellen (`git checkout -b feature/AmazingFeature`)
+3. Änderungen committen (`git commit -m 'Add AmazingFeature'`)
+4. Branch pushen (`git push origin feature/AmazingFeature`)
+5. Pull Request öffnen
 
 ---
 
 ## 📄 License
 
-Dieses Projekt ist unter der **MIT License** lizenziert - siehe [LICENSE](LICENSE) Datei für Details.
-
-```
-MIT License
-
-Copyright (c) 2026 GameForge Studio Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-[... siehe LICENSE Datei für vollständigen Text]
-```
+MIT License - siehe [LICENSE](LICENSE) Datei
 
 ---
 
-## 🙏 Acknowledgments
+## 🙏 Credits
 
-- Inspiriert von **Unity**, **Godot** und **Unreal Engine**
-- Nutzt **Three.js** für 3D-Rendering
-- **React** für die Editor-UI
-- **Vite** für schnelle Development-Builds
-- Community-Beiträge und Feedback
-
----
-
-## 📞 Support & Community
-
-- **GitHub Issues:** [Bug Reports & Feature Requests](https://github.com/ReichiMD/GameForge-Studio/issues)
-- **GitHub Discussions:** [Community Forum](https://github.com/ReichiMD/GameForge-Studio/discussions)
-- **Discord:** Coming Soon
-- **Twitter:** Coming Soon
-- **Email:** TBD
+- **Inspiriert von:** Minecraft Bedrock Edition
+- **PWA-Vorlage:** Fabrik-OS-Zentrale
+- **Backend:** Werkstatt-Minecraft-Addon
+- **Daten:** fabrik-library
 
 ---
 
-## 🌟 Star History
+## 📞 Support
 
-Wenn dir GameForge Studio gefällt, gib uns einen ⭐ auf GitHub!
-
----
-
-## 📈 Stats
-
-![GitHub stars](https://img.shields.io/github/stars/ReichiMD/GameForge-Studio?style=social)
-![GitHub forks](https://img.shields.io/github/forks/ReichiMD/GameForge-Studio?style=social)
-![GitHub issues](https://img.shields.io/github/issues/ReichiMD/GameForge-Studio)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/ReichiMD/GameForge-Studio)
-![License](https://img.shields.io/github/license/ReichiMD/GameForge-Studio)
+- **GitHub Issues:** [Bug Reports](https://github.com/ReichiMD/GameForge-Studio/issues)
+- **Werkstatt:** https://github.com/ReichiMD/Werkstatt-Minecraft-Addon
+- **Library:** https://github.com/ReichiMD/fabrik-library
 
 ---
 
 <div align="center">
 
-**Made with ❤️ by the GameForge Studio Team**
+**Made with ❤️ for young creators**
 
-[Website](https://gameforge.studio) • [Documentation](docs/README.md) • [Examples](examples/README.md) • [Contributing](CONTRIBUTING.md)
+[Dokumentation](PROJECT_INFO.md) • [Module](INDEX.md) • [Logs](SESSION_LOG.md)
 
 </div>

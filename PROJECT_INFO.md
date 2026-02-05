@@ -2,179 +2,367 @@
 
 ## 📋 Projektübersicht
 
-**Projekt:** GameForge Studio
-**Typ:** Game Development Framework & Toolset
+**Projekt:** GameForge Studio - Multi-Game Addon Creator App
+**Typ:** Native Mobile App (React Native + Expo)
+**Platform:** Android
 **Status:** In Entwicklung
 **Version:** 0.1.0-alpha
 **Lizenz:** MIT
 
 ## 🎯 Projektziel
 
-GameForge Studio ist ein modernes, modulares Framework für die Spieleentwicklung, das Entwicklern ermöglicht, schnell und effizient Spiele zu erstellen. Das Projekt kombiniert leistungsstarke Tools, intuitive APIs und eine flexible Architektur.
+GameForge Studio ist eine **kinderfreundliche Mobile App**, die es einem 7-jährigen Kind (zusammen mit Papa) ermöglicht, **Game-Addons zu erstellen** - ohne Programmieren zu müssen!
 
-## 🏗️ Technologie-Stack
+**Erstes Spiel:** Minecraft Bedrock Addons (Waffen, Items, Blöcke)
+**Später geplant:** Roblox, Terraria, Fortnite Creative etc.
 
-### Core
-- **Sprache:** TypeScript/JavaScript
-- **Runtime:** Node.js
-- **Build-Tool:** Vite
-- **Package Manager:** npm/pnpm
+## 👥 Zielgruppe
 
-### Frontend
-- **Framework:** React
-- **UI Library:** TBD
-- **State Management:** TBD
+- **Kind (7 Jahre):** Intuitive Bedienung, große Buttons, Emojis, kinderfreundlich
+- **Vater (kein Programmierer):** Einfache Einrichtung, keine technischen Kenntnisse nötig
+- **Später:** Community von Hobby-Creators
 
-### Backend
-- **API:** Express.js / FastAPI
-- **Datenbank:** PostgreSQL / MongoDB
-- **Authentifizierung:** JWT
+## 🏗️ System-Architektur
 
-### Game Engine Integration
-- **2D Engine:** Phaser / PixiJS
-- **3D Engine:** Three.js / Babylon.js
-- **Physics:** Matter.js / Cannon.js
+### 3-Komponenten-System
+
+```
+┌─────────────────────┐
+│  GameForge Studio   │  ← Diese App (React Native)
+│   (Mobile App)      │     - UI für Item-Erstellung
+│                     │     - Projekt-Management
+└──────────┬──────────┘     - GitHub Push
+           │
+           │ project.json
+           ↓
+┌─────────────────────┐
+│   Werkstatt-Repo    │  ← Backend (GitHub Actions)
+│  (GitHub Actions)   │     - Empfängt project.json
+│                     │     - Gemini AI Generation
+└──────────┬──────────┘     - Erstellt .mcaddon
+           │
+           │ Item-Daten
+           ↓
+┌─────────────────────┐
+│  fabrik-library     │  ← Daten-Repo
+│  (Item-Bibliothek)  │     - Mojang Items
+│                     │     - Texturen & Modelle
+└─────────────────────┘     - JSON Definitionen
+```
+
+### Komponenten-Details
+
+**1. GameForge Studio App (dieses Projekt)**
+- React Native + Expo
+- Screens: Home, Library, Workshop, Preview, Settings
+- Services: GitHub API, Project Manager, Translations
+- Lokale Speicherung: AsyncStorage
+
+**2. Werkstatt-Repo** (externe Abhängigkeit)
+- Repository: https://github.com/ReichiMD/Werkstatt-Minecraft-Addon
+- GitHub Action triggert bei Push
+- Gemini AI generiert Addon-Code
+- Output: .mcaddon Datei
+
+**3. fabrik-library** (Daten-Quelle)
+- Repository: https://github.com/ReichiMD/fabrik-library
+- Mojang Items mit Texturen
+- JSON-Definitionen
+- Wird von App geladen
+
+**4. Fabrik-OS-Zentrale (PWA)** (Wiederverwendung)
+- Existierende PWA mit ähnlichen Features
+- Module können portiert werden
+- UI-Komponenten als Vorlage
+
+## 🎨 Design-Prinzipien
+
+### UI/UX Guidelines
+
+**Kinderfreundlich aber nicht kindisch:**
+- ✅ Moderne, cleane Oberfläche
+- ✅ Große, klare Buttons (min. 60x60px)
+- ✅ Emojis statt viel Text
+- ✅ Intuitive Icons
+- ❌ Keine Comic-Grafiken
+- ❌ Keine Baby-Sprache
+
+**Farbschema (Minecraft-inspiriert):**
+- **Primary:** Purple (`#8B5CF6`) - Hauptaktionen
+- **Secondary:** Green (`#10B981`) - Erfolg, Speichern
+- **Accent:** Blue (`#3B82F6`) - Info, Links
+- **Background:** Dark Mode (`#1F2937`, `#111827`)
+
+**Navigation:**
+- Burger-Menü für Multi-Game Auswahl
+- Bottom Navigation für Hauptbereiche
+- Swipe-Gesten für Item-Galerie
+
+**Button-Größen:**
+- Touch-Target: Minimum 60x60px
+- Icon-Größe: 32x32px
+- Padding: 16px
 
 ## 📁 Projekt-Struktur
 
 ```
 GameForge-Studio/
+├── src/
+│   ├── screens/           # Screen-Komponenten
+│   │   ├── HomeScreen.jsx          # Projektliste
+│   │   ├── LibraryScreen.jsx       # Item-Galerie
+│   │   ├── WorkshopScreen.jsx      # Item-Editor
+│   │   ├── PreviewScreen.jsx       # Item-Übersicht
+│   │   └── SettingsScreen.jsx      # GitHub Token etc.
+│   │
+│   ├── components/        # Wiederverwendbare UI
+│   │   ├── common/                 # Buttons, Cards etc.
+│   │   ├── item/                   # Item-spezifisch
+│   │   └── navigation/             # Navigation
+│   │
+│   ├── services/          # Business Logic
+│   │   ├── ProjectService.js       # Projekt-Management
+│   │   ├── GitHubService.js        # GitHub API
+│   │   ├── LibraryService.js       # fabrik-library
+│   │   └── TranslationService.js   # i18n (DE/EN)
+│   │
+│   ├── hooks/             # Custom React Hooks
+│   ├── context/           # React Context (State)
+│   ├── utils/             # Helper Functions
+│   ├── constants/         # Konstanten, Configs
+│   └── assets/            # Bilder, Icons, Fonts
+│
 ├── docs/                  # Dokumentation
-├── src/                   # Source Code
-│   ├── core/             # Core Engine Komponenten
-│   ├── editor/           # Editor Tools
-│   ├── runtime/          # Game Runtime
-│   └── utils/            # Utilities
-├── examples/             # Beispielprojekte
-├── tests/                # Tests
-└── tools/                # Development Tools
+├── .expo/                 # Expo Cache
+└── android/               # Native Code (falls nötig)
 ```
 
-## 🎮 Hauptfunktionen
+## 🎮 Features (Mini-Version)
 
-### Phase 1: Foundation
-- [ ] Projekt-Setup und Grundarchitektur
-- [ ] Core Engine System
-- [ ] Asset Management System
-- [ ] Basic Editor Interface
+### Phase 1: MVP (Minimum Viable Product)
 
-### Phase 2: Game Systems
-- [ ] Entity Component System (ECS)
-- [ ] Scene Management
-- [ ] Input System
-- [ ] Audio System
+#### 1️⃣ HomeScreen - Projektliste
+- [ ] Liste aller Projekte
+- [ ] Neues Projekt erstellen
+- [ ] Projekt öffnen/löschen
+- [ ] Projekt zu GitHub pushen
+- [ ] Status: Draft / Published
 
-### Phase 3: Editor Features
-- [ ] Visual Scene Editor
-- [ ] Asset Browser
-- [ ] Script Editor
-- [ ] Debugging Tools
+#### 2️⃣ LibraryScreen - Item-Galerie
+- [ ] Grid-View von Items (aus fabrik-library)
+- [ ] Filter: Waffen, Tools, Blöcke
+- [ ] Suche nach Namen
+- [ ] Item-Details anzeigen
+- [ ] Item zum Projekt hinzufügen
 
-### Phase 4: Advanced Features
-- [ ] Plugin System
-- [ ] Multiplayer Support
-- [ ] Performance Profiler
-- [ ] Export & Build System
+#### 3️⃣ WorkshopScreen - Item-Editor
+- [ ] Item-Eigenschaften mit Schiebereglern
+  - Damage (Schaden)
+  - Durability (Haltbarkeit)
+  - Speed (Geschwindigkeit)
+- [ ] Texture-Auswahl
+- [ ] Name & Beschreibung
+- [ ] Speichern/Verwerfen
 
-## 👥 Team & Rollen
+#### 4️⃣ PreviewScreen - Item-Übersicht
+- [ ] Liste aller Items im Projekt
+- [ ] Eigenschaften-Übersicht
+- [ ] Item bearbeiten/löschen
+- [ ] **Keine** 3D-Vorschau
 
-- **Projektleitung:** TBD
-- **Lead Developer:** TBD
-- **UI/UX Design:** TBD
-- **Testing:** TBD
+#### 5️⃣ SettingsScreen - Einstellungen
+- [ ] GitHub Token eingeben
+- [ ] Repository-Auswahl (Werkstatt)
+- [ ] Sprache: DE/EN
+- [ ] Theme: Dark/Light
+- [ ] Über/Info
+
+### Phase 2: Erweiterungen (später)
+
+- [ ] Mehr Item-Typen (Rüstungen, Lebensmittel)
+- [ ] Roblox Integration
+- [ ] Terraria Mods
+- [ ] Community-Features (Teilen)
+- [ ] Tutorial-System
+
+## 🔗 PWA-Module zum Wiederverwenden
+
+Diese Module aus der **Fabrik-OS-Zentrale PWA** können portiert werden:
+
+| PWA-Modul | Ziel in App | Status |
+|-----------|-------------|--------|
+| `ui_library.js` | LibraryScreen | 🔄 Portieren |
+| `ui_workshop.js` | WorkshopScreen | 🔄 Portieren |
+| `project_manager.js` | ProjectService | 🔄 Portieren |
+| `github_api.js` | GitHubService | 🔄 Portieren |
+| `dictionary.js` | TranslationService | 🔄 Portieren |
+
+**Nicht übernehmen:**
+- ❌ Explorer (zu komplex für MVP)
+- ❌ 3D-Preview (nicht in Mini-Version)
+- ❌ Direkte KI-Integration (läuft im Backend)
+
+## 🔧 Technologie-Stack
+
+### Frontend (Mobile App)
+- **Framework:** React Native 0.73+
+- **Tooling:** Expo SDK 50+
+- **Navigation:** React Navigation 6
+- **State:** React Context + Hooks (später: Zustand)
+- **Storage:** AsyncStorage
+- **HTTP:** Axios
+- **UI Library:** React Native Paper (Material Design)
+
+### Backend (Werkstatt)
+- **Platform:** GitHub Actions
+- **AI:** Google Gemini API
+- **Output:** .mcaddon Datei
+
+### Daten (fabrik-library)
+- **Format:** JSON
+- **Assets:** PNG Texturen, .geo.json Modelle
+- **Zugriff:** GitHub Raw Content API
+
+### Development Tools
+- **IDE:** VS Code + React Native Tools
+- **Testing:** Jest + React Native Testing Library
+- **Debugging:** Expo DevTools, React DevTools
+- **Linting:** ESLint + Prettier
+- **Git:** Conventional Commits
 
 ## 📊 Entwicklungs-Metriken
 
 | Metrik | Ziel | Aktuell |
 |--------|------|---------|
-| Test Coverage | 80% | 0% |
-| Dokumentation | 100% | 5% |
+| Bundle Size | < 50 MB | 0 MB |
+| Startup Time | < 3s | N/A |
+| Test Coverage | 70% | 0% |
+| Min. Android | API 24 (7.0) | N/A |
 | Performance | 60 FPS | N/A |
-| Build Time | < 30s | N/A |
 
-## 🔗 Wichtige Links
+## 🚀 Workflow
 
-- **Repository:** https://github.com/ReichiMD/GameForge-Studio
-- **Dokumentation:** TBD
-- **Issue Tracker:** GitHub Issues
-- **Roadmap:** TBD
+### App → Addon Pipeline
 
-## 📝 Entwicklungs-Standards
-
-### Code Style
-- ESLint + Prettier
-- TypeScript Strict Mode
-- Konvention: camelCase für Variablen, PascalCase für Klassen
-
-### Git Workflow
-- Branch-Naming: `feature/`, `bugfix/`, `hotfix/`, `claude/`
-- Commit-Messages: Conventional Commits
-- PR-Reviews erforderlich
-
-### Testing
-- Unit Tests: Jest / Vitest
-- E2E Tests: Playwright / Cypress
-- Min. Coverage: 80%
-
-## 🚀 Getting Started
-
-```bash
-# Repository klonen
-git clone https://github.com/ReichiMD/GameForge-Studio.git
-
-# Dependencies installieren
-npm install
-
-# Development Server starten
-npm run dev
-
-# Tests ausführen
-npm test
-
-# Build erstellen
-npm run build
+```
+1. USER ERSTELLT ITEM
+   ↓
+   (App: WorkshopScreen)
+   ↓
+2. PROJEKT SPEICHERN
+   ↓
+   (App: ProjectService)
+   ↓
+3. PUSH TO GITHUB
+   ↓
+   (App: GitHubService → project.json)
+   ↓
+4. GITHUB ACTION TRIGGER
+   ↓
+   (Werkstatt: GitHub Actions)
+   ↓
+5. GEMINI AI GENERIERT CODE
+   ↓
+   (Werkstatt: Gemini API)
+   ↓
+6. .MCADDON ERSTELLEN
+   ↓
+   (Werkstatt: Build Script)
+   ↓
+7. DOWNLOAD LINK
+   ↓
+   (App: Benachrichtigung)
+   ↓
+8. INSTALLIEREN IN MINECRAFT
+   ↓
+   (User: Datei öffnen)
 ```
 
-## 📅 Milestones
+## 📅 Roadmap
 
-### Q1 2026
-- ✅ Projekt-Setup
-- ⏳ Core Architecture
-- ⏳ Basic Editor
+### Sprint 1 (Woche 1-2): Setup & Basis
+- [x] Projekt-Dokumentation korrigiert
+- [ ] React Native/Expo Setup
+- [ ] Navigation-Struktur
+- [ ] Theme & Design-System
+- [ ] HomeScreen (Projektliste)
 
-### Q2 2026
-- ECS Implementation
-- Scene Management
-- Asset Pipeline
+### Sprint 2 (Woche 3-4): Library & Workshop
+- [ ] LibraryScreen (fabrik-library Integration)
+- [ ] WorkshopScreen (Item-Editor)
+- [ ] Item-Eigenschaften (Schieberegler)
+- [ ] Projekt-Speicherung (AsyncStorage)
 
-### Q3 2026
-- Visual Editor
-- Plugin System
-- Documentation
+### Sprint 3 (Woche 5-6): GitHub Integration
+- [ ] GitHubService (API Client)
+- [ ] GitHub Token Verwaltung
+- [ ] project.json Export
+- [ ] Push zu Werkstatt-Repo
 
-### Q4 2026
-- Beta Release
-- Performance Optimization
-- Community Launch
+### Sprint 4 (Woche 7-8): Polish & Testing
+- [ ] PreviewScreen
+- [ ] SettingsScreen
+- [ ] Fehlerbehandlung
+- [ ] Testing & Bug-Fixes
+- [ ] Alpha Release
+
+### Später (Q2 2026+)
+- [ ] Roblox Support
+- [ ] Terraria Mods
+- [ ] Community Features
+- [ ] Tutorial-System
+
+## 🎓 Best Practices
+
+### Code-Organisation
+- **1 Screen = 1 File:** Keine riesigen Dateien
+- **Services getrennt:** Keine Business Logic in Screens
+- **Komponenten klein:** Max. 200 Zeilen
+- **Custom Hooks:** Wiederverwendbare Logik
+
+### Performance
+- **Lazy Loading:** Screens on-demand laden
+- **Image Optimization:** Komprimierte PNGs
+- **List Virtualization:** FlatList für große Listen
+- **Memo:** React.memo für teure Komponenten
+
+### State Management
+- **Local State:** useState für UI-State
+- **Context:** Für App-weiten State (Projekte, Settings)
+- **AsyncStorage:** Für Persistenz
+- **Keine Redux:** Zu komplex für diesen Use-Case
+
+## 🔒 Security & Privacy
+
+- **GitHub Token:** Nur lokal in SecureStore gespeichert
+- **Keine Cloud:** Alle Daten lokal oder in User's GitHub
+- **Keine Analytics:** Privacy-First
+- **Open Source:** Transparenter Code
 
 ## 🐛 Known Issues
 
-_Noch keine bekannten Issues_
+_Noch keine bekannten Issues (Projekt in Setup-Phase)_
 
-## 💡 Ideen & Features (Backlog)
+## 💡 Lessons Learned (aus PWA)
 
-- Cloud-basiertes Asset Management
-- AI-gestützte Level-Generierung
-- Collaborative Editing
-- Mobile App für Remote-Preview
+**Was gut funktioniert hat:**
+- ✅ Schieberegler für Item-Eigenschaften
+- ✅ Emoji-basierte Navigation
+- ✅ Projekt-basierter Workflow
+- ✅ GitHub als Backend
+
+**Was verbessert werden soll:**
+- 🔄 Performance (React Native ist schneller als PWA)
+- 🔄 Native Feel (Touch-Gesten, Animationen)
+- 🔄 Offline-First (PWA brauchte Internet)
 
 ## 📞 Kontakt & Support
 
-- **Issues:** GitHub Issues
-- **Diskussionen:** GitHub Discussions
-- **E-Mail:** TBD
+- **GitHub Issues:** [Bug Reports & Feature Requests](https://github.com/ReichiMD/GameForge-Studio/issues)
+- **Werkstatt-Repo:** https://github.com/ReichiMD/Werkstatt-Minecraft-Addon
+- **fabrik-library:** https://github.com/ReichiMD/fabrik-library
 
 ---
 
 **Letzte Aktualisierung:** 2026-02-05
-**Dokument-Version:** 1.0
+**Dokument-Version:** 2.0 (Korrigiert: Mobile App statt Game Engine)

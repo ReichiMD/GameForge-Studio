@@ -1,4 +1,5 @@
 # .claudeignore - Token-Optimierung für Claude Code
+# GameForge Studio - React Native Mobile App
 # Diese Datei definiert, welche Dateien und Ordner Claude ignorieren soll,
 # um Tokens zu sparen und die Performance zu verbessern.
 
@@ -14,6 +15,23 @@ vendor/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# ============================================================================
+# Expo & React Native Specific
+# ============================================================================
+.expo/
+.expo-shared/
+android/build/
+ios/build/
+ios/Pods/
+ios/.xcode.env.local
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
 
 # ============================================================================
 # Build Outputs & Compiled Files
