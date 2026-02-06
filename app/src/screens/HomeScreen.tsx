@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, sizing, typography } from '../theme';
+import { useProjects } from '../context/ProjectContext';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // ==========================================
@@ -17,16 +18,16 @@ type HomeScreenProps = {
   navigation: NativeStackNavigationProp<any>;
 };
 
-// Demo-Projekte (später aus AsyncStorage)
+// Demo-Projekte (nur zur Anzeige, nicht antippbar)
 const demoProjects = [
-  { id: '1', name: 'Super Schwert Pack', emoji: '⚔️', items: 3, status: 'ready' },
-  { id: '2', name: 'Coole Rüstungen', emoji: '🛡️', items: 5, status: 'draft' },
-  { id: '3', name: 'Magische Tränke', emoji: '🧪', items: 2, status: 'draft' },
+  { id: 'demo1', name: 'Super Schwert Pack', emoji: '⚔️', items: 3, status: 'ready' },
+  { id: 'demo2', name: 'Coole Rüstungen', emoji: '🛡️', items: 5, status: 'draft' },
+  { id: 'demo3', name: 'Magische Tränke', emoji: '🧪', items: 2, status: 'draft' },
 ];
 
 type ProjectStatus = 'ready' | 'draft';
 
-interface Project {
+interface DemoProject {
   id: string;
   name: string;
   emoji: string;
@@ -37,8 +38,8 @@ interface Project {
 // ==========================================
 // COMPONENTS: ProjectCard (Zeile 37-63)
 // ==========================================
-const ProjectCard = ({ project }: { project: Project }) => (
-  <TouchableOpacity style={styles.projectCard} activeOpacity={0.7}>
+const DemoProjectCard = ({ project }: { project: DemoProject }) => (
+  <View style={styles.projectCard}>
     <View style={styles.projectIcon}>
       <Text style={styles.projectEmoji}>{project.emoji}</Text>
     </View>
@@ -61,14 +62,15 @@ const ProjectCard = ({ project }: { project: Project }) => (
         </View>
       </View>
     </View>
-    <Text style={styles.projectArrow}>→</Text>
-  </TouchableOpacity>
+  </View>
 );
 
 // ==========================================
 // MAIN COMPONENT: HomeScreen (Zeile 64-107)
 // ==========================================
 export default function HomeScreen({ navigation }: HomeScreenProps) {
+  const { projects } = useProjects();
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -100,12 +102,43 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
           <Text style={styles.newProjectText}>Neues Projekt</Text>
         </TouchableOpacity>
 
-        {/* Section Title */}
-        <Text style={styles.sectionTitle}>📁 Meine Projekte</Text>
+        {/* Real Projects */}
+        {projects.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>📁 Meine Projekte</Text>
+            {projects.map((project) => (
+              <TouchableOpacity
+                key={project.id}
+                style={styles.projectCard}
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate('ProjectDetail', { projectId: project.id })}
+              >
+                <View style={styles.projectIcon}>
+                  <Text style={styles.projectEmoji}>{project.emoji}</Text>
+                </View>
+                <View style={styles.projectInfo}>
+                  <Text style={styles.projectName}>{project.name}</Text>
+                  <View style={styles.projectMeta}>
+                    <View style={styles.itemCount}>
+                      <Text style={styles.itemCountText}>{project.items.length} Items</Text>
+                    </View>
+                    <View style={[styles.statusBadge, styles.statusDraft]}>
+                      <Text style={[styles.statusText, styles.statusDraftText]}>
+                        ⏳ Entwurf
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                <Text style={styles.projectArrow}>→</Text>
+              </TouchableOpacity>
+            ))}
+          </>
+        )}
 
-        {/* Project List */}
+        {/* Demo Projects */}
+        <Text style={styles.sectionTitle}>📋 Beispiel-Projekte</Text>
         {demoProjects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
+          <DemoProjectCard key={project.id} project={project} />
         ))}
 
         {/* Bottom Padding */}

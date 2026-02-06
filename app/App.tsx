@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppNavigator from './src/navigation/AppNavigator';
 import LoginScreen from './src/screens/LoginScreen';
+import { ProjectProvider } from './src/context/ProjectContext';
 
 const AUTH_STORAGE_KEY = '@gameforge_auth';
 
@@ -54,11 +55,13 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <StatusBar style="light" />
-      {auth ? (
-        <AppNavigator auth={auth} onLogout={handleLogout} />
-      ) : (
-        <LoginScreen onLogin={handleLogin} />
-      )}
+      <ProjectProvider>
+        {auth ? (
+          <AppNavigator auth={auth} onLogout={handleLogout} />
+        ) : (
+          <LoginScreen onLogin={handleLogin} />
+        )}
+      </ProjectProvider>
     </SafeAreaProvider>
   );
 }
