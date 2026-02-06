@@ -7,7 +7,6 @@ import {
   ScrollView,
   TextInput,
   Modal,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, sizing, typography } from '../theme';
@@ -94,27 +93,6 @@ export default function CreateProjectScreen({ navigation }: CreateProjectScreenP
     });
   };
 
-  const handleCreateProject = () => {
-    if (!projectName.trim()) {
-      setNameError(true);
-      return;
-    }
-    if (!selectedCategory) {
-      Alert.alert('Kategorie fehlt', 'Bitte wähle eine Kategorie aus.');
-      return;
-    }
-
-    const category = categories.find(c => c.id === selectedCategory);
-    const project = addProject(
-      projectName.trim(),
-      selectedCategory,
-      category?.emoji || '📦',
-    );
-
-    // Navigate to the new project's detail screen
-    navigation.replace('ProjectDetail', { projectId: project.id });
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -176,20 +154,6 @@ export default function CreateProjectScreen({ navigation }: CreateProjectScreenP
             ))}
           </View>
         </View>
-
-        {/* Create Button */}
-        <TouchableOpacity
-          style={[
-            styles.createBtn,
-            (!projectName.trim() || !selectedCategory) && styles.createBtnDisabled,
-          ]}
-          onPress={handleCreateProject}
-          disabled={!projectName.trim() || !selectedCategory}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.createBtnEmoji}>🚀</Text>
-          <Text style={styles.createBtnText}>Projekt erstellen</Text>
-        </TouchableOpacity>
 
         {/* Bottom Padding */}
         <View style={{ height: spacing.xxl }} />
@@ -379,35 +343,6 @@ const styles = StyleSheet.create({
     fontSize: typography.xs,
     color: colors.textSecondary,
     textAlign: 'center',
-  },
-  createBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.md,
-    backgroundColor: colors.success,
-    paddingVertical: spacing.xl,
-    borderRadius: sizing.radiusLarge,
-    marginTop: spacing.lg,
-    minHeight: 64,
-    shadowColor: colors.success,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 15,
-    elevation: 8,
-  },
-  createBtnDisabled: {
-    backgroundColor: colors.surfaceLight,
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  createBtnEmoji: {
-    fontSize: 28,
-  },
-  createBtnText: {
-    fontSize: typography.lg,
-    fontWeight: typography.semibold,
-    color: colors.text,
   },
 
   // Modal Styles

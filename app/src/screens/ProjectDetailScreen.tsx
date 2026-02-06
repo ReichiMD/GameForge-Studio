@@ -15,14 +15,32 @@ import { useProjects } from '../context/ProjectContext';
 import { demoItems, rarityColors, rarityLabels } from '../data/items';
 import type { LibraryItem } from '../data/items';
 
+interface Category {
+  id: string;
+  name: string;
+  emoji: string;
+  description: string;
+}
+
+const categories: Category[] = [
+  { id: 'weapons', name: 'Waffen', emoji: '⚔️', description: 'Schwerter, Äxte, Bögen' },
+  { id: 'armor', name: 'Rüstung', emoji: '🛡️', description: 'Helme, Brustpanzer, Hosen' },
+  { id: 'mobs', name: 'Mobs', emoji: '👾', description: 'Tiere, Monster, NPCs' },
+  { id: 'food', name: 'Nahrung', emoji: '🍖', description: 'Essen, Tränke' },
+  { id: 'blocks', name: 'Blöcke', emoji: '🧱', description: 'Baublöcke, Dekorationen' },
+  { id: 'tools', name: 'Werkzeuge', emoji: '🔨', description: 'Spitzhacken, Schaufeln' },
+];
+
 export default function ProjectDetailScreen() {
   const route = useRoute();
   const navigation = useNavigation<any>();
   const { projectId } = route.params as { projectId: string };
-  const { getProject } = useProjects();
+  const { getProject, removeItemFromProject } = useProjects();
   const project = getProject(projectId);
 
   const [showItemModal, setShowItemModal] = useState(false);
+  const [modalMode, setModalMode] = useState<'category' | 'item'>('category');
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   if (!project) {
@@ -37,14 +55,27 @@ export default function ProjectDetailScreen() {
   }
 
   const filteredModalItems = demoItems.filter(item => {
-    const matchesCategory = item.category === project.category;
+    const matchesCategory = item.category === selectedCategory?.id;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
   const handleAddItem = () => {
+    setModalMode('category');
+    setSelectedCategory(null);
     setSearchQuery('');
     setShowItemModal(true);
+  };
+
+  const handleCategorySelect = (category: Category) => {
+    setSelectedCategory(category);
+    setModalMode('item');
+  };
+
+  const handleBackToCategories = () => {
+    setModalMode('category');
+    setSelectedCategory(null);
+    setSearchQuery('');
   };
 
   const handleItemSelect = (item: LibraryItem) => {
@@ -59,6 +90,10 @@ export default function ProjectDetailScreen() {
       },
       projectId: project.id,
     });
+  };
+
+  const handleDeleteItem = (itemId: string) => {
+    removeItemFromProject(projectId, itemId);
   };
 
   return (
@@ -97,22 +132,32 @@ export default function ProjectDetailScreen() {
           </View>
         ) : (
           project.items.map((item) => (
-            <View key={item.id} style={styles.itemRow}>
-              <View style={styles.itemIconContainer}>
-                <Text style={styles.itemEmoji}>{item.emoji}</Text>
+            <View key={item.id} style={styles.itemRowWrapper}>
+              <View style={styles.itemRow}>
+                <View style={styles.itemIconContainer}>
+                  <Text style={styles.itemEmoji}>{item.emoji}</Text>
+                </View>
+                <View style={styles.itemInfo}>
+                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemStat}>{item.stat}</Text>
+                </View>
+                <View style={[
+                  styles.itemRarityBadge,
+                  { backgroundColor: rarityColors[item.rarity as keyof typeof rarityColors] || colors.rarity.common }
+                ]}>
+                  <Text style={styles.itemRarityText}>
+                    {rarityLabels[item.rarity as keyof typeof rarityLabels] || item.rarity}
+                  </Text>
+                </View>
               </View>
-              <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemStat}>{item.stat}</Text>
-              </View>
-              <View style={[
-                styles.itemRarityBadge,
-                { backgroundColor: rarityColors[item.rarity as keyof typeof rarityColors] || colors.rarity.common }
-              ]}>
-                <Text style={styles.itemRarityText}>
-                  {rarityLabels[item.rarity as keyof typeof rarityLabels] || item.rarity}
-                </Text>
-              </View>
+              <TouchableOpacity
+                style={styles.deleteItemBtn}
+                onPress={() => handleDeleteItem(item.id)}
+                activeOpacity={0.7}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Text style={styles.deleteItemBtnText}>🗑️</Text>
+              </TouchableOpacity>
             </View>
           ))
         )}
@@ -145,60 +190,92 @@ export default function ProjectDetailScreen() {
           <View style={styles.modalHeader}>
             <TouchableOpacity
               style={styles.modalCloseBtn}
-              onPress={() => setShowItemModal(false)}
+              onPress={() => {
+                if (modalMode === 'item') {
+                  handleBackToCategories();
+                } else {
+                  setShowItemModal(false);
+                }
+              }}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Text style={styles.modalCloseBtnText}>←</Text>
             </TouchableOpacity>
             <Text style={styles.modalTitle}>
-              {project.emoji} Item auswählen
+              {modalMode === 'category'
+                ? '🎯 Kategorie auswählen'
+                : `${selectedCategory?.emoji} ${selectedCategory?.name} auswählen`
+              }
             </Text>
             <View style={{ width: sizing.touchMinimum }} />
           </View>
 
-          {/* Search Bar */}
-          <View style={styles.modalSearchContainer}>
-            <View style={styles.modalSearchBar}>
-              <Text style={styles.modalSearchIcon}>🔍</Text>
-              <TextInput
-                style={styles.modalSearchInput}
-                placeholder="Suche Items..."
-                placeholderTextColor={colors.textMuted}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-              />
-            </View>
-          </View>
-
-          {/* Item Grid */}
-          <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
-            <View style={styles.modalItemGrid}>
-              {filteredModalItems.map((item) => (
-                <TouchableOpacity
-                  key={item.id}
-                  style={styles.modalItemCard}
-                  onPress={() => handleItemSelect(item)}
-                  activeOpacity={0.7}
-                >
-                  <View style={styles.modalItemPreview}>
-                    <Text style={styles.modalItemEmoji}>{item.emoji}</Text>
-                    <View style={[styles.modalRarityBadge, { backgroundColor: rarityColors[item.rarity] }]}>
-                      <Text style={styles.modalRarityText}>{rarityLabels[item.rarity]}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.modalItemInfo}>
-                    <Text style={styles.modalItemName} numberOfLines={1}>{item.name}</Text>
-                    <Text style={styles.modalItemStat}>{item.stat}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            {filteredModalItems.length === 0 && (
-              <View style={styles.modalEmpty}>
-                <Text style={styles.modalEmptyEmoji}>🔍</Text>
-                <Text style={styles.modalEmptyText}>Keine Items gefunden</Text>
+          {/* Search Bar (only in item mode) */}
+          {modalMode === 'item' && (
+            <View style={styles.modalSearchContainer}>
+              <View style={styles.modalSearchBar}>
+                <Text style={styles.modalSearchIcon}>🔍</Text>
+                <TextInput
+                  style={styles.modalSearchInput}
+                  placeholder="Suche Items..."
+                  placeholderTextColor={colors.textMuted}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                />
               </View>
+            </View>
+          )}
+
+          {/* Content */}
+          <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+            {modalMode === 'category' ? (
+              /* Category Grid */
+              <View style={styles.categoryGrid}>
+                {categories.map((category) => (
+                  <TouchableOpacity
+                    key={category.id}
+                    style={styles.categoryCard}
+                    onPress={() => handleCategorySelect(category)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.categoryEmoji}>{category.emoji}</Text>
+                    <Text style={styles.categoryName}>{category.name}</Text>
+                    <Text style={styles.categoryDescription}>{category.description}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : (
+              /* Item Grid */
+              <>
+                <View style={styles.modalItemGrid}>
+                  {filteredModalItems.map((item) => (
+                    <TouchableOpacity
+                      key={item.id}
+                      style={styles.modalItemCard}
+                      onPress={() => handleItemSelect(item)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.modalItemPreview}>
+                        <Text style={styles.modalItemEmoji}>{item.emoji}</Text>
+                        <View style={[styles.modalRarityBadge, { backgroundColor: rarityColors[item.rarity] }]}>
+                          <Text style={styles.modalRarityText}>{rarityLabels[item.rarity]}</Text>
+                        </View>
+                      </View>
+                      <View style={styles.modalItemInfo}>
+                        <Text style={styles.modalItemName} numberOfLines={1}>{item.name}</Text>
+                        <Text style={styles.modalItemStat}>{item.stat}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                {filteredModalItems.length === 0 && (
+                  <View style={styles.modalEmpty}>
+                    <Text style={styles.modalEmptyEmoji}>🔍</Text>
+                    <Text style={styles.modalEmptyText}>Keine Items gefunden</Text>
+                  </View>
+                )}
+              </>
             )}
 
             <View style={{ height: spacing.xxl }} />
@@ -294,13 +371,16 @@ const styles = StyleSheet.create({
   },
 
   // Item List
+  itemRowWrapper: {
+    position: 'relative',
+    marginBottom: spacing.md,
+  },
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surface,
     borderRadius: sizing.radiusLarge,
     padding: spacing.lg,
-    marginBottom: spacing.md,
     gap: spacing.lg,
   },
   itemIconContainer: {
@@ -337,6 +417,25 @@ const styles = StyleSheet.create({
     fontWeight: typography.bold,
     color: colors.text,
     textTransform: 'uppercase',
+  },
+  deleteItemBtn: {
+    position: 'absolute',
+    top: spacing.sm,
+    right: spacing.sm,
+    width: 36,
+    height: 36,
+    backgroundColor: colors.error,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  deleteItemBtnText: {
+    fontSize: 18,
   },
 
   // Add Button
@@ -378,6 +477,38 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  categoryGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
+    paddingTop: spacing.lg,
+  },
+  categoryCard: {
+    width: '48%',
+    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: colors.border,
+    borderRadius: sizing.radiusLarge,
+    padding: spacing.lg,
+    alignItems: 'center',
+    minHeight: 140,
+    justifyContent: 'center',
+  },
+  categoryEmoji: {
+    fontSize: 48,
+    marginBottom: spacing.sm,
+  },
+  categoryName: {
+    fontSize: typography.md,
+    fontWeight: typography.semibold,
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+  categoryDescription: {
+    fontSize: typography.xs,
+    color: colors.textSecondary,
+    textAlign: 'center',
   },
   modalHeader: {
     flexDirection: 'row',
