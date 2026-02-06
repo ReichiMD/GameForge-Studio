@@ -8,6 +8,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, sizing, typography } from '../theme';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type HomeScreenProps = {
+  navigation: NativeStackNavigationProp<any>;
+};
 
 // Demo-Projekte (später aus AsyncStorage)
 const demoProjects = [
@@ -54,7 +59,7 @@ const ProjectCard = ({ project }: { project: Project }) => (
   </TouchableOpacity>
 );
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }: HomeScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -77,7 +82,11 @@ export default function HomeScreen() {
       {/* Content */}
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* New Project Button */}
-        <TouchableOpacity style={styles.newProjectBtn} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.newProjectBtn}
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('CreateProject')}
+        >
           <Text style={styles.newProjectEmoji}>✨</Text>
           <Text style={styles.newProjectText}>Neues Projekt</Text>
         </TouchableOpacity>

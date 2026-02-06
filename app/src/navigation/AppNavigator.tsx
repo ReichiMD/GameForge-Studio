@@ -2,16 +2,19 @@ import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   HomeScreen,
   LibraryScreen,
   WorkshopScreen,
   SettingsScreen,
+  CreateProjectScreen,
 } from '../screens';
 import { colors, spacing, sizing, typography } from '../theme';
 import type { AuthData } from '../../App';
 
 const Tab = createBottomTabNavigator();
+const HomeStack = createNativeStackNavigator();
 
 interface AppNavigatorProps {
   auth: AuthData;
@@ -29,6 +32,17 @@ const TabIcon = ({ emoji, focused }: TabIconProps) => (
   </View>
 );
 
+const HomeStackNavigator = () => (
+  <HomeStack.Navigator
+    screenOptions={{
+      headerShown: false,
+    }}
+  >
+    <HomeStack.Screen name="HomeMain" component={HomeScreen} />
+    <HomeStack.Screen name="CreateProject" component={CreateProjectScreen} />
+  </HomeStack.Navigator>
+);
+
 export default function AppNavigator({ auth, onLogout }: AppNavigatorProps) {
   return (
     <NavigationContainer>
@@ -43,7 +57,7 @@ export default function AppNavigator({ auth, onLogout }: AppNavigatorProps) {
       >
         <Tab.Screen
           name="Home"
-          component={HomeScreen}
+          component={HomeStackNavigator}
           options={{
             tabBarLabel: 'Home',
             tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" focused={focused} />,
