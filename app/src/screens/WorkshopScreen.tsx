@@ -9,8 +9,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { Image } from 'expo-image';
 import { colors, spacing, sizing, typography } from '../theme';
 import { useProjects } from '../context/ProjectContext';
+import { SnapSlider } from '../components';
+import { getItemById, getStatRanges, getItemTextureUrl, VanillaItem } from '../data/vanillaItems';
 
 // ==========================================
 // CONSTANTS
@@ -102,10 +105,53 @@ export default function WorkshopScreen() {
     ice: false,
   });
 
+  // Item Stats - laden echte Werte aus vanilla_stats.json
+  const [vanillaItemData, setVanillaItemData] = useState<VanillaItem | null>(null);
+  const [damage, setDamage] = useState(7);
+  const [attackSpeed, setAttackSpeed] = useState(1.6);
+  const [durability, setDurability] = useState(1561);
+  const [armor, setArmor] = useState(0);
+  const [armorToughness, setArmorToughness] = useState(0);
+  const [nutrition, setNutrition] = useState(0);
+  const [saturation, setSaturation] = useState(0);
+
   useEffect(() => {
     if (selectedItem) {
       setItemName(selectedItem.name);
       setItemEmoji(selectedItem.emoji);
+
+      // Lade echte Item-Daten aus vanilla_stats.json
+      // selectedItem.id kann z.B. "diamond_sword" sein
+      const itemId = selectedItem.id;
+      if (itemId) {
+        const vanillaItem = getItemById(itemId);
+        if (vanillaItem) {
+          setVanillaItemData(vanillaItem);
+
+          // Setze Standard-Werte basierend auf Item-Typ
+          if (vanillaItem.stats.damage !== undefined) {
+            setDamage(vanillaItem.stats.damage);
+          }
+          if (vanillaItem.stats.attack_speed !== undefined) {
+            setAttackSpeed(vanillaItem.stats.attack_speed);
+          }
+          if (vanillaItem.stats.durability !== undefined) {
+            setDurability(vanillaItem.stats.durability);
+          }
+          if (vanillaItem.stats.armor !== undefined) {
+            setArmor(vanillaItem.stats.armor);
+          }
+          if (vanillaItem.stats.armor_toughness !== undefined) {
+            setArmorToughness(vanillaItem.stats.armor_toughness);
+          }
+          if (vanillaItem.stats.nutrition !== undefined) {
+            setNutrition(vanillaItem.stats.nutrition);
+          }
+          if (vanillaItem.stats.saturation !== undefined) {
+            setSaturation(vanillaItem.stats.saturation);
+          }
+        }
+      }
     }
   }, [selectedItem]);
 
@@ -191,9 +237,156 @@ export default function WorkshopScreen() {
         {/* Stats Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📊 EIGENSCHAFTEN</Text>
-          <StatSlider label="Schaden" emoji="💥" value={35} maxValue={50} />
-          <StatSlider label="Geschwindigkeit" emoji="⚡" value={1.2} maxValue={3} unit="x" />
-          <StatSlider label="Haltbarkeit" emoji="🛡️" value={500} maxValue={600} />
+
+          {/* Item-Bild (wenn vanilla item verfügbar) */}
+          {vanillaItemData && (
+            <View style={styles.itemImageContainer}>
+              <Image
+                source={{ uri: getItemTextureUrl(vanillaItemData) }}
+                style={styles.itemImage}
+                contentFit="contain"
+                transition={200}
+              />
+              <Text style={styles.itemTypeBadge}>
+                {vanillaItemData.rarity === 'epic' && '⭐ '}
+                {vanillaItemData.rarity === 'rare' && '💎 '}
+                {vanillaItemData.name}
+              </Text>
+            </View>
+          )}
+
+          {/* Dynamische Slider je nach Item-Typ */}
+          {vanillaItemData && (() => {
+            const ranges = getStatRanges(vanillaItemData);
+
+            if (vanillaItemData.category === 'weapons') {
+              return (
+                <>
+                  {ranges.damage && (
+                    <SnapSlider
+                      label="Schaden"
+                      emoji="💥"
+                      value={damage}
+                      defaultValue={ranges.damage.default}
+                      minValue={ranges.damage.min}
+                      maxValue={ranges.damage.max}
+                      step={0.5}
+                      onValueChange={setDamage}
+                      unit=" ❤️"
+                    />
+                  )}
+                  {ranges.attack_speed && (
+                    <SnapSlider
+                      label="Geschwindigkeit"
+                      emoji="⚡"
+                      value={attackSpeed}
+                      defaultValue={ranges.attack_speed.default}
+                      minValue={ranges.attack_speed.min}
+                      maxValue={ranges.attack_speed.max}
+                      step={0.1}
+                      onValueChange={setAttackSpeed}
+                      unit="x"
+                    />
+                  )}
+                  {ranges.durability && (
+                    <SnapSlider
+                      label="Haltbarkeit"
+                      emoji="🛡️"
+                      value={durability}
+                      defaultValue={ranges.durability.default}
+                      minValue={ranges.durability.min}
+                      maxValue={ranges.durability.max}
+                      step={10}
+                      onValueChange={setDurability}
+                    />
+                  )}
+                </>
+              );
+            } else if (vanillaItemData.category === 'armor') {
+              return (
+                <>
+                  {ranges.armor && (
+                    <SnapSlider
+                      label="Rüstung"
+                      emoji="🛡️"
+                      value={armor}
+                      defaultValue={ranges.armor.default}
+                      minValue={ranges.armor.min}
+                      maxValue={ranges.armor.max}
+                      step={0.5}
+                      onValueChange={setArmor}
+                      unit=" 🛡️"
+                    />
+                  )}
+                  {ranges.armor_toughness && (
+                    <SnapSlider
+                      label="Robustheit"
+                      emoji="💪"
+                      value={armorToughness}
+                      defaultValue={ranges.armor_toughness.default}
+                      minValue={ranges.armor_toughness.min}
+                      maxValue={ranges.armor_toughness.max}
+                      step={0.5}
+                      onValueChange={setArmorToughness}
+                    />
+                  )}
+                  {ranges.durability && (
+                    <SnapSlider
+                      label="Haltbarkeit"
+                      emoji="⚙️"
+                      value={durability}
+                      defaultValue={ranges.durability.default}
+                      minValue={ranges.durability.min}
+                      maxValue={ranges.durability.max}
+                      step={10}
+                      onValueChange={setDurability}
+                    />
+                  )}
+                </>
+              );
+            } else if (vanillaItemData.category === 'food') {
+              return (
+                <>
+                  {ranges.nutrition && (
+                    <SnapSlider
+                      label="Nahrung"
+                      emoji="🍖"
+                      value={nutrition}
+                      defaultValue={ranges.nutrition.default}
+                      minValue={ranges.nutrition.min}
+                      maxValue={ranges.nutrition.max}
+                      step={0.5}
+                      onValueChange={setNutrition}
+                      unit=" 🍗"
+                    />
+                  )}
+                  {ranges.saturation && (
+                    <SnapSlider
+                      label="Sättigung"
+                      emoji="✨"
+                      value={saturation}
+                      defaultValue={ranges.saturation.default}
+                      minValue={ranges.saturation.min}
+                      maxValue={ranges.saturation.max}
+                      step={0.5}
+                      onValueChange={setSaturation}
+                    />
+                  )}
+                </>
+              );
+            }
+
+            return null;
+          })()}
+
+          {/* Fallback wenn kein vanilla item geladen */}
+          {!vanillaItemData && (
+            <>
+              <StatSlider label="Schaden" emoji="💥" value={35} maxValue={50} />
+              <StatSlider label="Geschwindigkeit" emoji="⚡" value={1.2} maxValue={3} unit="x" />
+              <StatSlider label="Haltbarkeit" emoji="🛡️" value={500} maxValue={600} />
+            </>
+          )}
         </View>
 
         {/* Color Section */}
@@ -457,5 +650,23 @@ const styles = StyleSheet.create({
     fontSize: typography.lg,
     fontWeight: typography.bold,
     color: colors.text,
+  },
+  itemImageContainer: {
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+    padding: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: sizing.radiusLarge,
+  },
+  itemImage: {
+    width: 80,
+    height: 80,
+    marginBottom: spacing.sm,
+  },
+  itemTypeBadge: {
+    fontSize: typography.sm,
+    fontWeight: typography.semibold,
+    color: colors.textSecondary,
+    textAlign: 'center',
   },
 });

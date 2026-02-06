@@ -82,6 +82,7 @@ export default function ProjectDetailScreen() {
     setShowItemModal(false);
     navigation.getParent()?.navigate('Workshop', {
       selectedItem: {
+        id: item.id,  // ← NEU: Echte Item-ID wird übergeben
         name: item.name,
         emoji: item.emoji,
         stat: item.stat,
