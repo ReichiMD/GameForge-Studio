@@ -34,30 +34,26 @@ jobs:
       - name: Setup EAS CLI
         run: npm install -g eas-cli
 
-      - name: Build APK with EAS
-        working-directory: ./app
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          echo "🚀 Starting EAS Build..."
-          echo "This will take ~10-15 minutes as it builds on Expo servers..."
-          eas build --platform android --profile preview --non-interactive --local=false
-          echo "✅ EAS Build completed!"
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Download APK from EAS
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK with EAS (LOCAL - No Limits!)
         working-directory: ./app
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          echo "📦 Downloading APK..."
-          # Get the latest build URL
-          BUILD_URL=$(eas build:list --platform android --limit 1 --json --non-interactive | jq -r '.[0].artifacts.buildUrl')
-          wget -O GameForge-Studio.apk "$BUILD_URL"
-          echo "✅ APK downloaded"
+          echo "🚀 Starting LOCAL EAS Build on GitHub runner..."
+          echo "This builds on GitHub servers, NOT Expo servers = NO 30-build limit!"
+          npx eas build --platform android --profile preview --local --non-interactive --output ./build-output/GameForge-Studio.apk
+          echo "✅ APK built successfully!"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: GameForge-Studio-APK
-          path: app/GameForge-Studio.apk
+          path: app/build-output/GameForge-Studio.apk
           retention-days: 30
