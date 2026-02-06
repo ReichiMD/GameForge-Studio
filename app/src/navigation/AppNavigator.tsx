@@ -9,8 +9,14 @@ import {
   SettingsScreen,
 } from '../screens';
 import { colors, spacing, sizing, typography } from '../theme';
+import type { AuthData } from '../../App';
 
 const Tab = createBottomTabNavigator();
+
+interface AppNavigatorProps {
+  auth: AuthData;
+  onLogout: () => void;
+}
 
 interface TabIconProps {
   emoji: string;
@@ -23,7 +29,7 @@ const TabIcon = ({ emoji, focused }: TabIconProps) => (
   </View>
 );
 
-export default function AppNavigator() {
+export default function AppNavigator({ auth, onLogout }: AppNavigatorProps) {
   return (
     <NavigationContainer>
       <Tab.Navigator
