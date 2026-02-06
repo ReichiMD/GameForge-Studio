@@ -112,7 +112,7 @@ export default function SettingsScreen() {
           <SettingItem
             emoji="📱"
             label="App Version"
-            value="1.0.0 (Mini)"
+            value="0.0.1"
             showArrow={false}
           />
           <SettingItem

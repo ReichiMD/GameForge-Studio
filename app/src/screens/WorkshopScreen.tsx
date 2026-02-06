@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRoute } from '@react-navigation/native';
 import { colors, spacing, sizing, typography } from '../theme';
 
 // ==========================================
@@ -80,13 +81,24 @@ const ToggleSwitch = ({ label, emoji, active, onToggle }: ToggleProps) => (
 // MAIN COMPONENT: WorkshopScreen (Zeile 70-172)
 // ==========================================
 export default function WorkshopScreen() {
+  const route = useRoute();
+  const selectedItem = (route.params as any)?.selectedItem;
+
   const [itemName, setItemName] = useState('Mein Super Schwert');
+  const [itemEmoji, setItemEmoji] = useState('⚔️');
   const [selectedColor, setSelectedColor] = useState('blue');
   const [effects, setEffects] = useState({
     fire: true,
     glow: false,
     ice: false,
   });
+
+  useEffect(() => {
+    if (selectedItem) {
+      setItemName(selectedItem.name);
+      setItemEmoji(selectedItem.emoji);
+    }
+  }, [selectedItem]);
 
   const toggleEffect = (effect: keyof typeof effects) => {
     setEffects(prev => ({ ...prev, [effect]: !prev[effect] }));
@@ -108,7 +120,7 @@ export default function WorkshopScreen() {
       {/* Item Preview */}
       <View style={styles.previewSection}>
         <View style={styles.itemIconLarge}>
-          <Text style={styles.itemEmojiLarge}>⚔️</Text>
+          <Text style={styles.itemEmojiLarge}>{itemEmoji}</Text>
         </View>
         <TextInput
           style={styles.nameInput}
@@ -171,10 +183,12 @@ export default function WorkshopScreen() {
           />
         </View>
 
-        {/* Create Button */}
+        {/* Create/Add Button */}
         <TouchableOpacity style={styles.createBtn} activeOpacity={0.8}>
-          <Text style={styles.createBtnEmoji}>🚀</Text>
-          <Text style={styles.createBtnText}>Item erstellen</Text>
+          <Text style={styles.createBtnEmoji}>{selectedItem ? '➕' : '🚀'}</Text>
+          <Text style={styles.createBtnText}>
+            {selectedItem ? 'Item hinzufügen' : 'Item erstellen'}
+          </Text>
         </TouchableOpacity>
 
         <View style={{ height: spacing.xxl }} />
