@@ -291,6 +291,9 @@ Diese Module aus der **Fabrik-OS-Zentrale PWA** können portiert werden:
 - [x] SettingsScreen (Einstellungen)
 - [x] LoginScreen (Auth mit AsyncStorage)
 - [x] Status Bar Fix (SafeAreaProvider)
+- [x] CreateProjectScreen (Kategorie-Auswahl)
+- [x] Stack Navigator für Home-Tab
+- [x] Token-Optimierung (CLAUDE.md, MEMORY.md, Section-Kommentare)
 
 ### Sprint 2 (Woche 3-4): Library & Workshop
 - [ ] LibraryScreen (fabrik-library Integration)
@@ -384,4 +387,4 @@ Diese Module aus der **Fabrik-OS-Zentrale PWA** können portiert werden:
 ---
 
 **Letzte Aktualisierung:** 2026-02-06
-**Dokument-Version:** 2.1 (Login-Screen + Status Bar Fix hinzugefügt)
+**Dokument-Version:** 2.2 (CreateProjectScreen + Token-Optimierung)

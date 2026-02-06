@@ -37,7 +37,8 @@ Icons, Bilder, Fonts (nicht unter src/)
 | Screen | Datei | Beschreibung | Features | Status |
 |--------|-------|--------------|----------|--------|
 | **Login** | `screens/LoginScreen.tsx` | Anmeldebildschirm | Benutzername, GitHub Token, AsyncStorage | 🟢 Implementiert |
-| **Home** | `screens/HomeScreen.tsx` | Projektliste, neues Projekt erstellen | Projektliste, Erstellen, Burger-Menü | 🟡 UI fertig |
+| **Home** | `screens/HomeScreen.tsx` | Projektliste, neues Projekt erstellen | Projektliste, Erstellen, Burger-Menü, Navigation | 🟢 Implementiert |
+| **CreateProject** | `screens/CreateProjectScreen.tsx` | Kategorie-Auswahl für neue Projekte | Projekt-Name, 6 Kategorien (Waffen, Rüstung, Mobs, Nahrung, Blöcke, Werkzeuge) | 🟢 Implementiert |
 | **Library** | `screens/LibraryScreen.tsx` | Item-Galerie aus fabrik-library | Grid-View, Filter, Suche, Item-Details | 🟡 UI fertig |
 | **Workshop** | `screens/WorkshopScreen.tsx` | Item-Editor mit Schiebereglern | Eigenschaften-Editor, Farb-Auswahl, Toggles | 🟡 UI fertig |
 | **Preview** | `screens/PreviewScreen.tsx` | Item-Übersicht im Projekt | Item-Liste, Eigenschaften, Bearbeiten | 🔴 Geplant |
@@ -263,6 +264,10 @@ Icons, Bilder, Fonts (nicht unter src/)
 | 2026-02-05 | Services | PWA-Mapping erstellt |
 | 2026-02-06 | Screens | LoginScreen hinzugefügt, Screen-Status aktualisiert |
 | 2026-02-06 | Auth | Login-Flow mit AsyncStorage implementiert |
+| 2026-02-06 | Screens | CreateProjectScreen hinzugefügt (Kategorie-Auswahl) |
+| 2026-02-06 | Navigation | Stack Navigator für Home-Tab (HomeScreen → CreateProjectScreen) |
+| 2026-02-06 | Code Quality | Section-Kommentare in großen Screens (WorkshopScreen, LibraryScreen, HomeScreen, CreateProjectScreen) |
+| 2026-02-06 | Dokumentation | CLAUDE.md erstellt für Token-Optimierung |
 
 ---
 
@@ -292,5 +297,5 @@ Icons, Bilder, Fonts (nicht unter src/)
 
 **Hinweis:** Dieses Dokument wird kontinuierlich aktualisiert während der Entwicklung.
 
-**Version:** 2.1 (LoginScreen + Auth-System hinzugefügt)
+**Version:** 2.2 (CreateProjectScreen + Token-Optimierung)
 **Letzte Aktualisierung:** 2026-02-06

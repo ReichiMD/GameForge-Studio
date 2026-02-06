@@ -8,6 +8,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, sizing, typography } from '../theme';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+// ==========================================
+// TYPES & MOCK DATA (Zeile 13-27)
+// ==========================================
+type HomeScreenProps = {
+  navigation: NativeStackNavigationProp<any>;
+};
 
 // Demo-Projekte (später aus AsyncStorage)
 const demoProjects = [
@@ -26,6 +34,9 @@ interface Project {
   status: ProjectStatus;
 }
 
+// ==========================================
+// COMPONENTS: ProjectCard (Zeile 37-63)
+// ==========================================
 const ProjectCard = ({ project }: { project: Project }) => (
   <TouchableOpacity style={styles.projectCard} activeOpacity={0.7}>
     <View style={styles.projectIcon}>
@@ -54,7 +65,10 @@ const ProjectCard = ({ project }: { project: Project }) => (
   </TouchableOpacity>
 );
 
-export default function HomeScreen() {
+// ==========================================
+// MAIN COMPONENT: HomeScreen (Zeile 64-107)
+// ==========================================
+export default function HomeScreen({ navigation }: HomeScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -77,7 +91,11 @@ export default function HomeScreen() {
       {/* Content */}
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* New Project Button */}
-        <TouchableOpacity style={styles.newProjectBtn} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.newProjectBtn}
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('CreateProject')}
+        >
           <Text style={styles.newProjectEmoji}>✨</Text>
           <Text style={styles.newProjectText}>Neues Projekt</Text>
         </TouchableOpacity>
@@ -97,6 +115,9 @@ export default function HomeScreen() {
   );
 }
 
+// ==========================================
+// STYLES (Zeile 109-263)
+// ==========================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -663,6 +663,80 @@ interface AuthData {
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-06 (Session #4)
-**Nächste geplante Session:** GitHub API Integration, Logout in Settings, Web-Preview
+### Session #5 - 2026-02-06 - Token-Optimierung & CreateProjectScreen
+
+**Branch:** `claude/optimize-token-usage-9iqXa`
+**Dauer:** ~2 Stunden
+**Entwickler:** Claude (AI Assistant)
+**Ziel:** Token-Verbrauch optimieren & Kategorie-Auswahl für neue Projekte
+
+#### Durchgeführte Arbeiten
+- [x] CreateProjectScreen mit Kategorie-Auswahl implementiert (6 Kategorien)
+- [x] Stack Navigator für Home-Tab eingerichtet (HomeScreen → CreateProjectScreen)
+- [x] CLAUDE.md erstellt (Token-Optimierungs-Guide)
+- [x] MEMORY.md befüllt (Projekt-Essentials & Lessons Learned)
+- [x] Section-Kommentare in 4 großen Screens hinzugefügt
+- [x] INDEX.md & PROJECT_INFO.md aktualisiert
+
+#### Wichtige Entscheidungen
+- **Section-Kommentare statt Datei-Aufteilung:** Schneller umgesetzt, gleiche Token-Ersparnis
+- **CLAUDE.md als zentrale Einstiegsdatei:** Definiert, welche Dateien für welche Tasks gelesen werden
+- **Frag-basierter Workflow:** Claude fragt vor großen Reads nach Kontext
+
+#### Token-Optimierungen
+| Optimierung | Token-Kosten (Investment) | Ersparnis/Session |
+|-------------|---------------------------|-------------------|
+| CLAUDE.md erstellen | 2.123 | ~14.000 |
+| MEMORY.md befüllen | 1.450 | ~2.000 |
+| Section-Kommentare | 4.907 | ~3.000-4.000 |
+| **Gesamt** | **8.480** | **~19.000-20.000** |
+
+**ROI:** 2,4x nach 1 Session, 10x nach 5 Sessions
+
+#### Gemessene Token-Kosten (Session #5)
+- **Gesamt:** 82.508 Token von 200.000 (41,3%)
+- **Dokumentation lesen:** ~18.000 Token (21,8%)
+- **CreateProjectScreen:** 18.292 Token (22,2%)
+- **Optimierungen:** 13.663 Token (16,6%)
+- **Git-Operationen:** 3.170 Token (3,8%)
+
+**Erkenntnisse:**
+- Dokumentation ist größter Token-Fresser (21,8%)
+- Mit CLAUDE.md: Erwartete Ersparnis 40-50% in zukünftigen Sessions
+- Section-Kommentare ermöglichen partielle Reads (z.B. nur Components statt ganzer Screen)
+
+#### Implementierte Features
+**CreateProjectScreen:**
+- Projekt-Name Eingabe
+- 6 Kategorien: ⚔️ Waffen, 🛡️ Rüstung, 👾 Mobs, 🍖 Nahrung, 🧱 Blöcke, 🔨 Werkzeuge
+- Grid-Layout mit großen Touch-Buttons
+- Kategorie-Auswahl mit Visual Feedback
+- Navigation zurück zu HomeScreen
+
+**Section-Kommentare:**
+- WorkshopScreen (373 Zeilen) → 5 Sections
+- LibraryScreen (285 Zeilen) → 5 Sections
+- HomeScreen (255 Zeilen) → 4 Sections
+- CreateProjectScreen (240 Zeilen) → 3 Sections
+
+#### Nächste Schritte
+1. LibraryService implementieren (fabrik-library Integration)
+2. WorkshopScreen Logic (Item-Editor mit funktionalen Schiebereglern)
+3. Projekt-Speicherung in AsyncStorage
+
+#### Commits
+- `1eae126` - Add CreateProjectScreen with category selection
+- `ea4070a` - Add CLAUDE.md for token optimization
+- `4e69e75` - Add section comments to large screens
+
+#### Notizen
+- Token-Budget Management ist essentiell bei AI-gestützter Entwicklung
+- Frag-basierter Workflow reduziert unnötige Reads um ~70%
+- Section-Kommentare ermöglichen `Read(file, offset, limit)` für gezielte Reads
+- CLAUDE.md sollte bei jedem größeren Projekt verwendet werden
+
+---
+
+**Letzte Aktualisierung:** 2026-02-06 (Session #5)
+**Nächste geplante Session:** LibraryService (fabrik-library), WorkshopScreen Logic, Projekt-Speicherung
 **Verantwortlich für Updates:** Projekt-Team

@@ -10,6 +10,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, sizing, typography } from '../theme';
 
+// ==========================================
+// TYPES & INTERFACES (Zeile 13-23)
+// ==========================================
 type Rarity = 'common' | 'rare' | 'epic' | 'legendary';
 type ItemType = 'weapon' | 'armor' | 'potion' | 'food' | 'block';
 
@@ -22,6 +25,9 @@ interface LibraryItem {
   stat: string;
 }
 
+// ==========================================
+// MOCK DATA (Zeile 25-32)
+// ==========================================
 const demoItems: LibraryItem[] = [
   { id: '1', name: 'Drachenschwert', emoji: '⚔️', type: 'weapon', rarity: 'legendary', stat: '50 DMG' },
   { id: '2', name: 'Diamant Schild', emoji: '🛡️', type: 'armor', rarity: 'epic', stat: '+20 DEF' },
@@ -31,6 +37,9 @@ const demoItems: LibraryItem[] = [
   { id: '6', name: 'Goldener Apfel', emoji: '🍎', type: 'food', rarity: 'common', stat: '+5 HP' },
 ];
 
+// ==========================================
+// CONSTANTS: Filters & Rarity Mapping (Zeile 34-54)
+// ==========================================
 const filters = [
   { id: 'all', label: '✨ Alle' },
   { id: 'weapon', label: '⚔️ Waffen' },
@@ -79,6 +88,9 @@ const ItemCard = ({ item }: { item: LibraryItem }) => (
   </TouchableOpacity>
 );
 
+// ==========================================
+// MAIN COMPONENT: LibraryScreen (Zeile 91-156)
+// ==========================================
 export default function LibraryScreen() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -146,6 +158,9 @@ export default function LibraryScreen() {
   );
 }
 
+// ==========================================
+// STYLES (Zeile 158-285)
+// ==========================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,
