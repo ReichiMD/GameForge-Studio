@@ -1,0 +1,690 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "last_update": "2026-02-06",
+    "source": "Minecraft Wiki (https://minecraft.wiki)",
+    "description": "Vanilla Minecraft item stats for GameForge Studio",
+    "note": "Stats collected from Minecraft Wiki for educational purposes"
+  },
+  "items": {
+    "_comment_weapons": "=== WAFFEN ===",
+    "wooden_sword": {
+      "id": "minecraft:wooden_sword",
+      "name": "Holzschwert",
+      "name_en": "Wooden Sword",
+      "category": "weapons",
+      "type": "sword",
+      "emoji": "🗡️",
+      "rarity": "common",
+      "stats": {
+        "damage": 4,
+        "attack_speed": 1.6,
+        "durability": 59,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/wood_sword.png"
+    },
+    "stone_sword": {
+      "id": "minecraft:stone_sword",
+      "name": "Steinschwert",
+      "name_en": "Stone Sword",
+      "category": "weapons",
+      "type": "sword",
+      "emoji": "⚔️",
+      "rarity": "common",
+      "stats": {
+        "damage": 5,
+        "attack_speed": 1.6,
+        "durability": 131,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/stone_sword.png"
+    },
+    "iron_sword": {
+      "id": "minecraft:iron_sword",
+      "name": "Eisenschwert",
+      "name_en": "Iron Sword",
+      "category": "weapons",
+      "type": "sword",
+      "emoji": "⚔️",
+      "rarity": "uncommon",
+      "stats": {
+        "damage": 6,
+        "attack_speed": 1.6,
+        "durability": 250,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/iron_sword.png"
+    },
+    "golden_sword": {
+      "id": "minecraft:golden_sword",
+      "name": "Goldschwert",
+      "name_en": "Golden Sword",
+      "category": "weapons",
+      "type": "sword",
+      "emoji": "⚔️",
+      "rarity": "rare",
+      "stats": {
+        "damage": 4,
+        "attack_speed": 1.6,
+        "durability": 32,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/gold_sword.png"
+    },
+    "diamond_sword": {
+      "id": "minecraft:diamond_sword",
+      "name": "Diamantschwert",
+      "name_en": "Diamond Sword",
+      "category": "weapons",
+      "type": "sword",
+      "emoji": "⚔️",
+      "rarity": "rare",
+      "stats": {
+        "damage": 7,
+        "attack_speed": 1.6,
+        "durability": 1561,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/diamond_sword.png"
+    },
+    "netherite_sword": {
+      "id": "minecraft:netherite_sword",
+      "name": "Netheritschwert",
+      "name_en": "Netherite Sword",
+      "category": "weapons",
+      "type": "sword",
+      "emoji": "⚔️",
+      "rarity": "epic",
+      "stats": {
+        "damage": 8,
+        "attack_speed": 1.6,
+        "durability": 2031,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/netherite_sword.png"
+    },
+    "bow": {
+      "id": "minecraft:bow",
+      "name": "Bogen",
+      "name_en": "Bow",
+      "category": "weapons",
+      "type": "ranged",
+      "emoji": "🏹",
+      "rarity": "uncommon",
+      "stats": {
+        "damage": 9,
+        "attack_speed": 1.0,
+        "durability": 384,
+        "enchantable": true,
+        "stackable": false,
+        "projectile": "arrow"
+      },
+      "texture": "assets/vanilla/textures/items/bow.png"
+    },
+    "crossbow": {
+      "id": "minecraft:crossbow",
+      "name": "Armbrust",
+      "name_en": "Crossbow",
+      "category": "weapons",
+      "type": "ranged",
+      "emoji": "🏹",
+      "rarity": "uncommon",
+      "stats": {
+        "damage": 9,
+        "attack_speed": 1.25,
+        "durability": 326,
+        "enchantable": true,
+        "stackable": false,
+        "projectile": "arrow"
+      },
+      "texture": "assets/vanilla/textures/items/crossbow.png"
+    },
+    "trident": {
+      "id": "minecraft:trident",
+      "name": "Dreizack",
+      "name_en": "Trident",
+      "category": "weapons",
+      "type": "melee_ranged",
+      "emoji": "🔱",
+      "rarity": "rare",
+      "stats": {
+        "damage": 9,
+        "attack_speed": 1.1,
+        "durability": 250,
+        "enchantable": true,
+        "stackable": false,
+        "throwable": true
+      },
+      "texture": "assets/vanilla/textures/items/trident.png"
+    },
+
+    "_comment_armor": "=== RÜSTUNG ===",
+    "leather_helmet": {
+      "id": "minecraft:leather_helmet",
+      "name": "Lederkappe",
+      "name_en": "Leather Cap",
+      "category": "armor",
+      "type": "helmet",
+      "emoji": "🪖",
+      "rarity": "common",
+      "stats": {
+        "armor": 1,
+        "durability": 55,
+        "enchantable": true,
+        "stackable": false,
+        "dyeable": true
+      },
+      "texture": "assets/vanilla/textures/items/leather_helmet.png"
+    },
+    "leather_chestplate": {
+      "id": "minecraft:leather_chestplate",
+      "name": "Lederjacke",
+      "name_en": "Leather Tunic",
+      "category": "armor",
+      "type": "chestplate",
+      "emoji": "🦺",
+      "rarity": "common",
+      "stats": {
+        "armor": 3,
+        "durability": 80,
+        "enchantable": true,
+        "stackable": false,
+        "dyeable": true
+      },
+      "texture": "assets/vanilla/textures/items/leather_chestplate.png"
+    },
+    "leather_leggings": {
+      "id": "minecraft:leather_leggings",
+      "name": "Lederhose",
+      "name_en": "Leather Pants",
+      "category": "armor",
+      "type": "leggings",
+      "emoji": "👖",
+      "rarity": "common",
+      "stats": {
+        "armor": 2,
+        "durability": 75,
+        "enchantable": true,
+        "stackable": false,
+        "dyeable": true
+      },
+      "texture": "assets/vanilla/textures/items/leather_leggings.png"
+    },
+    "leather_boots": {
+      "id": "minecraft:leather_boots",
+      "name": "Lederstiefel",
+      "name_en": "Leather Boots",
+      "category": "armor",
+      "type": "boots",
+      "emoji": "🥾",
+      "rarity": "common",
+      "stats": {
+        "armor": 1,
+        "durability": 65,
+        "enchantable": true,
+        "stackable": false,
+        "dyeable": true
+      },
+      "texture": "assets/vanilla/textures/items/leather_boots.png"
+    },
+    "iron_helmet": {
+      "id": "minecraft:iron_helmet",
+      "name": "Eisenhelm",
+      "name_en": "Iron Helmet",
+      "category": "armor",
+      "type": "helmet",
+      "emoji": "🪖",
+      "rarity": "uncommon",
+      "stats": {
+        "armor": 2,
+        "durability": 165,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/iron_helmet.png"
+    },
+    "iron_chestplate": {
+      "id": "minecraft:iron_chestplate",
+      "name": "Eisenharnisch",
+      "name_en": "Iron Chestplate",
+      "category": "armor",
+      "type": "chestplate",
+      "emoji": "🛡️",
+      "rarity": "uncommon",
+      "stats": {
+        "armor": 6,
+        "durability": 240,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/iron_chestplate.png"
+    },
+    "iron_leggings": {
+      "id": "minecraft:iron_leggings",
+      "name": "Eisenbeinschutz",
+      "name_en": "Iron Leggings",
+      "category": "armor",
+      "type": "leggings",
+      "emoji": "👖",
+      "rarity": "uncommon",
+      "stats": {
+        "armor": 5,
+        "durability": 225,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/iron_leggings.png"
+    },
+    "iron_boots": {
+      "id": "minecraft:iron_boots",
+      "name": "Eisenstiefel",
+      "name_en": "Iron Boots",
+      "category": "armor",
+      "type": "boots",
+      "emoji": "🥾",
+      "rarity": "uncommon",
+      "stats": {
+        "armor": 2,
+        "durability": 195,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/iron_boots.png"
+    },
+    "diamond_helmet": {
+      "id": "minecraft:diamond_helmet",
+      "name": "Diamanthelm",
+      "name_en": "Diamond Helmet",
+      "category": "armor",
+      "type": "helmet",
+      "emoji": "🪖",
+      "rarity": "rare",
+      "stats": {
+        "armor": 3,
+        "armor_toughness": 2,
+        "durability": 363,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/diamond_helmet.png"
+    },
+    "diamond_chestplate": {
+      "id": "minecraft:diamond_chestplate",
+      "name": "Diamantharnisch",
+      "name_en": "Diamond Chestplate",
+      "category": "armor",
+      "type": "chestplate",
+      "emoji": "🛡️",
+      "rarity": "rare",
+      "stats": {
+        "armor": 8,
+        "armor_toughness": 2,
+        "durability": 528,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/diamond_chestplate.png"
+    },
+    "diamond_leggings": {
+      "id": "minecraft:diamond_leggings",
+      "name": "Diamantbeinschutz",
+      "name_en": "Diamond Leggings",
+      "category": "armor",
+      "type": "leggings",
+      "emoji": "👖",
+      "rarity": "rare",
+      "stats": {
+        "armor": 6,
+        "armor_toughness": 2,
+        "durability": 495,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/diamond_leggings.png"
+    },
+    "diamond_boots": {
+      "id": "minecraft:diamond_boots",
+      "name": "Diamantstiefel",
+      "name_en": "Diamond Boots",
+      "category": "armor",
+      "type": "boots",
+      "emoji": "🥾",
+      "rarity": "rare",
+      "stats": {
+        "armor": 3,
+        "armor_toughness": 2,
+        "durability": 429,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/diamond_boots.png"
+    },
+    "netherite_helmet": {
+      "id": "minecraft:netherite_helmet",
+      "name": "Netherithelm",
+      "name_en": "Netherite Helmet",
+      "category": "armor",
+      "type": "helmet",
+      "emoji": "🪖",
+      "rarity": "epic",
+      "stats": {
+        "armor": 3,
+        "armor_toughness": 3,
+        "knockback_resistance": 0.1,
+        "durability": 407,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/netherite_helmet.png"
+    },
+    "netherite_chestplate": {
+      "id": "minecraft:netherite_chestplate",
+      "name": "Netheritharnisch",
+      "name_en": "Netherite Chestplate",
+      "category": "armor",
+      "type": "chestplate",
+      "emoji": "🛡️",
+      "rarity": "epic",
+      "stats": {
+        "armor": 8,
+        "armor_toughness": 3,
+        "knockback_resistance": 0.1,
+        "durability": 592,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/netherite_chestplate.png"
+    },
+    "netherite_leggings": {
+      "id": "minecraft:netherite_leggings",
+      "name": "Netheritbeinschutz",
+      "name_en": "Netherite Leggings",
+      "category": "armor",
+      "type": "leggings",
+      "emoji": "👖",
+      "rarity": "epic",
+      "stats": {
+        "armor": 6,
+        "armor_toughness": 3,
+        "knockback_resistance": 0.1,
+        "durability": 555,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/netherite_leggings.png"
+    },
+    "netherite_boots": {
+      "id": "minecraft:netherite_boots",
+      "name": "Netheritstiefel",
+      "name_en": "Netherite Boots",
+      "category": "armor",
+      "type": "boots",
+      "emoji": "🥾",
+      "rarity": "epic",
+      "stats": {
+        "armor": 3,
+        "armor_toughness": 3,
+        "knockback_resistance": 0.1,
+        "durability": 481,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "assets/vanilla/textures/items/netherite_boots.png"
+    },
+
+    "_comment_food": "=== NAHRUNG ===",
+    "apple": {
+      "id": "minecraft:apple",
+      "name": "Apfel",
+      "name_en": "Apple",
+      "category": "food",
+      "type": "food",
+      "emoji": "🍎",
+      "rarity": "common",
+      "stats": {
+        "nutrition": 4,
+        "saturation": 2.4,
+        "stackable": true,
+        "stack_size": 64
+      },
+      "texture": "assets/vanilla/textures/items/apple.png"
+    },
+    "golden_apple": {
+      "id": "minecraft:golden_apple",
+      "name": "Goldener Apfel",
+      "name_en": "Golden Apple",
+      "category": "food",
+      "type": "food",
+      "emoji": "🍎",
+      "rarity": "rare",
+      "stats": {
+        "nutrition": 4,
+        "saturation": 9.6,
+        "stackable": true,
+        "stack_size": 64,
+        "effects": ["regeneration_ii_5s", "absorption_2m"]
+      },
+      "texture": "assets/vanilla/textures/items/apple_golden.png"
+    },
+    "enchanted_golden_apple": {
+      "id": "minecraft:enchanted_golden_apple",
+      "name": "Verzauberter Goldener Apfel",
+      "name_en": "Enchanted Golden Apple",
+      "category": "food",
+      "type": "food",
+      "emoji": "🍎",
+      "rarity": "epic",
+      "stats": {
+        "nutrition": 4,
+        "saturation": 9.6,
+        "stackable": true,
+        "stack_size": 64,
+        "effects": ["regeneration_ii_30s", "absorption_iv_2m", "resistance_5m", "fire_resistance_5m"]
+      },
+      "texture": "assets/vanilla/textures/items/apple_golden.png"
+    },
+    "bread": {
+      "id": "minecraft:bread",
+      "name": "Brot",
+      "name_en": "Bread",
+      "category": "food",
+      "type": "food",
+      "emoji": "🍞",
+      "rarity": "common",
+      "stats": {
+        "nutrition": 5,
+        "saturation": 6.0,
+        "stackable": true,
+        "stack_size": 64
+      },
+      "texture": "assets/vanilla/textures/items/bread.png"
+    },
+    "cooked_beef": {
+      "id": "minecraft:cooked_beef",
+      "name": "Gebratenes Rindfleisch",
+      "name_en": "Steak",
+      "category": "food",
+      "type": "food",
+      "emoji": "🥩",
+      "rarity": "uncommon",
+      "stats": {
+        "nutrition": 8,
+        "saturation": 12.8,
+        "stackable": true,
+        "stack_size": 64
+      },
+      "texture": "assets/vanilla/textures/items/beef_cooked.png"
+    },
+    "cooked_porkchop": {
+      "id": "minecraft:cooked_porkchop",
+      "name": "Gebratenes Schweinefleisch",
+      "name_en": "Cooked Porkchop",
+      "category": "food",
+      "type": "food",
+      "emoji": "🍖",
+      "rarity": "uncommon",
+      "stats": {
+        "nutrition": 8,
+        "saturation": 12.8,
+        "stackable": true,
+        "stack_size": 64
+      },
+      "texture": "assets/vanilla/textures/items/porkchop_cooked.png"
+    },
+    "cooked_chicken": {
+      "id": "minecraft:cooked_chicken",
+      "name": "Gebratenes Hühnchen",
+      "name_en": "Cooked Chicken",
+      "category": "food",
+      "type": "food",
+      "emoji": "🍗",
+      "rarity": "uncommon",
+      "stats": {
+        "nutrition": 6,
+        "saturation": 7.2,
+        "stackable": true,
+        "stack_size": 64
+      },
+      "texture": "assets/vanilla/textures/items/chicken_cooked.png"
+    },
+    "cooked_salmon": {
+      "id": "minecraft:cooked_salmon",
+      "name": "Gebratener Lachs",
+      "name_en": "Cooked Salmon",
+      "category": "food",
+      "type": "food",
+      "emoji": "🐟",
+      "rarity": "uncommon",
+      "stats": {
+        "nutrition": 6,
+        "saturation": 9.6,
+        "stackable": true,
+        "stack_size": 64
+      },
+      "texture": "assets/vanilla/textures/items/fish_salmon_cooked.png"
+    },
+    "cooked_cod": {
+      "id": "minecraft:cooked_cod",
+      "name": "Gebratener Kabeljau",
+      "name_en": "Cooked Cod",
+      "category": "food",
+      "type": "food",
+      "emoji": "🐟",
+      "rarity": "common",
+      "stats": {
+        "nutrition": 5,
+        "saturation": 6.0,
+        "stackable": true,
+        "stack_size": 64
+      },
+      "texture": "assets/vanilla/textures/items/fish_cod_cooked.png"
+    },
+    "baked_potato": {
+      "id": "minecraft:baked_potato",
+      "name": "Ofenkartoffel",
+      "name_en": "Baked Potato",
+      "category": "food",
+      "type": "food",
+      "emoji": "🥔",
+      "rarity": "common",
+      "stats": {
+        "nutrition": 5,
+        "saturation": 6.0,
+        "stackable": true,
+        "stack_size": 64
+      },
+      "texture": "assets/vanilla/textures/items/potato_baked.png"
+    },
+    "carrot": {
+      "id": "minecraft:carrot",
+      "name": "Karotte",
+      "name_en": "Carrot",
+      "category": "food",
+      "type": "food",
+      "emoji": "🥕",
+      "rarity": "common",
+      "stats": {
+        "nutrition": 3,
+        "saturation": 3.6,
+        "stackable": true,
+        "stack_size": 64
+      },
+      "texture": "assets/vanilla/textures/items/carrot.png"
+    },
+    "melon_slice": {
+      "id": "minecraft:melon_slice",
+      "name": "Melonenscheibe",
+      "name_en": "Melon Slice",
+      "category": "food",
+      "type": "food",
+      "emoji": "🍉",
+      "rarity": "common",
+      "stats": {
+        "nutrition": 2,
+        "saturation": 1.2,
+        "stackable": true,
+        "stack_size": 64
+      },
+      "texture": "assets/vanilla/textures/items/melon.png"
+    },
+    "cookie": {
+      "id": "minecraft:cookie",
+      "name": "Keks",
+      "name_en": "Cookie",
+      "category": "food",
+      "type": "food",
+      "emoji": "🍪",
+      "rarity": "common",
+      "stats": {
+        "nutrition": 2,
+        "saturation": 0.4,
+        "stackable": true,
+        "stack_size": 64
+      },
+      "texture": "assets/vanilla/textures/items/cookie.png"
+    },
+    "cake": {
+      "id": "minecraft:cake",
+      "name": "Kuchen",
+      "name_en": "Cake",
+      "category": "food",
+      "type": "food_block",
+      "emoji": "🎂",
+      "rarity": "uncommon",
+      "stats": {
+        "nutrition": 14,
+        "saturation": 2.8,
+        "stackable": false,
+        "slices": 7
+      },
+      "texture": "assets/vanilla/textures/items/cake.png"
+    }
+  },
+  "categories": {
+    "weapons": {
+      "name": "Waffen",
+      "name_en": "Weapons",
+      "emoji": "⚔️",
+      "description": "Schwerter, Bögen, Äxte"
+    },
+    "armor": {
+      "name": "Rüstung",
+      "name_en": "Armor",
+      "emoji": "🛡️",
+      "description": "Helme, Brustpanzer, Hosen, Stiefel"
+    },
+    "food": {
+      "name": "Nahrung",
+      "name_en": "Food",
+      "emoji": "🍖",
+      "description": "Essen und Tränke"
+    }
+  }
+}

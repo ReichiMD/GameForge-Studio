@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -85,6 +85,7 @@ export default function WorkshopScreen() {
   const route = useRoute();
   const navigation = useNavigation<any>();
   const { addProject, addItemToProject } = useProjects();
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const selectedItem = (route.params as any)?.selectedItem;
   const projectId = (route.params as any)?.projectId;
@@ -107,6 +108,11 @@ export default function WorkshopScreen() {
       setItemEmoji(selectedItem.emoji);
     }
   }, [selectedItem]);
+
+  // Reset scroll position when screen is opened
+  useEffect(() => {
+    scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+  }, []);
 
   const toggleEffect = (effect: keyof typeof effects) => {
     setEffects(prev => ({ ...prev, [effect]: !prev[effect] }));
@@ -157,7 +163,11 @@ export default function WorkshopScreen() {
           <Text style={styles.backBtnText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.pageTitle}>🔧 Item Editor</Text>
-        <TouchableOpacity style={styles.saveBtn}>
+        <TouchableOpacity
+          style={styles.saveBtn}
+          onPress={hasItemToAdd ? handleAddItem : undefined}
+          activeOpacity={0.7}
+        >
           <Text style={styles.saveBtnText}>💾</Text>
         </TouchableOpacity>
       </View>
@@ -177,7 +187,7 @@ export default function WorkshopScreen() {
       </View>
 
       {/* Content */}
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView ref={scrollViewRef} style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Stats Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📊 EIGENSCHAFTEN</Text>

@@ -69,7 +69,12 @@ const DemoProjectCard = ({ project }: { project: DemoProject }) => (
 // MAIN COMPONENT: HomeScreen (Zeile 64-107)
 // ==========================================
 export default function HomeScreen({ navigation }: HomeScreenProps) {
-  const { projects } = useProjects();
+  const { projects, deleteProject } = useProjects();
+
+  const handleDeleteProject = (projectId: string, projectName: string) => {
+    // Simple confirmation (in production, use a proper confirmation dialog)
+    deleteProject(projectId);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -107,30 +112,39 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
           <>
             <Text style={styles.sectionTitle}>📁 Meine Projekte</Text>
             {projects.map((project) => (
-              <TouchableOpacity
-                key={project.id}
-                style={styles.projectCard}
-                activeOpacity={0.7}
-                onPress={() => navigation.navigate('ProjectDetail', { projectId: project.id })}
-              >
-                <View style={styles.projectIcon}>
-                  <Text style={styles.projectEmoji}>{project.emoji}</Text>
-                </View>
-                <View style={styles.projectInfo}>
-                  <Text style={styles.projectName}>{project.name}</Text>
-                  <View style={styles.projectMeta}>
-                    <View style={styles.itemCount}>
-                      <Text style={styles.itemCountText}>{project.items.length} Items</Text>
-                    </View>
-                    <View style={[styles.statusBadge, styles.statusDraft]}>
-                      <Text style={[styles.statusText, styles.statusDraftText]}>
-                        ⏳ Entwurf
-                      </Text>
+              <View key={project.id} style={styles.projectCardWrapper}>
+                <TouchableOpacity
+                  style={styles.projectCard}
+                  activeOpacity={0.7}
+                  onPress={() => navigation.navigate('ProjectDetail', { projectId: project.id })}
+                >
+                  <View style={styles.projectIcon}>
+                    <Text style={styles.projectEmoji}>{project.emoji}</Text>
+                  </View>
+                  <View style={styles.projectInfo}>
+                    <Text style={styles.projectName}>{project.name}</Text>
+                    <View style={styles.projectMeta}>
+                      <View style={styles.itemCount}>
+                        <Text style={styles.itemCountText}>{project.items.length} Items</Text>
+                      </View>
+                      <View style={[styles.statusBadge, styles.statusDraft]}>
+                        <Text style={[styles.statusText, styles.statusDraftText]}>
+                          ⏳ Entwurf
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                </View>
-                <Text style={styles.projectArrow}>→</Text>
-              </TouchableOpacity>
+                  <Text style={styles.projectArrow}>→</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.deleteBtn}
+                  onPress={() => handleDeleteProject(project.id, project.name)}
+                  activeOpacity={0.7}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <Text style={styles.deleteBtnText}>🗑️</Text>
+                </TouchableOpacity>
+              </View>
             ))}
           </>
         )}
@@ -237,13 +251,16 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginBottom: spacing.lg,
   },
+  projectCardWrapper: {
+    position: 'relative',
+    marginBottom: spacing.md,
+  },
   projectCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surface,
     borderRadius: sizing.radiusLarge,
     padding: spacing.lg,
-    marginBottom: spacing.md,
     gap: spacing.lg,
   },
   projectIcon: {
@@ -305,5 +322,24 @@ const styles = StyleSheet.create({
   projectArrow: {
     fontSize: 20,
     color: colors.textMuted,
+  },
+  deleteBtn: {
+    position: 'absolute',
+    top: spacing.sm,
+    right: spacing.sm,
+    width: 36,
+    height: 36,
+    backgroundColor: colors.error,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  deleteBtnText: {
+    fontSize: 18,
   },
 });

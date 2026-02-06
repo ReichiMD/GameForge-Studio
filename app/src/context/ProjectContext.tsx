@@ -26,6 +26,8 @@ interface ProjectContextType {
   addProject: (name: string, category: string, emoji: string) => Project;
   addItemToProject: (projectId: string, item: Omit<ProjectItem, 'id'>) => void;
   getProject: (projectId: string) => Project | undefined;
+  deleteProject: (projectId: string) => void;
+  removeItemFromProject: (projectId: string, itemId: string) => void;
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
@@ -93,8 +95,32 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     return projects.find(p => p.id === projectId);
   }, [projects]);
 
+  const deleteProject = useCallback((projectId: string) => {
+    setProjects(prev => {
+      const updated = prev.filter(p => p.id !== projectId);
+      saveProjects(updated);
+      return updated;
+    });
+  }, []);
+
+  const removeItemFromProject = useCallback((projectId: string, itemId: string) => {
+    setProjects(prev => {
+      const updated = prev.map(p => {
+        if (p.id === projectId) {
+          return {
+            ...p,
+            items: p.items.filter(item => item.id !== itemId),
+          };
+        }
+        return p;
+      });
+      saveProjects(updated);
+      return updated;
+    });
+  }, []);
+
   return (
-    <ProjectContext.Provider value={{ projects, addProject, addItemToProject, getProject }}>
+    <ProjectContext.Provider value={{ projects, addProject, addItemToProject, getProject, deleteProject, removeItemFromProject }}>
       {children}
     </ProjectContext.Provider>
   );
