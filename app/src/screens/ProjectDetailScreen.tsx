@@ -7,77 +7,48 @@ import {
   ScrollView,
   TextInput,
   Modal,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { colors, spacing, sizing, typography } from '../theme';
 import { useProjects } from '../context/ProjectContext';
 import { demoItems, rarityColors, rarityLabels } from '../data/items';
 import type { LibraryItem } from '../data/items';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-// ==========================================
-// TYPES & CONSTANTS
-// ==========================================
-type CreateProjectScreenProps = {
-  navigation: NativeStackNavigationProp<any>;
-};
+export default function ProjectDetailScreen() {
+  const route = useRoute();
+  const navigation = useNavigation<any>();
+  const { projectId } = route.params as { projectId: string };
+  const { getProject } = useProjects();
+  const project = getProject(projectId);
 
-interface Category {
-  id: string;
-  name: string;
-  emoji: string;
-  description: string;
-}
-
-const categories: Category[] = [
-  { id: 'weapons', name: 'Waffen', emoji: '⚔️', description: 'Schwerter, Äxte, Bögen' },
-  { id: 'armor', name: 'Rüstung', emoji: '🛡️', description: 'Helme, Brustpanzer, Hosen' },
-  { id: 'mobs', name: 'Mobs', emoji: '👾', description: 'Tiere, Monster, NPCs' },
-  { id: 'food', name: 'Nahrung', emoji: '🍖', description: 'Essen, Tränke' },
-  { id: 'blocks', name: 'Blöcke', emoji: '🧱', description: 'Baublöcke, Dekorationen' },
-  { id: 'tools', name: 'Werkzeuge', emoji: '🔨', description: 'Spitzhacken, Schaufeln' },
-];
-
-// ==========================================
-// MAIN COMPONENT: CreateProjectScreen
-// ==========================================
-export default function CreateProjectScreen({ navigation }: CreateProjectScreenProps) {
-  const { addProject } = useProjects();
-  const [projectName, setProjectName] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showItemModal, setShowItemModal] = useState(false);
-  const [modalCategory, setModalCategory] = useState<Category | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [nameError, setNameError] = useState(false);
 
-  const handleCategorySelect = (categoryId: string) => {
-    setSelectedCategory(categoryId);
-
-    if (!projectName.trim()) {
-      setNameError(true);
-      return;
-    }
-
-    setNameError(false);
-    const category = categories.find(c => c.id === categoryId);
-    if (category) {
-      setModalCategory(category);
-      setSearchQuery('');
-      setShowItemModal(true);
-    }
-  };
+  if (!project) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyEmoji}>❌</Text>
+          <Text style={styles.emptyText}>Projekt nicht gefunden</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   const filteredModalItems = demoItems.filter(item => {
-    const matchesCategory = item.category === modalCategory?.id;
+    const matchesCategory = item.category === project.category;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
+  const handleAddItem = () => {
+    setSearchQuery('');
+    setShowItemModal(true);
+  };
+
   const handleItemSelect = (item: LibraryItem) => {
     setShowItemModal(false);
-    const category = modalCategory;
-    // Navigate to Workshop with item + new project info
     navigation.getParent()?.navigate('Workshop', {
       selectedItem: {
         name: item.name,
@@ -86,33 +57,8 @@ export default function CreateProjectScreen({ navigation }: CreateProjectScreenP
         rarity: item.rarity,
         category: item.category,
       },
-      newProject: {
-        name: projectName.trim(),
-        category: category?.id || 'weapons',
-        emoji: category?.emoji || '⚔️',
-      },
+      projectId: project.id,
     });
-  };
-
-  const handleCreateProject = () => {
-    if (!projectName.trim()) {
-      setNameError(true);
-      return;
-    }
-    if (!selectedCategory) {
-      Alert.alert('Kategorie fehlt', 'Bitte wähle eine Kategorie aus.');
-      return;
-    }
-
-    const category = categories.find(c => c.id === selectedCategory);
-    const project = addProject(
-      projectName.trim(),
-      selectedCategory,
-      category?.emoji || '📦',
-    );
-
-    // Navigate to the new project's detail screen
-    navigation.replace('ProjectDetail', { projectId: project.id });
   };
 
   return (
@@ -127,73 +73,65 @@ export default function CreateProjectScreen({ navigation }: CreateProjectScreenP
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
         <View style={styles.titleContainer}>
-          <Text style={styles.titleEmoji}>✨</Text>
-          <Text style={styles.title}>Neues Projekt</Text>
+          <Text style={styles.titleEmoji}>{project.emoji}</Text>
+          <Text style={styles.title} numberOfLines={1}>{project.name}</Text>
         </View>
         <View style={{ width: sizing.touchMinimum }} />
       </View>
 
       {/* Content */}
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Project Name Input */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>📝 Projekt-Name</Text>
-          <TextInput
-            style={[styles.input, nameError && styles.inputError]}
-            value={projectName}
-            onChangeText={(text) => {
-              setProjectName(text);
-              if (text.trim()) setNameError(false);
-            }}
-            placeholder="z.B. Super Schwert Pack"
-            placeholderTextColor={colors.textMuted}
-            autoCapitalize="words"
-            autoCorrect={false}
-          />
-          {nameError && (
-            <Text style={styles.errorText}>Bitte gib einen Namen ein!</Text>
-          )}
-        </View>
+        {/* Item Count */}
+        <Text style={styles.sectionTitle}>
+          📦 Items ({project.items.length})
+        </Text>
 
-        {/* Category Selection */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>🎯 Was möchtest du erstellen?</Text>
-          <View style={styles.categoryGrid}>
-            {categories.map((category) => (
-              <TouchableOpacity
-                key={category.id}
-                style={[
-                  styles.categoryCard,
-                  selectedCategory === category.id && styles.categoryCardSelected,
-                ]}
-                onPress={() => handleCategorySelect(category.id)}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.categoryEmoji}>{category.emoji}</Text>
-                <Text style={styles.categoryName}>{category.name}</Text>
-                <Text style={styles.categoryDescription}>{category.description}</Text>
-              </TouchableOpacity>
-            ))}
+        {/* Item List */}
+        {project.items.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateEmoji}>📭</Text>
+            <Text style={styles.emptyStateTitle}>Noch keine Items</Text>
+            <Text style={styles.emptyStateSubtitle}>
+              Füge dein erstes Item hinzu!
+            </Text>
           </View>
-        </View>
-
-        {/* Create Button */}
-        <TouchableOpacity
-          style={[
-            styles.createBtn,
-            (!projectName.trim() || !selectedCategory) && styles.createBtnDisabled,
-          ]}
-          onPress={handleCreateProject}
-          disabled={!projectName.trim() || !selectedCategory}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.createBtnEmoji}>🚀</Text>
-          <Text style={styles.createBtnText}>Projekt erstellen</Text>
-        </TouchableOpacity>
+        ) : (
+          project.items.map((item) => (
+            <View key={item.id} style={styles.itemRow}>
+              <View style={styles.itemIconContainer}>
+                <Text style={styles.itemEmoji}>{item.emoji}</Text>
+              </View>
+              <View style={styles.itemInfo}>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemStat}>{item.stat}</Text>
+              </View>
+              <View style={[
+                styles.itemRarityBadge,
+                { backgroundColor: rarityColors[item.rarity as keyof typeof rarityColors] || colors.rarity.common }
+              ]}>
+                <Text style={styles.itemRarityText}>
+                  {rarityLabels[item.rarity as keyof typeof rarityLabels] || item.rarity}
+                </Text>
+              </View>
+            </View>
+          ))
+        )}
 
         {/* Bottom Padding */}
-        <View style={{ height: spacing.xxl }} />
+        <View style={{ height: 100 }} />
       </ScrollView>
+
+      {/* Add Item Button (fixed at bottom) */}
+      <View style={styles.addBtnContainer}>
+        <TouchableOpacity
+          style={styles.addBtn}
+          onPress={handleAddItem}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.addBtnEmoji}>➕</Text>
+          <Text style={styles.addBtnText}>Item hinzufügen</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Item Selection Modal */}
       <Modal
@@ -213,7 +151,7 @@ export default function CreateProjectScreen({ navigation }: CreateProjectScreenP
               <Text style={styles.modalCloseBtnText}>←</Text>
             </TouchableOpacity>
             <Text style={styles.modalTitle}>
-              {modalCategory?.emoji} {modalCategory?.name} auswählen
+              {project.emoji} Item auswählen
             </Text>
             <View style={{ width: sizing.touchMinimum }} />
           </View>
@@ -271,9 +209,6 @@ export default function CreateProjectScreen({ navigation }: CreateProjectScreenP
   );
 }
 
-// ==========================================
-// STYLES
-// ==========================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -303,6 +238,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+    flex: 1,
+    justifyContent: 'center',
   },
   titleEmoji: {
     fontSize: 24,
@@ -311,102 +248,129 @@ const styles = StyleSheet.create({
     fontSize: typography.xl,
     fontWeight: typography.bold,
     color: colors.text,
+    maxWidth: 200,
   },
   content: {
     flex: 1,
     padding: spacing.xl,
   },
-  section: {
-    marginBottom: spacing.xxl,
+  sectionTitle: {
+    fontSize: typography.md,
+    color: colors.textSecondary,
+    marginBottom: spacing.lg,
   },
-  sectionLabel: {
+
+  // Empty State
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: spacing.xxxl,
+  },
+  emptyStateEmoji: {
+    fontSize: 64,
+    marginBottom: spacing.md,
+  },
+  emptyStateTitle: {
     fontSize: typography.lg,
     fontWeight: typography.semibold,
     color: colors.text,
-    marginBottom: spacing.lg,
-  },
-  input: {
-    backgroundColor: colors.surface,
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderRadius: sizing.radiusLarge,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.lg,
-    fontSize: typography.md,
-    color: colors.text,
-    minHeight: 60,
-  },
-  inputError: {
-    borderColor: colors.error,
-  },
-  errorText: {
-    color: colors.error,
-    fontSize: typography.sm,
-    marginTop: spacing.sm,
-  },
-  categoryGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-  },
-  categoryCard: {
-    width: '48%',
-    backgroundColor: colors.surface,
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderRadius: sizing.radiusLarge,
-    padding: spacing.lg,
-    alignItems: 'center',
-    minHeight: 140,
-    justifyContent: 'center',
-  },
-  categoryCardSelected: {
-    backgroundColor: colors.primaryAlpha,
-    borderColor: colors.primary,
-    borderWidth: 3,
-  },
-  categoryEmoji: {
-    fontSize: 48,
     marginBottom: spacing.sm,
   },
-  categoryName: {
+  emptyStateSubtitle: {
+    fontSize: typography.md,
+    color: colors.textMuted,
+  },
+  emptyEmoji: {
+    fontSize: 48,
+    marginBottom: spacing.md,
+  },
+  emptyText: {
+    fontSize: typography.lg,
+    color: colors.textMuted,
+  },
+
+  // Item List
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: sizing.radiusLarge,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    gap: spacing.lg,
+  },
+  itemIconContainer: {
+    width: sizing.touchIdeal,
+    height: sizing.touchIdeal,
+    backgroundColor: colors.surfaceLight,
+    borderRadius: sizing.radiusMedium,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  itemEmoji: {
+    fontSize: 32,
+  },
+  itemInfo: {
+    flex: 1,
+  },
+  itemName: {
     fontSize: typography.md,
     fontWeight: typography.semibold,
     color: colors.text,
     marginBottom: spacing.xs,
   },
-  categoryDescription: {
-    fontSize: typography.xs,
+  itemStat: {
+    fontSize: typography.sm,
     color: colors.textSecondary,
-    textAlign: 'center',
   },
-  createBtn: {
+  itemRarityBadge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: 6,
+  },
+  itemRarityText: {
+    fontSize: 10,
+    fontWeight: typography.bold,
+    color: colors.text,
+    textTransform: 'uppercase',
+  },
+
+  // Add Button
+  addBtnContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: spacing.xl,
+    backgroundColor: colors.background,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  addBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.md,
     backgroundColor: colors.success,
-    paddingVertical: spacing.xl,
+    paddingVertical: spacing.lg,
     borderRadius: sizing.radiusLarge,
-    marginTop: spacing.lg,
-    minHeight: 64,
+    minHeight: 60,
     shadowColor: colors.success,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 15,
     elevation: 8,
   },
-  createBtnDisabled: {
-    backgroundColor: colors.surfaceLight,
-    shadowOpacity: 0,
-    elevation: 0,
+  addBtnEmoji: {
+    fontSize: 24,
   },
-  createBtnEmoji: {
-    fontSize: 28,
-  },
-  createBtnText: {
+  addBtnText: {
     fontSize: typography.lg,
-    fontWeight: typography.semibold,
+    fontWeight: typography.bold,
     color: colors.text,
   },
 

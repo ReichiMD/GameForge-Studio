@@ -9,6 +9,7 @@ import {
   WorkshopScreen,
   SettingsScreen,
   CreateProjectScreen,
+  ProjectDetailScreen,
 } from '../screens';
 import { colors, spacing, sizing, typography } from '../theme';
 import type { AuthData } from '../../App';
@@ -40,6 +41,7 @@ const HomeStackNavigator = () => (
   >
     <HomeStack.Screen name="HomeMain" component={HomeScreen} />
     <HomeStack.Screen name="CreateProject" component={CreateProjectScreen} />
+    <HomeStack.Screen name="ProjectDetail" component={ProjectDetailScreen} />
   </HomeStack.Navigator>
 );
 

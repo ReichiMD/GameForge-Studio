@@ -8,11 +8,12 @@ import {
   TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { colors, spacing, sizing, typography } from '../theme';
+import { useProjects } from '../context/ProjectContext';
 
 // ==========================================
-// CONSTANTS (Zeile 13-22)
+// CONSTANTS
 // ==========================================
 const itemColors = [
   { id: 'red', color: '#EF4444' },
@@ -26,7 +27,7 @@ const itemColors = [
 ];
 
 // ==========================================
-// COMPONENTS: StatSlider (Zeile 24-48)
+// COMPONENTS: StatSlider
 // ==========================================
 interface SliderProps {
   label: string;
@@ -55,7 +56,7 @@ const StatSlider = ({ label, emoji, value, maxValue, unit = '' }: SliderProps) =
 };
 
 // ==========================================
-// COMPONENTS: ToggleSwitch (Zeile 50-68)
+// COMPONENTS: ToggleSwitch
 // ==========================================
 interface ToggleProps {
   label: string;
@@ -78,11 +79,18 @@ const ToggleSwitch = ({ label, emoji, active, onToggle }: ToggleProps) => (
 );
 
 // ==========================================
-// MAIN COMPONENT: WorkshopScreen (Zeile 70-172)
+// MAIN COMPONENT: WorkshopScreen
 // ==========================================
 export default function WorkshopScreen() {
   const route = useRoute();
+  const navigation = useNavigation<any>();
+  const { addProject, addItemToProject } = useProjects();
+
   const selectedItem = (route.params as any)?.selectedItem;
+  const projectId = (route.params as any)?.projectId;
+  const newProject = (route.params as any)?.newProject;
+
+  const hasItemToAdd = !!selectedItem && (!!projectId || !!newProject);
 
   const [itemName, setItemName] = useState('Mein Super Schwert');
   const [itemEmoji, setItemEmoji] = useState('⚔️');
@@ -102,6 +110,43 @@ export default function WorkshopScreen() {
 
   const toggleEffect = (effect: keyof typeof effects) => {
     setEffects(prev => ({ ...prev, [effect]: !prev[effect] }));
+  };
+
+  const handleAddItem = () => {
+    if (!selectedItem) return;
+
+    const itemData = {
+      name: itemName,
+      emoji: itemEmoji,
+      stat: selectedItem.stat,
+      rarity: selectedItem.rarity,
+      category: selectedItem.category,
+    };
+
+    let targetProjectId = projectId;
+
+    // If coming from CreateProjectScreen, create the project first
+    if (newProject && !projectId) {
+      const project = addProject(newProject.name, newProject.category, newProject.emoji);
+      targetProjectId = project.id;
+    }
+
+    if (targetProjectId) {
+      addItemToProject(targetProjectId, itemData);
+
+      // Clear params so Workshop tab resets to default
+      navigation.setParams({
+        selectedItem: undefined,
+        projectId: undefined,
+        newProject: undefined,
+      });
+
+      // Navigate to ProjectDetailScreen
+      navigation.navigate('Home', {
+        screen: 'ProjectDetail',
+        params: { projectId: targetProjectId },
+      });
+    }
   };
 
   return (
@@ -184,10 +229,14 @@ export default function WorkshopScreen() {
         </View>
 
         {/* Create/Add Button */}
-        <TouchableOpacity style={styles.createBtn} activeOpacity={0.8}>
-          <Text style={styles.createBtnEmoji}>{selectedItem ? '➕' : '🚀'}</Text>
+        <TouchableOpacity
+          style={styles.createBtn}
+          activeOpacity={0.8}
+          onPress={hasItemToAdd ? handleAddItem : undefined}
+        >
+          <Text style={styles.createBtnEmoji}>{hasItemToAdd ? '➕' : '🚀'}</Text>
           <Text style={styles.createBtnText}>
-            {selectedItem ? 'Item hinzufügen' : 'Item erstellen'}
+            {hasItemToAdd ? 'Item hinzufügen' : 'Item erstellen'}
           </Text>
         </TouchableOpacity>
 
@@ -198,7 +247,7 @@ export default function WorkshopScreen() {
 }
 
 // ==========================================
-// STYLES (Zeile 174-373)
+// STYLES
 // ==========================================
 const styles = StyleSheet.create({
   container: {
