@@ -282,10 +282,15 @@ Diese Module aus der **Fabrik-OS-Zentrale PWA** können portiert werden:
 
 ### Sprint 1 (Woche 1-2): Setup & Basis
 - [x] Projekt-Dokumentation korrigiert
-- [ ] React Native/Expo Setup
-- [ ] Navigation-Struktur
-- [ ] Theme & Design-System
-- [ ] HomeScreen (Projektliste)
+- [x] React Native/Expo Setup
+- [x] Navigation-Struktur (Bottom Tabs)
+- [x] Theme & Design-System (colors, spacing, typography)
+- [x] HomeScreen (Projektliste)
+- [x] LibraryScreen (Item-Galerie)
+- [x] WorkshopScreen (Item-Editor)
+- [x] SettingsScreen (Einstellungen)
+- [x] LoginScreen (Auth mit AsyncStorage)
+- [x] Status Bar Fix (SafeAreaProvider)
 
 ### Sprint 2 (Woche 3-4): Library & Workshop
 - [ ] LibraryScreen (fabrik-library Integration)
@@ -339,9 +344,23 @@ Diese Module aus der **Fabrik-OS-Zentrale PWA** können portiert werden:
 - **Keine Analytics:** Privacy-First
 - **Open Source:** Transparenter Code
 
+## 🔐 Auth-System (Login)
+
+**Implementiert in Session #4:**
+
+- App zeigt beim Start einen Login-Screen
+- User gibt **Benutzername** (z.B. "ReichiMD") und **GitHub Token** ein
+- Login-Daten werden in **AsyncStorage** gespeichert (Key: `@gameforge_auth`)
+- Persistente Anmeldung (kein erneutes Login bei jedem Start)
+- Auth-Daten (`username` + `githubToken`) werden an AppNavigator durchgereicht
+- Vorbereitet für GitHub API-Integration in allen Screens
+- Logout-Funktion vorhanden (noch nicht in UI eingebaut → TODO: SettingsScreen)
+
 ## 🐛 Known Issues
 
-_Noch keine bekannten Issues (Projekt in Setup-Phase)_
+- **TS-Fehler in HomeScreen:** `demoProjects` Array hat keine Type-Annotation → `status` wird als `string` inferiert statt `ProjectStatus` (kosmetisch, kein Runtime-Fehler)
+- **Logout-Button fehlt:** `onLogout` wird an AppNavigator übergeben, aber noch nicht in SettingsScreen zugänglich
+- **GitHub Token doppelt:** LoginScreen und SettingsScreen haben beide ein Token-Feld (sollte vereinheitlicht werden)
 
 ## 💡 Lessons Learned (aus PWA)
 
@@ -364,5 +383,5 @@ _Noch keine bekannten Issues (Projekt in Setup-Phase)_
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-05
-**Dokument-Version:** 2.0 (Korrigiert: Mobile App statt Game Engine)
+**Letzte Aktualisierung:** 2026-02-06
+**Dokument-Version:** 2.1 (Login-Screen + Status Bar Fix hinzugefügt)

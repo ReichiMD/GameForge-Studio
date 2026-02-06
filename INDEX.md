@@ -36,11 +36,12 @@ Icons, Bilder, Fonts (nicht unter src/)
 
 | Screen | Datei | Beschreibung | Features | Status |
 |--------|-------|--------------|----------|--------|
-| **Home** | `screens/HomeScreen.jsx` | Projektliste, neues Projekt erstellen | Projektliste, Erstellen, Löschen, GitHub Push | 🔴 Geplant |
-| **Library** | `screens/LibraryScreen.jsx` | Item-Galerie aus fabrik-library | Grid-View, Filter, Suche, Item-Details | 🔴 Geplant |
-| **Workshop** | `screens/WorkshopScreen.jsx` | Item-Editor mit Schiebereglern | Eigenschaften-Editor, Texture-Auswahl | 🔴 Geplant |
-| **Preview** | `screens/PreviewScreen.jsx` | Item-Übersicht im Projekt | Item-Liste, Eigenschaften, Bearbeiten | 🔴 Geplant |
-| **Settings** | `screens/SettingsScreen.jsx` | App-Einstellungen | GitHub Token, Sprache, Theme | 🔴 Geplant |
+| **Login** | `screens/LoginScreen.tsx` | Anmeldebildschirm | Benutzername, GitHub Token, AsyncStorage | 🟢 Implementiert |
+| **Home** | `screens/HomeScreen.tsx` | Projektliste, neues Projekt erstellen | Projektliste, Erstellen, Burger-Menü | 🟡 UI fertig |
+| **Library** | `screens/LibraryScreen.tsx` | Item-Galerie aus fabrik-library | Grid-View, Filter, Suche, Item-Details | 🟡 UI fertig |
+| **Workshop** | `screens/WorkshopScreen.tsx` | Item-Editor mit Schiebereglern | Eigenschaften-Editor, Farb-Auswahl, Toggles | 🟡 UI fertig |
+| **Preview** | `screens/PreviewScreen.tsx` | Item-Übersicht im Projekt | Item-Liste, Eigenschaften, Bearbeiten | 🔴 Geplant |
+| **Settings** | `screens/SettingsScreen.tsx` | App-Einstellungen | GitHub Token, Sprache, Theme | 🟡 UI fertig |
 
 ---
 
@@ -260,6 +261,8 @@ Icons, Bilder, Fonts (nicht unter src/)
 | 2026-02-05 | INDEX.md | Komplett neu strukturiert für React Native App |
 | 2026-02-05 | Screens | 5 Haupt-Screens definiert |
 | 2026-02-05 | Services | PWA-Mapping erstellt |
+| 2026-02-06 | Screens | LoginScreen hinzugefügt, Screen-Status aktualisiert |
+| 2026-02-06 | Auth | Login-Flow mit AsyncStorage implementiert |
 
 ---
 
@@ -289,5 +292,5 @@ Icons, Bilder, Fonts (nicht unter src/)
 
 **Hinweis:** Dieses Dokument wird kontinuierlich aktualisiert während der Entwicklung.
 
-**Version:** 2.0 (Korrigiert für React Native Mobile App)
-**Letzte Aktualisierung:** 2026-02-05
+**Version:** 2.1 (LoginScreen + Auth-System hinzugefügt)
+**Letzte Aktualisierung:** 2026-02-06

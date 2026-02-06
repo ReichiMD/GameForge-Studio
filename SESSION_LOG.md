@@ -519,16 +519,108 @@ GameForge-Studio/
 
 ---
 
+### Session #4 - 2026-02-06 - Login Screen & Status Bar Fix
+
+**Branch:** `claude/login-screen-status-bar-iTOPF`
+**Dauer:** ~30 Minuten
+**Entwickler:** Claude (AI Assistant)
+**Ziel:** Status-Bar-Overlap auf Android fixen + Login-Screen mit GitHub-Auth erstellen
+
+#### Durchgeführte Arbeiten
+- [x] Status Bar Overlap gefixt (App lag hinter System-Statusleiste)
+- [x] LoginScreen erstellt (Benutzername + GitHub Token)
+- [x] Auth-State Management mit AsyncStorage implementiert
+- [x] App.tsx komplett überarbeitet (Login-Flow + SafeAreaProvider)
+- [x] AppNavigator erweitert (auth/logout Props)
+- [x] Alle 4 Screens auf korrekte SafeAreaView umgestellt
+- [x] npm dependencies installiert & TypeScript geprüft
+
+#### Geänderte Dateien
+
+**Neue Dateien:**
+- `app/src/screens/LoginScreen.tsx` - Login-Screen mit Username/Token-Eingabe
+
+**Geänderte Dateien:**
+- `app/App.tsx` - SafeAreaProvider, Auth-State (AsyncStorage), Login-Flow
+- `app/src/navigation/AppNavigator.tsx` - auth/onLogout Props Interface
+- `app/src/screens/HomeScreen.tsx` - SafeAreaView von react-native-safe-area-context
+- `app/src/screens/LibraryScreen.tsx` - SafeAreaView von react-native-safe-area-context
+- `app/src/screens/WorkshopScreen.tsx` - SafeAreaView von react-native-safe-area-context
+- `app/src/screens/SettingsScreen.tsx` - SafeAreaView von react-native-safe-area-context
+- `app/src/screens/index.ts` - LoginScreen Export hinzugefügt
+
+#### Wichtige Entscheidungen
+
+**1. SafeAreaView von react-native-safe-area-context statt react-native**
+- **Problem:** `edgeToEdgeEnabled: true` in app.json + SafeAreaView von react-native = Content hinter Statusleiste
+- **Lösung:** SafeAreaProvider als Root-Wrapper + SafeAreaView aus dem richtigen Package
+- **Impact:** Betrifft alle 4 bestehenden Screens + neuen LoginScreen
+
+**2. AsyncStorage für Login-Persistenz**
+- **Begründung:** User muss sich nicht bei jedem App-Start neu anmelden
+- **Key:** `@gameforge_auth` (Username + GitHub Token als JSON)
+- **Impact:** Einmal anmelden reicht, Daten bleiben gespeichert
+
+**3. Auth-Daten als Props durch die App**
+- **auth/onLogout** werden an AppNavigator übergeben
+- **Vorbereitung** für spätere GitHub API-Integration in allen Screens
+- **Logout-Funktion** löscht AsyncStorage und zeigt Login-Screen
+
+#### Probleme & Lösungen
+
+| Problem | Lösung | Status |
+|---------|--------|--------|
+| App-Inhalt hinter Android-Statusleiste (Uhrzeit/Akku) | SafeAreaProvider + SafeAreaView von react-native-safe-area-context | ✅ |
+| Hamburger-Button nicht klickbar (verdeckt) | SafeAreaView sorgt für korrekten Top-Inset | ✅ |
+| Kein Login/Auth-System vorhanden | LoginScreen mit AsyncStorage-Persistenz | ✅ |
+| Vorbestehender TS-Fehler (demoProjects Typing) | Nicht von uns verursacht, nicht angefasst | ⏳ |
+
+#### Technische Details
+
+**Login-Flow:**
+```
+App Start → AsyncStorage prüfen
+  → Auth vorhanden? → AppNavigator (Hauptapp)
+  → Kein Auth? → LoginScreen
+    → User gibt Name + Token ein
+    → "Anmelden" → AsyncStorage speichern → AppNavigator
+```
+
+**Auth-Daten Interface:**
+```typescript
+interface AuthData {
+  username: string;    // z.B. "ReichiMD"
+  githubToken: string; // z.B. "ghp_xxxxxxxxxxxx"
+}
+```
+
+#### Nächste Schritte
+
+1. **Logout-Button** in SettingsScreen einbauen (nutzt onLogout Prop)
+2. **GitHub API Integration** - Auth-Daten für Repository-Zugriff nutzen
+3. **SettingsScreen** GitHub Token Feld mit Login-Daten vorausfüllen (redundant entfernen)
+4. **Vorbestehenden TS-Fehler** in HomeScreen fixen (demoProjects Typing)
+5. **GitHub Pages Web-Preview** einrichten
+
+#### Notizen
+
+- User arbeitet weiterhin hauptsächlich mobil
+- User fragt sich ob er jedes Mal sagen muss "lass den Rest der App" → Antwort: Nein, wird nur geändert was angefragt wird
+- Auth-Daten (username + token) stehen jetzt app-weit zur Verfügung für zukünftige GitHub API Calls
+
+---
+
 ## 📊 Gesamt-Statistiken
 
 | Metrik | Wert |
 |--------|------|
-| Gesamt-Sessions | 3 |
-| Gesamt-Commits | 8+ |
-| Implementierte Features | 4 Screens |
-| Zeilen Code | ~1500 |
+| Gesamt-Sessions | 4 |
+| Gesamt-Commits | 9+ |
+| Implementierte Features | 5 Screens (4 + Login) |
+| Zeilen Code | ~1800 |
 | Test Coverage | 0% |
 | APK-Build | GitHub Actions ✅ |
+| Auth-System | AsyncStorage ✅ |
 
 ---
 
@@ -537,6 +629,7 @@ GameForge-Studio/
 - [Session #1 - Projekt-Setup](#session-1---2026-02-05---projekt-setup--grundstruktur) (falsche Richtung: Game Engine)
 - [Session #2 - Korrektur](#session-2---2026-02-05---korrektur-mobile-app-statt-game-engine) (korrigiert: Mobile App)
 - [Session #3 - App Design](#session-3---2026-02-05---app-design--implementation) (komplette App gebaut)
+- [Session #4 - Login & Status Bar](#session-4---2026-02-06---login-screen--status-bar-fix) (Login-Screen + SafeArea Fix)
 
 ---
 
@@ -570,6 +663,6 @@ GameForge-Studio/
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-05 (Session #3)
-**Nächste geplante Session:** Feedback & Änderungen nach APK-Test
+**Letzte Aktualisierung:** 2026-02-06 (Session #4)
+**Nächste geplante Session:** GitHub API Integration, Logout in Settings, Web-Preview
 **Verantwortlich für Updates:** Projekt-Team
