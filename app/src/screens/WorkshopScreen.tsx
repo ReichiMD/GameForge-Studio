@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Image } from 'expo-image';
 import { colors, spacing, sizing, typography } from '../theme';
 import { useProjects } from '../context/ProjectContext';
 import { SnapSlider } from '../components';
@@ -244,8 +244,7 @@ export default function WorkshopScreen() {
               <Image
                 source={{ uri: getItemTextureUrl(vanillaItemData) }}
                 style={styles.itemImage}
-                contentFit="contain"
-                transition={200}
+                resizeMode="contain"
               />
               <Text style={styles.itemTypeBadge}>
                 {vanillaItemData.rarity === 'epic' && '⭐ '}

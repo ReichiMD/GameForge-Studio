@@ -1,4 +1,4 @@
-name: Build Android APK (EAS)
+name: Build Android APK
 
 on:
   workflow_dispatch:  # Manuell auslösen
@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: Build APK with EAS
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
@@ -25,15 +25,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: app/package-lock.json
 
-      - name: Install dependencies
-        working-directory: ./app
-        run: |
-          npm ci
-          echo "✅ Dependencies installed"
-
-      - name: Setup EAS CLI
-        run: npm install -g eas-cli
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -43,17 +34,37 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build APK with EAS (LOCAL - No Limits!)
+      - name: Install dependencies
         working-directory: ./app
         run: |
-          echo "🚀 Starting LOCAL EAS Build on GitHub runner..."
-          echo "This builds on GitHub servers, NOT Expo servers = NO 30-build limit!"
-          npx eas build --platform android --profile preview --local --non-interactive --output ./build-output/GameForge-Studio.apk
-          echo "✅ APK built successfully!"
+          npm ci
+          echo "✅ Dependencies installed"
+
+      - name: Generate native projects
+        working-directory: ./app
+        run: |
+          echo "🔨 Starting expo prebuild..."
+          npx expo prebuild --platform android --clean
+          echo "✅ Native projects generated"
+
+      - name: Make gradlew executable
+        working-directory: ./app/android
+        run: chmod +x gradlew
+
+      - name: Build APK
+        working-directory: ./app/android
+        run: |
+          echo "🏗️ Starting APK build..."
+          ./gradlew assembleRelease --stacktrace
+          echo "✅ APK built successfully"
+
+      - name: Rename APK
+        run: |
+          mv app/android/app/build/outputs/apk/release/app-release.apk app/android/app/build/outputs/apk/release/GameForge-Studio.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: GameForge-Studio-APK
-          path: app/build-output/GameForge-Studio.apk
+          path: app/android/app/build/outputs/apk/release/GameForge-Studio.apk
           retention-days: 30

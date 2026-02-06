@@ -8,10 +8,9 @@
  * - Anzeige von aktueller Wert / Standardwert
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Slider from '@react-native-community/slider';
-import * as Haptics from 'expo-haptics';
 import { colors } from '../theme/colors';
 
 interface SnapSliderProps {
@@ -45,8 +44,7 @@ export const SnapSlider: React.FC<SnapSliderProps> = ({
     const distanceFromDefault = Math.abs(newValue - defaultValue);
 
     if (distanceFromDefault < snapThreshold && !lastSnapped) {
-      // Snap zum Standardwert
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      // Snap zum Standardwert (ohne Vibration)
       setLastSnapped(true);
       onValueChange(defaultValue);
     } else if (distanceFromDefault >= snapThreshold) {
