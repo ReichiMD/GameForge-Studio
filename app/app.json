@@ -12,6 +12,19 @@
       "resizeMode": "contain",
       "backgroundColor": "#111827"
     },
+    "plugins": [
+      "expo-image",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0"
+          }
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true
     },

@@ -36,15 +36,28 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./app
-        run: npm ci
+        run: |
+          npm ci
+          echo "✅ Dependencies installed"
+          npm list --depth=0
 
       - name: Generate native projects
         working-directory: ./app
-        run: npx expo prebuild --platform android --clean
+        run: |
+          echo "🔨 Starting expo prebuild..."
+          npx expo prebuild --platform android --clean
+          echo "✅ Native projects generated"
+
+      - name: Make gradlew executable
+        working-directory: ./app/android
+        run: chmod +x gradlew
 
       - name: Build APK
         working-directory: ./app/android
-        run: ./gradlew assembleRelease
+        run: |
+          echo "🏗️ Starting APK build..."
+          ./gradlew assembleRelease --stacktrace
+          echo "✅ APK built successfully"
 
       - name: Rename APK
         run: |
