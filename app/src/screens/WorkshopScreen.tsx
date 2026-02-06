@@ -10,6 +10,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, sizing, typography } from '../theme';
 
+// ==========================================
+// CONSTANTS (Zeile 13-22)
+// ==========================================
 const itemColors = [
   { id: 'red', color: '#EF4444' },
   { id: 'orange', color: '#F97316' },
@@ -21,6 +24,9 @@ const itemColors = [
   { id: 'white', color: '#F9FAFB' },
 ];
 
+// ==========================================
+// COMPONENTS: StatSlider (Zeile 24-48)
+// ==========================================
 interface SliderProps {
   label: string;
   emoji: string;
@@ -47,6 +53,9 @@ const StatSlider = ({ label, emoji, value, maxValue, unit = '' }: SliderProps) =
   );
 };
 
+// ==========================================
+// COMPONENTS: ToggleSwitch (Zeile 50-68)
+// ==========================================
 interface ToggleProps {
   label: string;
   emoji: string;
@@ -67,6 +76,9 @@ const ToggleSwitch = ({ label, emoji, active, onToggle }: ToggleProps) => (
   </TouchableOpacity>
 );
 
+// ==========================================
+// MAIN COMPONENT: WorkshopScreen (Zeile 70-172)
+// ==========================================
 export default function WorkshopScreen() {
   const [itemName, setItemName] = useState('Mein Super Schwert');
   const [selectedColor, setSelectedColor] = useState('blue');
@@ -171,6 +183,9 @@ export default function WorkshopScreen() {
   );
 }
 
+// ==========================================
+// STYLES (Zeile 174-373)
+// ==========================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -11,6 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, sizing, typography } from '../theme';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+// ==========================================
+// TYPES & CONSTANTS (Zeile 13-32)
+// ==========================================
 type CreateProjectScreenProps = {
   navigation: NativeStackNavigationProp<any>;
 };
@@ -31,6 +34,9 @@ const categories: Category[] = [
   { id: 'tools', name: 'Werkzeuge', emoji: '🔨', description: 'Spitzhacken, Schaufeln' },
 ];
 
+// ==========================================
+// MAIN COMPONENT: CreateProjectScreen (Zeile 34-130)
+// ==========================================
 export default function CreateProjectScreen({ navigation }: CreateProjectScreenProps) {
   const [projectName, setProjectName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -129,6 +135,9 @@ export default function CreateProjectScreen({ navigation }: CreateProjectScreenP
   );
 }
 
+// ==========================================
+// STYLES (Zeile 132-240)
+// ==========================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,
