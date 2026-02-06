@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK (EAS)
 
 on:
   workflow_dispatch:  # Manuell auslösen
@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: Build APK
+    name: Build APK with EAS
     runs-on: ubuntu-latest
 
     steps:
@@ -25,47 +25,39 @@ jobs:
           cache: 'npm'
           cache-dependency-path: app/package-lock.json
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install dependencies
         working-directory: ./app
         run: |
           npm ci
           echo "✅ Dependencies installed"
-          npm list --depth=0
 
-      - name: Generate native projects
+      - name: Setup EAS CLI
+        run: npm install -g eas-cli
+
+      - name: Build APK with EAS
         working-directory: ./app
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          echo "🔨 Starting expo prebuild..."
-          npx expo prebuild --platform android --clean
-          echo "✅ Native projects generated"
+          echo "🚀 Starting EAS Build..."
+          echo "This will take ~10-15 minutes as it builds on Expo servers..."
+          eas build --platform android --profile preview --non-interactive --local=false
+          echo "✅ EAS Build completed!"
 
-      - name: Make gradlew executable
-        working-directory: ./app/android
-        run: chmod +x gradlew
-
-      - name: Build APK
-        working-directory: ./app/android
+      - name: Download APK from EAS
+        working-directory: ./app
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          echo "🏗️ Starting APK build..."
-          ./gradlew assembleRelease --stacktrace
-          echo "✅ APK built successfully"
-
-      - name: Rename APK
-        run: |
-          mv app/android/app/build/outputs/apk/release/app-release.apk app/android/app/build/outputs/apk/release/GameForge-Studio.apk
+          echo "📦 Downloading APK..."
+          # Get the latest build URL
+          BUILD_URL=$(eas build:list --platform android --limit 1 --json --non-interactive | jq -r '.[0].artifacts.buildUrl')
+          wget -O GameForge-Studio.apk "$BUILD_URL"
+          echo "✅ APK downloaded"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: GameForge-Studio-APK
-          path: app/android/app/build/outputs/apk/release/GameForge-Studio.apk
+          path: app/GameForge-Studio.apk
           retention-days: 30
