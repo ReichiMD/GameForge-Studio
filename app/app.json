@@ -13,7 +13,6 @@
       "backgroundColor": "#111827"
     },
     "plugins": [
-      "expo-image",
       [
         "expo-build-properties",
         {
