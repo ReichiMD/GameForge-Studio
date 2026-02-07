@@ -9,8 +9,12 @@
             "name": "Diamond_pickaxe",
             "type": "weapon",
             "texture_path": "assets/textures/weapon/diamond_pickaxe.png",
-            "stats": {},
-            "added_at": "2026-02-07T19:20:28.580Z"
+            "stats": {
+                "damage": 30,
+                "durability": 1560
+            },
+            "added_at": "2026-02-07T19:20:28.580Z",
+            "last_modified": "2026-02-07T19:20:35.632Z"
         }
     ]
 }
