@@ -1,8 +1,8 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 2.1 (Flutter)
+**Version:** 2.2 (Flutter)
 **Letzte Aktualisierung:** 2026-02-07
-**Status:** Phase 3 Projekt-Speicherung (~90%)
+**Status:** Phase 4 Item-Integration (~95%)
 
 ---
 
@@ -12,18 +12,20 @@
 - **Zielgruppe:** 7-jähriges Kind + Vater (kinderfreundlich!)
 - **Tech-Stack:** Flutter + Dart, Material 3 Design, SharedPreferences
 - **Platform:** Android (APK via GitHub Actions)
-- **Status:** Migration von React Native → Flutter bei 85%
+- **Status:** Migration von React Native → Flutter bei 95%
 
 ---
 
-## 📱 Was funktioniert bereits? (Phase 1-3)
+## 📱 Was funktioniert bereits? (Phase 1-4)
 
 ✅ **Login/Logout** - Username + GitHub Token (SharedPreferences)
 ✅ **Bottom Navigation** - 4 Tabs (Home, Bibliothek, Workshop, Settings)
-✅ **HomeScreen** - Echte Projekte mit Swipe-to-Delete, Empty State
-✅ **CreateProjectScreen** - 6 Kategorien, speichert Projekte persistent
+✅ **HomeScreen** - Echte Projekte mit Swipe-to-Delete, Empty State, Base-Item Anzeige
+✅ **CreateProjectScreen** - 6 Kategorien, Item-Selection Modal, Projekt-Speicherung
 ✅ **Projekt-Speicherung** - ProjectService mit SharedPreferences (CRUD)
-✅ **Project Model** - JSON-Serialization, Timestamps, Category-Icons
+✅ **Project Model** - JSON-Serialization, Timestamps, Category-Icons, Base-Item Support
+✅ **Item-Integration** - vanilla_stats.json Loader, VanillaItem Model, 39 Items
+✅ **ItemSelectionModal** - Grid-View mit Rarity-Badges, Filtern nach Kategorie
 ✅ **WorkshopScreen MVP** - Item-Editor mit Slidern (Damage, Durability), Effekt-Toggles
 ✅ **SettingsScreen** - Logout-Button
 ✅ **Theme-System** - Material 3, Purple Theme (#8B5CF6), kinderfreundliche Touch-Targets
@@ -31,13 +33,9 @@
 
 ---
 
-## ⏳ Was fehlt noch? (Phase 4 - TODOs)
+## ⏳ Was fehlt noch? (Phase 5 - TODOs)
 
-### **Priorität 1: Daten-Integration**
-- [ ] **vanilla_stats.json laden** - Item-Daten aus `library/vanilla_stats.json` einbinden
-- [ ] **Item-Selection Modal** - Nach Kategorie-Auswahl Items anzeigen
-
-### **Priorität 2: Feature-Erweiterungen**
+### **Priorität 1: Workshop-Integration**
 - [ ] **WorkshopScreen erweitern** - Mehr Stats, echte Item-Daten
 - [ ] **LibraryScreen** - Item-Galerie mit Filter/Suche
 - [ ] **Projekt bearbeiten** - Projekte öffnen und im Workshop editieren
@@ -66,10 +64,13 @@ app/lib/
 │   ├── app_spacing.dart           ✅ Spacing, Sizing, Typography
 │   └── app_theme.dart             ✅ Material 3 Config
 ├── models/
-│   └── project.dart               ✅ JSON-Serialization, Timestamps, Icons
+│   ├── project.dart               ✅ JSON-Serialization, Timestamps, Icons, Base-Item
+│   └── vanilla_item.dart          ✅ VanillaItem + VanillaCategory Models
 ├── services/
-│   └── project_service.dart       ✅ CRUD Operations (SharedPreferences)
-└── data/                          ⏳ TODO (vanilla_stats.json Loader)
+│   ├── project_service.dart       ✅ CRUD Operations (SharedPreferences)
+│   └── vanilla_data_service.dart  ✅ JSON Loader, Category Mapping
+└── widgets/
+    └── item_selection_modal.dart  ✅ Item Grid, Rarity-Badges, Category Filter
 ```
 
 ---
@@ -152,30 +153,32 @@ Du:   *liest nur app/lib/screens/home_screen.dart + theme/app_colors.dart*
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #11 - 2026-02-07 - Phase 3 Projekt-Speicherung**
-- ✅ Project Model mit JSON-Serialization erstellt
-- ✅ ProjectService mit CRUD-Operationen (SharedPreferences)
-- ✅ CreateProjectScreen speichert jetzt Projekte
-- ✅ HomeScreen lädt echte Projekte + Swipe-to-Delete
-- ✅ Empty State wenn keine Projekte vorhanden
-- Branch: `claude/implement-project-saving-lCGe5`
-- Commit: 6965d74
+**Session #12 - 2026-02-07 - Phase 4 Item-Integration**
+- ✅ VanillaItem + VanillaCategory Models erstellt
+- ✅ VanillaDataService mit JSON-Loader (vanilla_stats.json, 39 Items)
+- ✅ ItemSelectionModal mit Grid-View, Rarity-Badges, Stat-Anzeige
+- ✅ CreateProjectScreen erweitert: Kategorie → Item-Selection → Speichern
+- ✅ Project Model mit baseItem Getter und hasBaseItem Check
+- ✅ HomeScreen zeigt Base-Item in Projekt-Cards
+- ✅ Asset-Registrierung in pubspec.yaml
+- Branch: `claude/implement-phase-4-k05od`
+- Commit: 8721da6
 
 **Nächste Session:**
-👉 **vanilla_stats.json laden + Item-Selection Modal**
-- JSON-Daten aus library/vanilla_stats.json laden
-- Item-Selection Modal nach Kategorie-Auswahl
-- Projekte mit ausgewähltem Item verknüpfen
+👉 **Workshop-Integration mit Base-Item Daten**
+- WorkshopScreen mit Base-Item Daten befüllen
+- Stats vom Base-Item als Ausgangswerte verwenden
+- Projekt bearbeiten (aus HomeScreen öffnen)
 
 ---
 
 ## 🐛 Bekannte Issues
 
-- vanilla_stats.json noch nicht geladen
-- Keine Item-Selection nach Kategorie-Auswahl
 - LibraryScreen nur Placeholder
 - Projekte können nicht bearbeitet werden (nur erstellen/löschen)
+- WorkshopScreen nutzt noch keine Base-Item Daten
 - App-Name ist technisch (gameforge_studio)
+- Kategorien ohne vanilla items (Mobs, Blöcke, Werkzeuge) haben keine Item-Auswahl
 
 **Alle non-blocking** - App funktioniert grundsätzlich!
 
@@ -183,11 +186,11 @@ Du:   *liest nur app/lib/screens/home_screen.dart + theme/app_colors.dart*
 
 ## 🎯 Nächster Milestone
 
-**Phase 4: Item-Integration**
-- vanilla_stats.json laden und parsen
-- Item-Selection Modal (nach Kategorie filtern)
-- Projekte mit Items verknüpfen
-- Item-Daten im Workshop anzeigen
+**Phase 5: Workshop-Integration**
+- Projekte aus HomeScreen im Workshop öffnen
+- Base-Item Daten als Ausgangswerte verwenden
+- Workshop-Screen erweitern (mehr Stats)
+- LibraryScreen implementieren (Item-Galerie)
 
 **Geschätzter Aufwand:** 2-3 Sessions
 
