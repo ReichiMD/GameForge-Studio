@@ -153,16 +153,17 @@ Du:   *liest nur app/lib/screens/home_screen.dart + theme/app_colors.dart*
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #12 - 2026-02-07 - Phase 4 Item-Integration**
+**Session #13 - 2026-02-07 - Phase 4 Item-Integration + Bugfixes**
 - ✅ VanillaItem + VanillaCategory Models erstellt
 - ✅ VanillaDataService mit JSON-Loader (vanilla_stats.json, 39 Items)
 - ✅ ItemSelectionModal mit Grid-View, Rarity-Badges, Stat-Anzeige
 - ✅ CreateProjectScreen erweitert: Kategorie → Item-Selection → Speichern
 - ✅ Project Model mit baseItem Getter und hasBaseItem Check
 - ✅ HomeScreen zeigt Base-Item in Projekt-Cards
-- ✅ Asset-Registrierung in pubspec.yaml
+- ✅ Asset-Fix: vanilla_stats.json nach app/assets/library/ verschoben
+- ✅ Bugfix: AppColors.accent → AppColors.info korrigiert
 - Branch: `claude/implement-phase-4-k05od`
-- Commit: 8721da6
+- Commits: 8721da6, d110bcd, f38a97d, 94c1b7c
 
 **Nächste Session:**
 👉 **Workshop-Integration mit Base-Item Daten**

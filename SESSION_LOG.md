@@ -150,6 +150,9 @@
 
 **Commits:**
 - `8721da6` - Implement Phase 4: Item Integration with vanilla_stats.json
+- `d110bcd` - Update documentation for Phase 4 completion
+- `f38a97d` - Fix: Replace AppColors.accent with AppColors.info
+- `94c1b7c` - Fix: Move vanilla_stats.json to app/assets/ directory
 
 **Wichtige Features:**
 - 39 vanilla Items aus JSON geladen (Waffen, Rüstung, Nahrung)
@@ -157,6 +160,10 @@
 - Projekte speichern ausgewähltes Base-Item (JSON in Project.data)
 - HomeScreen zeigt "Basiert auf: [Item]" wenn Base-Item vorhanden
 - Kategorien ohne vanilla items (Mobs, Blöcke, Werkzeuge) speichern direkt
+
+**Bugfixes während Session:**
+- AppColors.accent existierte nicht → geändert zu AppColors.info
+- Asset-Pfad ../library/ funktionierte nicht → verschoben nach app/assets/library/
 
 **Status:** ✅ Phase 4 Item-Integration komplett (~95% Migration)
 
