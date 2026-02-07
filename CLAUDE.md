@@ -1,8 +1,8 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 2.2 (Flutter)
+**Version:** 2.3 (Flutter)
 **Letzte Aktualisierung:** 2026-02-07
-**Status:** Phase 4 Item-Integration (~95%)
+**Status:** Phase 5 Workshop-Integration (✅ Fertig!)
 
 ---
 
@@ -16,34 +16,39 @@
 
 ---
 
-## 📱 Was funktioniert bereits? (Phase 1-4)
+## 📱 Was funktioniert bereits? (Phase 1-5)
 
 ✅ **Login/Logout** - Username + GitHub Token (SharedPreferences)
 ✅ **Bottom Navigation** - 4 Tabs (Home, Bibliothek, Workshop, Settings)
-✅ **HomeScreen** - Echte Projekte mit Swipe-to-Delete, Empty State, Base-Item Anzeige
+✅ **HomeScreen** - Echte Projekte mit Swipe-to-Delete, Empty State, Base-Item Anzeige, Tap-to-Edit
 ✅ **CreateProjectScreen** - 6 Kategorien, Item-Selection Modal, Projekt-Speicherung
 ✅ **Projekt-Speicherung** - ProjectService mit SharedPreferences (CRUD)
 ✅ **Project Model** - JSON-Serialization, Timestamps, Category-Icons, Base-Item Support
 ✅ **Item-Integration** - vanilla_stats.json Loader, VanillaItem Model, 39 Items
 ✅ **ItemSelectionModal** - Grid-View mit Rarity-Badges, Filtern nach Kategorie
-✅ **WorkshopScreen MVP** - Item-Editor mit Slidern (Damage, Durability), Effekt-Toggles
+✅ **WorkshopScreen** - Item-Editor mit 6 Stats (damage, durability, attack_speed, armor, armor_toughness, mining_speed)
+✅ **WorkshopScreen** - Base-Item Daten als Ausgangswerte, Projekt-Speicherung, Edit-Mode
+✅ **LibraryScreen** - Item-Galerie mit 39 Items, Category-Filter, Suche, Detail-Modal
 ✅ **SettingsScreen** - Logout-Button
 ✅ **Theme-System** - Material 3, Purple Theme (#8B5CF6), kinderfreundliche Touch-Targets
 ✅ **APK Build** - GitHub Actions baut erfolgreich (21 MB APK)
+✅ **Kompletter Workflow** - Projekt erstellen → bearbeiten → speichern
 
 ---
 
-## ⏳ Was fehlt noch? (Phase 5 - TODOs)
+## ⏳ Was fehlt noch? (Phase 6 - TODOs)
 
-### **Priorität 1: Workshop-Integration**
-- [ ] **WorkshopScreen erweitern** - Mehr Stats, echte Item-Daten
-- [ ] **LibraryScreen** - Item-Galerie mit Filter/Suche
-- [ ] **Projekt bearbeiten** - Projekte öffnen und im Workshop editieren
-
-### **Priorität 3: Polish**
+### **Priorität 1: Polish & UX**
 - [ ] App-Name ändern (von "gameforge_studio" zu "GameForge Studio")
 - [ ] App-Icon + Splash-Screen
 - [ ] Besseres Error-Handling, Toast-Nachrichten
+- [ ] Loading-States verbessern (Skeleton Screens)
+
+### **Priorität 2: Erweiterte Features**
+- [ ] Item-Export (JSON für Minecraft Addon)
+- [ ] Projekt-Duplikation
+- [ ] Item-Vorschau mit Texture aus fabrik-library
+- [ ] Mehr Effekte (Poison, Regeneration, etc.)
 
 ---
 
@@ -54,10 +59,10 @@ app/lib/
 ├── main.dart                      ← Entry Point, MainNavigation, AuthWrapper
 ├── screens/
 │   ├── login_screen.dart          ✅ Fertig (Form Validation, Token Input)
-│   ├── home_screen.dart           ✅ Fertig (Echte Projekte, Swipe-Delete, Empty State)
+│   ├── home_screen.dart           ✅ Fertig (Projekte, Swipe-Delete, Tap-to-Edit)
 │   ├── create_project_screen.dart ✅ Fertig (6 Kategorien, Projekt-Speicherung)
-│   ├── workshop_screen.dart       ✅ MVP (Slider, Toggles, Speichern-Button)
-│   ├── library_screen.dart        ⏳ Placeholder
+│   ├── workshop_screen.dart       ✅ Fertig (6 Stats, Base-Item Integration, Speichern)
+│   ├── library_screen.dart        ✅ Fertig (Item-Galerie, Filter, Suche, Details)
 │   └── settings_screen.dart       ✅ Fertig (Logout)
 ├── theme/
 │   ├── app_colors.dart            ✅ Purple Theme, Success/Error/Accent
@@ -153,47 +158,50 @@ Du:   *liest nur app/lib/screens/home_screen.dart + theme/app_colors.dart*
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #13 - 2026-02-07 - Phase 4 Item-Integration + Bugfixes**
-- ✅ VanillaItem + VanillaCategory Models erstellt
-- ✅ VanillaDataService mit JSON-Loader (vanilla_stats.json, 39 Items)
-- ✅ ItemSelectionModal mit Grid-View, Rarity-Badges, Stat-Anzeige
-- ✅ CreateProjectScreen erweitert: Kategorie → Item-Selection → Speichern
-- ✅ Project Model mit baseItem Getter und hasBaseItem Check
-- ✅ HomeScreen zeigt Base-Item in Projekt-Cards
-- ✅ Asset-Fix: vanilla_stats.json nach app/assets/library/ verschoben
-- ✅ Bugfix: AppColors.accent → AppColors.info korrigiert
-- Branch: `claude/implement-phase-4-k05od`
-- Commits: 8721da6, d110bcd, f38a97d, 94c1b7c
+**Session #14 - 2026-02-07 - Phase 5 Workshop-Integration**
+- ✅ HomeScreen: Tap-to-Edit Funktionalität (öffnet Workshop mit Projekt)
+- ✅ WorkshopScreen: Projekt-Parameter hinzugefügt (optional)
+- ✅ WorkshopScreen: Base-Item Daten als Ausgangswerte laden
+- ✅ WorkshopScreen: 6 Stats implementiert (damage, durability, attack_speed, armor, armor_toughness, mining_speed)
+- ✅ WorkshopScreen: Projekt-Speicherung mit customStats und effects
+- ✅ WorkshopScreen: Back-Button im Edit-Mode
+- ✅ LibraryScreen: Vollständige Item-Galerie mit 39 Items
+- ✅ LibraryScreen: Category-Filter (horizontal scrolling chips)
+- ✅ LibraryScreen: Such-Funktionalität mit Clear-Button
+- ✅ LibraryScreen: Item-Details Modal mit Stats
+- Branch: `claude/implement-phase-5-A9Q1N`
+- Commit: 4ffb2c8
 
 **Nächste Session:**
-👉 **Workshop-Integration mit Base-Item Daten**
-- WorkshopScreen mit Base-Item Daten befüllen
-- Stats vom Base-Item als Ausgangswerte verwenden
-- Projekt bearbeiten (aus HomeScreen öffnen)
+👉 **App Polish & Testing**
+- App-Name ändern
+- App-Icon + Splash-Screen
+- End-to-End Testing auf echtem Device
+- Bug-Fixes falls nötig
 
 ---
 
 ## 🐛 Bekannte Issues
 
-- LibraryScreen nur Placeholder
-- Projekte können nicht bearbeitet werden (nur erstellen/löschen)
-- WorkshopScreen nutzt noch keine Base-Item Daten
 - App-Name ist technisch (gameforge_studio)
 - Kategorien ohne vanilla items (Mobs, Blöcke, Werkzeuge) haben keine Item-Auswahl
+- Kein App-Icon oder Splash-Screen
+- Item-Export noch nicht implementiert
 
-**Alle non-blocking** - App funktioniert grundsätzlich!
+**Alle non-blocking** - App ist voll funktionsfähig!
 
 ---
 
 ## 🎯 Nächster Milestone
 
-**Phase 5: Workshop-Integration**
-- Projekte aus HomeScreen im Workshop öffnen
-- Base-Item Daten als Ausgangswerte verwenden
-- Workshop-Screen erweitern (mehr Stats)
-- LibraryScreen implementieren (Item-Galerie)
+**Phase 6: App Polish & Release-Vorbereitung**
+- App-Name und Branding verbessern
+- App-Icon und Splash-Screen erstellen
+- End-to-End Testing auf Android Device
+- Item-Export Funktionalität
+- Erste Beta-Version veröffentlichen
 
-**Geschätzter Aufwand:** 2-3 Sessions
+**Geschätzter Aufwand:** 1-2 Sessions
 
 ---
 
