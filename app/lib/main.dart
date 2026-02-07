@@ -5,6 +5,7 @@ import 'screens/home_screen.dart';
 import 'screens/library_screen.dart';
 import 'screens/workshop_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/create_project_screen.dart';
 import 'theme/app_theme.dart';
 import 'theme/app_colors.dart';
 import 'theme/app_spacing.dart';
@@ -125,19 +126,20 @@ class _MainNavigationState extends State<MainNavigation> {
     super.initState();
     _screens = [
       HomeScreen(
-        onCreateProject: () {
-          // TODO: Navigate to CreateProjectScreen
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Neues Projekt - Coming soon!'),
-            ),
-          );
-        },
+        onCreateProject: _navigateToCreateProject,
       ),
       const LibraryScreen(),
       const WorkshopScreen(),
       SettingsScreen(onLogout: widget.onLogout),
     ];
+  }
+
+  void _navigateToCreateProject() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const CreateProjectScreen(),
+      ),
+    );
   }
 
   @override
