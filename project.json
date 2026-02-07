@@ -1,0 +1,16 @@
+{
+    "name": "GameForge-Studio",
+    "version": "1.0.0",
+    "description": "Erstellt mit Fabrik-OS",
+    "created_at": "2026-02-07T19:20:28.894Z",
+    "assets": [
+        {
+            "id": "gameforgestudio:diamond_pickaxe",
+            "name": "Diamond_pickaxe",
+            "type": "weapon",
+            "texture_path": "assets/textures/weapon/diamond_pickaxe.png",
+            "stats": {},
+            "added_at": "2026-02-07T19:20:28.580Z"
+        }
+    ]
+}
