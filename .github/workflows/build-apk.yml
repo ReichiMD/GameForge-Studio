@@ -18,53 +18,40 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: app/package-lock.json
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.1'
+          channel: 'stable'
+          cache: true
 
       - name: Install dependencies
         working-directory: ./app
         run: |
-          npm ci
+          echo "📦 Installing Flutter dependencies..."
+          flutter pub get
           echo "✅ Dependencies installed"
 
-      - name: Generate native projects
+      - name: Build APK
         working-directory: ./app
         run: |
-          echo "🔨 Starting expo prebuild..."
-          npx expo prebuild --platform android --clean
-          echo "✅ Native projects generated"
-
-      - name: Make gradlew executable
-        working-directory: ./app/android
-        run: chmod +x gradlew
-
-      - name: Build APK
-        working-directory: ./app/android
-        run: |
           echo "🏗️ Starting APK build..."
-          ./gradlew assembleRelease --stacktrace
+          flutter build apk --release
           echo "✅ APK built successfully"
 
       - name: Rename APK
         run: |
-          mv app/android/app/build/outputs/apk/release/app-release.apk app/android/app/build/outputs/apk/release/GameForge-Studio.apk
+          mv app/build/app/outputs/flutter-apk/app-release.apk app/build/app/outputs/flutter-apk/GameForge-Studio.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: GameForge-Studio-APK
-          path: app/android/app/build/outputs/apk/release/GameForge-Studio.apk
+          path: app/build/app/outputs/flutter-apk/GameForge-Studio.apk
           retention-days: 30
