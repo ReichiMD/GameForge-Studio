@@ -1,6 +1,59 @@
 import 'package:flutter/foundation.dart';
 import 'vanilla_item.dart';
 
+/// Represents a single item in a project
+class ProjectItem {
+  final String id;
+  final String name;
+  final String? baseItemKey;
+  final Map<String, dynamic> stats;
+  final Map<String, dynamic> effects;
+
+  ProjectItem({
+    required this.id,
+    required this.name,
+    this.baseItemKey,
+    Map<String, dynamic>? stats,
+    Map<String, dynamic>? effects,
+  })  : stats = stats ?? {},
+        effects = effects ?? {};
+
+  factory ProjectItem.fromJson(Map<String, dynamic> json) {
+    return ProjectItem(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      baseItemKey: json['baseItemKey'] as String?,
+      stats: Map<String, dynamic>.from(json['stats'] as Map? ?? {}),
+      effects: Map<String, dynamic>.from(json['effects'] as Map? ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'baseItemKey': baseItemKey,
+      'stats': stats,
+      'effects': effects,
+    };
+  }
+
+  ProjectItem copyWith({
+    String? name,
+    String? baseItemKey,
+    Map<String, dynamic>? stats,
+    Map<String, dynamic>? effects,
+  }) {
+    return ProjectItem(
+      id: id,
+      name: name ?? this.name,
+      baseItemKey: baseItemKey ?? this.baseItemKey,
+      stats: stats ?? this.stats,
+      effects: effects ?? this.effects,
+    );
+  }
+}
+
 /// Represents a GameForge project
 class Project {
   final String id;
@@ -9,6 +62,7 @@ class Project {
   final DateTime createdAt;
   final DateTime updatedAt;
   final Map<String, dynamic> data; // Flexible data storage for item properties
+  final List<ProjectItem> items; // Items in this project
 
   Project({
     required this.id,
@@ -17,13 +71,15 @@ class Project {
     required this.createdAt,
     required this.updatedAt,
     required this.data,
-  });
+    List<ProjectItem>? items,
+  }) : items = items ?? [];
 
   /// Create a new project with generated ID and timestamps
   factory Project.create({
     required String name,
     required String category,
     Map<String, dynamic>? data,
+    List<ProjectItem>? items,
   }) {
     final now = DateTime.now();
     return Project(
@@ -33,11 +89,16 @@ class Project {
       createdAt: now,
       updatedAt: now,
       data: data ?? {},
+      items: items ?? [],
     );
   }
 
   /// Create Project from JSON
   factory Project.fromJson(Map<String, dynamic> json) {
+    final itemsList = (json['items'] as List?)?.map((item) {
+      return ProjectItem.fromJson(item as Map<String, dynamic>);
+    }).toList() ?? [];
+
     return Project(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -45,6 +106,7 @@ class Project {
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       data: Map<String, dynamic>.from(json['data'] as Map? ?? {}),
+      items: itemsList,
     );
   }
 
@@ -57,6 +119,7 @@ class Project {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'data': data,
+      'items': items.map((item) => item.toJson()).toList(),
     };
   }
 
@@ -66,6 +129,7 @@ class Project {
     String? category,
     DateTime? updatedAt,
     Map<String, dynamic>? data,
+    List<ProjectItem>? items,
   }) {
     return Project(
       id: id,
@@ -74,6 +138,7 @@ class Project {
       createdAt: createdAt,
       updatedAt: updatedAt ?? DateTime.now(),
       data: data ?? this.data,
+      items: items ?? this.items,
     );
   }
 

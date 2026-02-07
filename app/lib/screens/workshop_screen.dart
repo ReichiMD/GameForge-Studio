@@ -4,11 +4,17 @@ import '../theme/app_spacing.dart';
 import '../models/project.dart';
 import '../models/vanilla_item.dart';
 import '../services/project_service.dart';
+import '../services/vanilla_data_service.dart';
 
 class WorkshopScreen extends StatefulWidget {
   final Project? project;
+  final ProjectItem? projectItem;
 
-  const WorkshopScreen({super.key, this.project});
+  const WorkshopScreen({
+    super.key,
+    this.project,
+    this.projectItem,
+  });
 
   @override
   State<WorkshopScreen> createState() => _WorkshopScreenState();
@@ -16,6 +22,7 @@ class WorkshopScreen extends StatefulWidget {
 
 class _WorkshopScreenState extends State<WorkshopScreen> {
   final ProjectService _projectService = ProjectService();
+  final VanillaDataService _vanillaService = VanillaDataService();
 
   // Item State
   String _itemName = 'Mein Super Schwert';
@@ -44,6 +51,45 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
   }
 
   void _loadProjectData() {
+    // If we're editing a ProjectItem
+    if (widget.projectItem != null) {
+      final item = widget.projectItem!;
+      setState(() {
+        _itemName = item.name;
+        _itemEmoji = '✨';
+      });
+
+      // Load stats from ProjectItem
+      final stats = item.stats;
+      if (stats.isNotEmpty) {
+        setState(() {
+          _damage = (stats['damage'] as num?)?.toDouble() ?? _damage;
+          _durability = (stats['durability'] as num?)?.toDouble() ?? _durability;
+          _attackSpeed = (stats['attack_speed'] as num?)?.toDouble() ?? _attackSpeed;
+          _armor = (stats['armor'] as num?)?.toDouble() ?? _armor;
+          _armorToughness = (stats['armor_toughness'] as num?)?.toDouble() ?? _armorToughness;
+          _miningSpeed = (stats['mining_speed'] as num?)?.toDouble() ?? _miningSpeed;
+        });
+      }
+
+      // Load effects
+      final effects = item.effects;
+      if (effects.isNotEmpty) {
+        setState(() {
+          _fireEffect = effects['fire'] as bool? ?? _fireEffect;
+          _glowEffect = effects['glow'] as bool? ?? _glowEffect;
+        });
+      }
+
+      // Load base item name if available
+      if (item.baseItemKey != null) {
+        _loadBaseItemName(item.baseItemKey!);
+      }
+
+      return;
+    }
+
+    // Legacy behavior: loading from project (old flow)
     if (widget.project == null) return;
 
     final project = widget.project!;
@@ -91,6 +137,20 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         _fireEffect = effects['fire'] as bool? ?? _fireEffect;
         _glowEffect = effects['glow'] as bool? ?? _glowEffect;
       });
+    }
+  }
+
+  Future<void> _loadBaseItemName(String baseItemKey) async {
+    try {
+      final item = await _vanillaService.getItem(baseItemKey);
+      if (item != null && mounted) {
+        setState(() {
+          _baseItemName = item.name;
+          _baseItem = item;
+        });
+      }
+    } catch (e) {
+      // Silently fail if we can't load the base item
     }
   }
 
@@ -623,6 +683,63 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
   }
 
   Future<void> _handleSave() async {
+    // If we're editing a ProjectItem
+    if (widget.projectItem != null && widget.project != null) {
+      final updatedItem = widget.projectItem!.copyWith(
+        name: _itemName,
+        stats: {
+          'damage': _damage,
+          'durability': _durability,
+          'attack_speed': _attackSpeed,
+          'armor': _armor,
+          'armor_toughness': _armorToughness,
+          'mining_speed': _miningSpeed,
+        },
+        effects: {
+          'fire': _fireEffect,
+          'glow': _glowEffect,
+        },
+      );
+
+      // Update the project with the updated item
+      final updatedItems = widget.project!.items.map((item) {
+        return item.id == updatedItem.id ? updatedItem : item;
+      }).toList();
+
+      final updatedProject = widget.project!.copyWith(
+        items: updatedItems,
+        updatedAt: DateTime.now(),
+      );
+
+      final success = await _projectService.saveProject(updatedProject);
+
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '✅ "$_itemName" gespeichert!',
+            ),
+            backgroundColor: AppColors.success,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
+        Navigator.of(context).pop();
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              '❌ Fehler beim Speichern',
+            ),
+            backgroundColor: AppColors.error,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Legacy behavior: saving to project data
     if (widget.project == null) {
       // Demo mode - just show a message
       ScaffoldMessenger.of(context).showSnackBar(
