@@ -1,22 +1,98 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../models/project.dart';
+import '../models/vanilla_item.dart';
+import '../services/project_service.dart';
 
 class WorkshopScreen extends StatefulWidget {
-  const WorkshopScreen({super.key});
+  final Project? project;
+
+  const WorkshopScreen({super.key, this.project});
 
   @override
   State<WorkshopScreen> createState() => _WorkshopScreenState();
 }
 
 class _WorkshopScreenState extends State<WorkshopScreen> {
-  // Demo Item State
+  final ProjectService _projectService = ProjectService();
+
+  // Item State
   String _itemName = 'Mein Super Schwert';
   String _itemEmoji = '⚔️';
+  String? _baseItemName;
+
+  // Stats
   double _damage = 7.0;
   double _durability = 1561.0;
+  double _attackSpeed = 1.6;
+  double _armor = 0.0;
+  double _armorToughness = 0.0;
+  double _miningSpeed = 1.0;
+
+  // Effects
   bool _fireEffect = true;
   bool _glowEffect = false;
+
+  // Original project reference
+  VanillaItem? _baseItem;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProjectData();
+  }
+
+  void _loadProjectData() {
+    if (widget.project == null) return;
+
+    final project = widget.project!;
+
+    // Load basic info
+    setState(() {
+      _itemName = project.name;
+      _itemEmoji = project.data['emoji'] as String? ?? project.categoryIcon;
+    });
+
+    // Load base item data
+    final baseItem = project.baseItem;
+    if (baseItem != null) {
+      setState(() {
+        _baseItem = baseItem;
+        _baseItemName = baseItem.name;
+
+        // Load stats from base item
+        _damage = (baseItem.getStat('attack_damage') as num?)?.toDouble() ?? _damage;
+        _durability = (baseItem.getStat('durability') as num?)?.toDouble() ?? _durability;
+        _attackSpeed = (baseItem.getStat('attack_speed') as num?)?.toDouble() ?? _attackSpeed;
+        _armor = (baseItem.getStat('armor') as num?)?.toDouble() ?? _armor;
+        _armorToughness = (baseItem.getStat('armor_toughness') as num?)?.toDouble() ?? _armorToughness;
+        _miningSpeed = (baseItem.getStat('mining_speed') as num?)?.toDouble() ?? _miningSpeed;
+      });
+    }
+
+    // Load custom modifications if any
+    final data = project.data;
+    if (data['customStats'] != null) {
+      final customStats = data['customStats'] as Map<String, dynamic>;
+      setState(() {
+        _damage = (customStats['damage'] as num?)?.toDouble() ?? _damage;
+        _durability = (customStats['durability'] as num?)?.toDouble() ?? _durability;
+        _attackSpeed = (customStats['attack_speed'] as num?)?.toDouble() ?? _attackSpeed;
+        _armor = (customStats['armor'] as num?)?.toDouble() ?? _armor;
+        _armorToughness = (customStats['armor_toughness'] as num?)?.toDouble() ?? _armorToughness;
+        _miningSpeed = (customStats['mining_speed'] as num?)?.toDouble() ?? _miningSpeed;
+      });
+    }
+
+    if (data['effects'] != null) {
+      final effects = data['effects'] as Map<String, dynamic>;
+      setState(() {
+        _fireEffect = effects['fire'] as bool? ?? _fireEffect;
+        _glowEffect = effects['glow'] as bool? ?? _glowEffect;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +112,8 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
   }
 
   Widget _buildHeader() {
+    final bool isEditMode = widget.project != null;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.xl,
@@ -49,11 +127,23 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       ),
       child: Row(
         children: [
+          if (isEditMode) ...[
+            GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                width: AppSizing.touchMinimum,
+                height: AppSizing.touchMinimum,
+                alignment: Alignment.center,
+                child: const Text('←', style: TextStyle(fontSize: 28, color: AppColors.text)),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+          ],
           const Text('🔧', style: TextStyle(fontSize: 28)),
           const SizedBox(width: AppSpacing.md),
-          const Text(
-            'Workshop',
-            style: TextStyle(
+          Text(
+            isEditMode ? 'Bearbeiten' : 'Workshop',
+            style: const TextStyle(
               fontSize: AppTypography.xl,
               fontWeight: FontWeight.w700,
               color: AppColors.text,
@@ -133,14 +223,26 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            'Diamond Sword (Demo)',
-            style: TextStyle(
-              fontSize: AppTypography.sm,
-              color: AppColors.textSecondary.withOpacity(0.7),
+          if (_baseItemName != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              'Basiert auf: $_baseItemName',
+              style: TextStyle(
+                fontSize: AppTypography.sm,
+                color: AppColors.info.withOpacity(0.8),
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
+          ] else ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              widget.project != null ? widget.project!.category : 'Demo',
+              style: TextStyle(
+                fontSize: AppTypography.sm,
+                color: AppColors.textSecondary.withOpacity(0.7),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -238,6 +340,62 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
             });
           },
         ),
+        const SizedBox(height: AppSpacing.lg),
+        _buildStatSlider(
+          label: 'Attack Speed',
+          emoji: '⚡',
+          value: _attackSpeed,
+          minValue: 0.5,
+          maxValue: 4.0,
+          divisions: 35,
+          decimals: 1,
+          onChanged: (value) {
+            setState(() {
+              _attackSpeed = value;
+            });
+          },
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _buildStatSlider(
+          label: 'Armor',
+          emoji: '🛡️',
+          value: _armor,
+          minValue: 0,
+          maxValue: 20,
+          onChanged: (value) {
+            setState(() {
+              _armor = value;
+            });
+          },
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _buildStatSlider(
+          label: 'Armor Toughness',
+          emoji: '💪',
+          value: _armorToughness,
+          minValue: 0,
+          maxValue: 12,
+          onChanged: (value) {
+            setState(() {
+              _armorToughness = value;
+            });
+          },
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _buildStatSlider(
+          label: 'Mining Speed',
+          emoji: '⛏️',
+          value: _miningSpeed,
+          minValue: 0.5,
+          maxValue: 12.0,
+          divisions: 115,
+          decimals: 1,
+          onChanged: (value) {
+            setState(() {
+              _miningSpeed = value;
+            });
+          },
+        ),
       ],
     );
   }
@@ -249,6 +407,8 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
     required double minValue,
     required double maxValue,
     required ValueChanged<double> onChanged,
+    int? divisions,
+    int decimals = 0,
   }) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -281,7 +441,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
                   borderRadius: BorderRadius.circular(AppSizing.radiusSmall),
                 ),
                 child: Text(
-                  value.toInt().toString(),
+                  decimals > 0 ? value.toStringAsFixed(decimals) : value.toInt().toString(),
                   style: const TextStyle(
                     fontSize: AppTypography.md,
                     fontWeight: FontWeight.w700,
@@ -306,6 +466,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
               value: value,
               min: minValue,
               max: maxValue,
+              divisions: divisions,
               onChanged: onChanged,
             ),
           ),
@@ -314,14 +475,14 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                minValue.toInt().toString(),
+                decimals > 0 ? minValue.toStringAsFixed(decimals) : minValue.toInt().toString(),
                 style: TextStyle(
                   fontSize: AppTypography.xs,
                   color: AppColors.textSecondary.withOpacity(0.6),
                 ),
               ),
               Text(
-                maxValue.toInt().toString(),
+                decimals > 0 ? maxValue.toStringAsFixed(decimals) : maxValue.toInt().toString(),
                 style: TextStyle(
                   fontSize: AppTypography.xs,
                   color: AppColors.textSecondary.withOpacity(0.6),
@@ -461,15 +622,67 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
     );
   }
 
-  void _handleSave() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '✅ "$_itemName" gespeichert! (Damage: ${_damage.toInt()}, Durability: ${_durability.toInt()})',
+  Future<void> _handleSave() async {
+    if (widget.project == null) {
+      // Demo mode - just show a message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '✅ "$_itemName" gespeichert! (Demo-Modus)',
+          ),
+          backgroundColor: AppColors.success,
+          duration: const Duration(seconds: 3),
         ),
-        backgroundColor: AppColors.success,
-        duration: const Duration(seconds: 3),
-      ),
+      );
+      return;
+    }
+
+    // Save project with updated data
+    final updatedProject = widget.project!.copyWith(
+      name: _itemName,
+      data: {
+        ...widget.project!.data,
+        'emoji': _itemEmoji,
+        'customStats': {
+          'damage': _damage,
+          'durability': _durability,
+          'attack_speed': _attackSpeed,
+          'armor': _armor,
+          'armor_toughness': _armorToughness,
+          'mining_speed': _miningSpeed,
+        },
+        'effects': {
+          'fire': _fireEffect,
+          'glow': _glowEffect,
+        },
+      },
     );
+
+    final success = await _projectService.updateProject(updatedProject);
+
+    if (success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '✅ "$_itemName" gespeichert!',
+          ),
+          backgroundColor: AppColors.success,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      // Close workshop and return to home
+      Navigator.of(context).pop();
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            '❌ Fehler beim Speichern',
+          ),
+          backgroundColor: AppColors.error,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }

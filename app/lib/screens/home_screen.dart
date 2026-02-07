@@ -3,6 +3,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
 import '../services/project_service.dart';
+import 'workshop_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onCreateProject;
@@ -49,6 +50,18 @@ class _HomeScreenState extends State<HomeScreen> {
       await Future.delayed(const Duration(milliseconds: 500));
       _loadProjects();
     }
+  }
+
+  Future<void> _openProject(Project project) async {
+    // Navigate to Workshop with project
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => WorkshopScreen(project: project),
+      ),
+    );
+
+    // Reload projects when returning (project might have been updated)
+    _loadProjects();
   }
 
   Future<void> _deleteProject(String projectId) async {
@@ -365,14 +378,16 @@ class _HomeScreenState extends State<HomeScreen> {
         await _deleteProject(project.id);
         return false; // We handle deletion ourselves
       },
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
-        ),
-        child: Row(
-          children: [
+      child: GestureDetector(
+        onTap: () => _openProject(project),
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
+          ),
+          child: Row(
+            children: [
             // Icon
             Container(
               width: AppSizing.touchIdeal,
@@ -455,6 +470,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );
