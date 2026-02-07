@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'vanilla_item.dart';
 
 /// Represents a GameForge project
 class Project {
@@ -95,6 +96,23 @@ class Project {
         return '📦';
     }
   }
+
+  /// Get the base item if one was selected
+  VanillaItem? get baseItem {
+    final baseItemData = data['baseItem'];
+    if (baseItemData == null) return null;
+
+    try {
+      final itemMap = baseItemData as Map<String, dynamic>;
+      final key = itemMap['key'] as String;
+      return VanillaItem.fromJson(key, itemMap);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Check if project has a base item
+  bool get hasBaseItem => data['baseItem'] != null;
 
   @override
   bool operator ==(Object other) {
