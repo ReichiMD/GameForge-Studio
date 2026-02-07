@@ -109,15 +109,36 @@
 
 ---
 
-## 🎯 Nächste Session: Phase 3
+### Session #12 - 2026-02-07 - Phase 3 Projekt-Speicherung
+
+**Branch:** `claude/implement-project-saving-lCGe5`
+
+**Durchgeführt:**
+- ✅ Project Model mit JSON-Serialization (app/lib/models/project.dart)
+- ✅ ProjectService mit CRUD-Operationen (app/lib/services/project_service.dart)
+- ✅ CreateProjectScreen speichert jetzt Projekte persistent
+- ✅ HomeScreen lädt echte Projekte + Swipe-to-Delete-Funktion
+- ✅ Empty State wenn keine Projekte vorhanden
+
+**Commits:**
+- `6965d74` - Implement project saving with SharedPreferences (Phase 3)
+
+**Wichtige Features:**
+- Projekte überleben App-Neustart (SharedPreferences)
+- Swipe-to-Delete mit Confirmation-Dialog
+- Nutzerfreundliche Datumsanzeige (Heute, Gestern, etc.)
+- Auto-Refresh nach Projekt-Erstellung
+
+**Status:** ✅ Phase 3 Projekt-Speicherung komplett (~90% Migration)
+
+**Nächstes:** vanilla_stats.json laden + Item-Selection Modal
+
+---
+
+## 🎯 Nächste Session: Phase 4
 
 **Geplant:**
-1. Projekt-Speicherung (SharedPreferences)
-   - Project-Model erstellen
-   - ProjectService implementieren
-   - HomeScreen mit echten Projekten
-
-2. vanilla_stats.json Integration
+1. vanilla_stats.json Integration
    - Asset in pubspec.yaml einbinden
    - Loader erstellen
    - WorkshopScreen mit echten Item-Daten
@@ -133,9 +154,9 @@
 ## 📊 Projekt-Status
 
 **Technologie:** Flutter + Dart (migriert von React Native)
-**Fortschritt:** ~85% (Phase 2 komplett)
+**Fortschritt:** ~90% (Phase 3 komplett)
 **APK:** Baut erfolgreich (21 MB)
-**Nächster Milestone:** Phase 3 - Daten-Integration
+**Nächster Milestone:** Phase 4 - Item-Integration
 
 **Dokumentation:**
 - ✅ CLAUDE.md (Session-Start)
@@ -147,4 +168,4 @@
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-07 (Session #11)
+**Letzte Aktualisierung:** 2026-02-07 (Session #12)
