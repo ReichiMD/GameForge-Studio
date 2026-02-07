@@ -1,216 +1,222 @@
 # 🗺️ GameForge Studio - Roadmap
 
 **Projekt:** Minecraft Add-on Creator für Kinder (7 Jahre+)
-**Status:** MVP Phase
-**Letzte Aktualisierung:** 2026-02-06
+**Technologie:** Flutter + Dart (migriert von React Native)
+**Status:** Phase 2 abgeschlossen (~85%)
+**Letzte Aktualisierung:** 2026-02-07
 
 ---
 
-## ✅ Sprint 1 - Grundstruktur (Abgeschlossen)
+## ⚠️ Migration: React Native → Flutter (Abgeschlossen)
 
-- [x] React Native + Expo Setup
-- [x] Bottom Tab Navigation (Home, Library, Workshop, Settings)
-- [x] Theme System (Dark Mode optimiert)
-- [x] 6 Haupt-Screens implementiert
-- [x] AsyncStorage Integration
-- [x] Login-Screen mit GitHub Token
-- [x] Projekt-Kontext (CRUD)
+**Grund:** Zuverlässigere APK-Builds, bessere Performance, einfacherer Build-Prozess
+**Zeitraum:** 2026-02-06 bis 2026-02-07 (2 Tage)
 
----
+**Was migriert wurde:**
+- [x] Design-System → Material 3 (app_colors.dart, app_spacing.dart, app_theme.dart)
+- [x] LoginScreen + Auth → SharedPreferences
+- [x] HomeScreen → Demo-Projekte, Navigation
+- [x] Bottom Navigation → 4 Tabs (IndexedStack)
+- [x] CreateProjectScreen → 6 Kategorien
+- [x] WorkshopScreen → MVP mit Slidern
+- [x] SettingsScreen → Logout
+- [x] GitHub Actions → Flutter APK Build
 
-## ✅ Sprint 2 - Bug Fixes (Abgeschlossen - 2026-02-06)
-
-- [x] "Projekt erstellen" Button entfernt (überflüssig)
-- [x] Scroll-Position im WorkshopScreen zurücksetzen
-- [x] Speichern-Button im WorkshopScreen funktionalisiert
-- [x] 2-stufige Kategorie/Item-Auswahl im ProjectDetailScreen
-- [x] Lösch-Buttons für Projekte und Items hinzugefügt
-- [x] `deleteProject` und `removeItemFromProject` in ProjectContext
+**Status:** ✅ Migration erfolgreich! APK baut (21 MB)
 
 ---
 
-## 🚧 Sprint 3 - Item Library & Stats (In Planung)
+## ✅ Phase 1 - Core Setup (Abgeschlossen - 2026-02-07)
 
-### Phase 3.1: Library Integration
-- [ ] `vanilla_stats.json` in App einbinden
-- [ ] Item-Datenmodell erweitern (Stats, Texturen)
-- [ ] LibraryScreen mit echten Daten befüllen
-- [ ] Item-Filter nach Kategorie
-- [ ] Item-Suche implementieren
+- [x] Flutter + Dart Setup (Flutter 3.27.1, Dart 3.6.0)
+- [x] Material 3 Dark Theme (Purple #8B5CF6)
+- [x] Kinderfreundliche Touch-Targets (60px)
+- [x] LoginScreen mit Form Validation
+- [x] SharedPreferences für Auth
+- [x] HomeScreen mit Demo-Projekten
+- [x] GitHub Actions Workflow (APK automatisch bauen)
 
-### Phase 3.2: Item Editor - Echte Stats
-- [ ] **Priorität A**: WorkshopScreen mit echten Stats
-  - [ ] Schaden-Slider (dynamisch je nach Item-Typ)
-  - [ ] Geschwindigkeit-Slider
-  - [ ] Haltbarkeit-Slider
-  - [ ] Rarity-Auswahl (Common, Uncommon, Rare, Epic)
-  - [ ] "Erweitert"-Button für zusätzliche Optionen
-- [ ] Stats aus `vanilla_stats.json` laden
-- [ ] Standard-Werte vs. Custom-Werte
-
-### Phase 3.3: Erweiterte Editor-Features
-- [ ] **Erweitert-Modus** im Item Editor:
-  - [ ] Item-ID Eingabe
-  - [ ] Kritischer Treffer %
-  - [ ] Knockback
-  - [ ] Reichweite
-  - [ ] Verzauberungen-Auswahl
-  - [ ] Max Stack Size
-  - [ ] Reparierbar (Ja/Nein)
+**Ergebnis:** Solide Basis, zuverlässige Builds
 
 ---
 
-## 📦 Sprint 4 - Custom Items (Geplant)
+## ✅ Phase 2 - Navigation & Screens (Abgeschlossen - 2026-02-07)
 
-### Phase 4.1: Custom Item Erstellung
-- [ ] Item bearbeiten → Automatisch als Custom markieren
-- [ ] Custom Items in `assets/custom/items/` speichern
-- [ ] Lokaler Cache + Repository-Sync
-- [ ] Custom Items in separatem Tab anzeigen
+- [x] Bottom Navigation Bar (Home, Bibliothek, Workshop, Settings)
+- [x] State Preservation (IndexedStack)
+- [x] CreateProjectScreen (6 Kategorien: Waffen, Rüstung, Mobs, Nahrung, Blöcke, Werkzeuge)
+- [x] Projekt-Name Validation
+- [x] WorkshopScreen MVP:
+  - [x] Item-Preview Card
+  - [x] Editierbarer Item-Name
+  - [x] Damage Slider (1-20)
+  - [x] Durability Slider (100-3000)
+  - [x] Effekt-Toggles (Feuer, Leuchten)
+  - [x] Speichern-Button mit SnackBar
+- [x] SettingsScreen (Logout-Button)
+- [x] Navigation Flow (Home → CreateProject → Workshop)
 
-### Phase 4.2: Bild-Upload
-- [ ] Foto aus Galerie auswählen
-- [ ] Bild-Editor für kleine Texturen (16x16, 32x32)
-  - [ ] Pixel-Grid
-  - [ ] Farbpalette
-  - [ ] Einfache Werkzeuge (Stift, Radierer, Füllen)
-- [ ] Custom Texturen in `assets/custom/textures/` speichern
-- [ ] Vorschau im Item Editor
-
-### Phase 4.3: Item-Management
-- [ ] Custom Items umbenennen
-- [ ] Custom Items duplizieren
-- [ ] Custom Items exportieren (JSON + PNG)
-- [ ] Custom Items importieren
+**Ergebnis:** Alle Haupt-Screens vorhanden, Navigation funktioniert
 
 ---
 
-## 🔧 Sprint 5 - GitHub Integration (Geplant)
+## 🚧 Phase 3 - Daten-Integration (In Arbeit)
+
+**Priorität:** HOCH (ohne Daten ist App nur Demo)
+
+### Phase 3.1: Projekt-Speicherung
+- [ ] **Project-Model** erstellen (`app/lib/models/project.dart`)
+- [ ] **ProjectService** implementieren:
+  - [ ] `loadProjects()` aus SharedPreferences
+  - [ ] `saveProject(Project project)`
+  - [ ] `deleteProject(String id)`
+  - [ ] `addItemToProject(String projectId, String itemId)`
+- [ ] **HomeScreen** mit echten Projekten (statt Demo-Daten)
+- [ ] **CreateProjectScreen** speichert neues Projekt
+
+**Geschätzter Aufwand:** 2-3h (1 Session)
+
+### Phase 3.2: vanilla_stats.json Integration
+- [ ] **Asset einbinden** (pubspec.yaml)
+- [ ] **VanillaItem-Model** erstellen
+- [ ] **Loader** implementieren (`app/lib/data/vanilla_items.dart`)
+- [ ] **WorkshopScreen** mit echten Item-Daten:
+  - [ ] Item-Daten aus vanilla_stats.json laden
+  - [ ] Dynamische Slider (Damage, Durability, Attack Speed, Armor)
+  - [ ] Stats je nach Item-Typ (Waffe vs. Rüstung vs. Nahrung)
+
+**Geschätzter Aufwand:** 3-4h (1-2 Sessions)
+
+### Phase 3.3: Item-Selection Modal
+- [ ] **Modal** nach Kategorie-Auswahl
+- [ ] Items aus vanilla_stats.json anzeigen
+- [ ] Suche/Filter
+- [ ] Item-Auswahl → WorkshopScreen
+
+**Geschätzter Aufwand:** 2-3h (1 Session)
+
+---
+
+## 📅 Phase 4 - LibraryScreen & Features (Geplant)
+
+### Phase 4.1: LibraryScreen
+- [ ] Item-Galerie (Grid View)
+- [ ] Filter nach Kategorie
+- [ ] Suche nach Name
+- [ ] Item-Details anzeigen
+- [ ] Item zu Projekt hinzufügen
+
+**Geschätzter Aufwand:** 4-6h (2 Sessions)
+
+### Phase 4.2: WorkshopScreen Erweiterungen
+- [ ] GitHub-Bilder laden (von fabrik-library)
+- [ ] Snap-to-Default Slider (Vibration)
+- [ ] Erweitert-Button (Item-ID, Knockback, etc.)
+- [ ] Rarity-Auswahl (Common, Uncommon, Rare, Epic)
+
+**Geschätzter Aufwand:** 3-4h (1-2 Sessions)
+
+### Phase 4.3: UI Polish
+- [ ] App-Name ändern (gameforge_studio → GameForge Studio)
+- [ ] App-Icon hinzufügen
+- [ ] Splash-Screen anpassen
+- [ ] Error-Handling verbessern
+- [ ] Loading-States hinzufügen
+
+**Geschätzter Aufwand:** 2-3h (1 Session)
+
+---
+
+## 🔧 Phase 5 - GitHub Integration (Geplant)
 
 ### Phase 5.1: GitHubService
-- [ ] API Client implementieren
-- [ ] Token-Verwaltung (sicher!)
+- [ ] API Client implementieren (http package)
+- [ ] Token-Verwaltung (sicher in SharedPreferences)
 - [ ] Repository-Zugriff testen
 
 ### Phase 5.2: Projekt-Export
 - [ ] `project.json` generieren (Minecraft Addon Format)
 - [ ] `manifest.json` erstellen
-- [ ] Behavior Pack Struktur aufbauen
-- [ ] Resource Pack Struktur aufbauen
+- [ ] Behavior Pack Struktur
+- [ ] Resource Pack Struktur
 
 ### Phase 5.3: GitHub Push
-- [ ] Projekt zu GitHub pushen
-- [ ] Commit-Historie anzeigen
-- [ ] Pull/Sync von GitHub
+- [ ] Projekt zu Werkstatt-Repo pushen
+- [ ] GitHub Actions triggern (Gemini AI)
+- [ ] .mcaddon Download
+
+**Geschätzter Aufwand:** 6-8h (2-3 Sessions)
 
 ---
 
-## 🏗️ Sprint 6 - Advanced Features (Zukunft)
+## 🌟 Phase 6 - Advanced Features (Zukunft)
 
-### Phase 6.1: Erweiterte Kategorien
-- [ ] Werkzeuge (Spitzhacke, Schaufel, Axt, Hacke)
+### Erweiterte Kategorien
 - [ ] Blöcke (Bau, Deko, Redstone)
 - [ ] Tränke (Effekte, Dauer)
-- [ ] Mobs (Entities - fortgeschritten)
+- [ ] Werkzeuge (Spitzhacke, Schaufel, Axt)
 
-### Phase 6.2: Crafting-Rezepte
-- [ ] Rezept-Editor
-- [ ] 3x3 Grid
+### Crafting-Rezepte
+- [ ] Rezept-Editor (3x3 Grid)
 - [ ] Shapeless Recipes
 - [ ] Furnace/Brewing Rezepte
 
-### Phase 6.3: Testing & Preview
-- [ ] In-App Preview (3D Item-Vorschau?)
-- [ ] Addon-Validator
-- [ ] Export zu Minecraft (direkter Import?)
+### Custom Items
+- [ ] Foto aus Galerie für Custom Textur
+- [ ] Einfacher Pixel-Editor (16x16)
+- [ ] Custom Items exportieren/importieren
 
 ---
 
-## 🌐 Sprint 7 - Library Migration (Wichtig!)
+## 📱 UX/UI Verbesserungen (Laufend)
 
-### Phase 7.1: Repository-Struktur
-- [ ] **Library-Daten** von `GameForge-Studio` nach `fabrik-library` verschieben
-  - [ ] `vanilla_stats.json`
-  - [ ] `library_index.json`
-  - [ ] `assets/vanilla/`
-  - [ ] `assets/custom/` (Template-Struktur)
-- [ ] `sync_assets.yml` Workflow erweitern
-- [ ] `indexer.py` für Stats-Integration
-
-### Phase 7.2: App-Integration
-- [ ] App holt Library-Daten von `fabrik-library`
-- [ ] Lokaler Cache-Mechanismus
-- [ ] Background-Sync (einmal pro Tag?)
-
-### Phase 7.3: Custom Items Cloud-Sync
-- [ ] Custom Items in `fabrik-library` pushen
-- [ ] Geräte-übergreifender Zugriff
-- [ ] Versionierung (Git)
-
----
-
-## 📱 Sprint 8 - UX/UI Verbesserungen (Laufend)
-
-### Kinder-freundlich (7 Jahre+)
-- [ ] Große Touch-Targets (min. 60x60px)
-- [ ] Emoji-heavy UI
-- [ ] Animationen (Fun Factor!)
+### Kinder-freundlich
+- [x] Große Touch-Targets (60x60px)
+- [x] Emoji-heavy UI
+- [ ] Animationen (Fun Factor)
 - [ ] Tutorials/Onboarding
 - [ ] Achievements (Gamification)
 
 ### Performance
 - [ ] Lazy Loading für Item-Listen
 - [ ] Image Caching optimieren
-- [ ] Scroll-Performance verbessern
-
-### Settings-Screen
-- [ ] Copyright-Hinweis: "Minecraft Assets © Mojang AB"
-- [ ] App-Version anzeigen
-- [ ] Logout-Button
-- [ ] Theme-Toggle (Light/Dark)
+- [ ] Scroll-Performance
 
 ---
 
-## 🐛 Known Issues (Backlog)
+## 🐛 Known Issues
 
-- [ ] TypeScript-Fehler in `HomeScreen.tsx` (demoProjects Array - kosmetisch)
-- [ ] Logout-Button fehlt im UI (onLogout wird übergeben, aber nicht genutzt)
-- [ ] Services (alle) noch nicht implementiert
+- ❌ HomeScreen hat Demo-Daten (keine echte Speicherung)
+- ❌ vanilla_stats.json noch nicht geladen
+- ❌ LibraryScreen nur Placeholder
+- ❌ App-Name ist technisch (gameforge_studio)
 
----
-
-## 💡 Ideen für später
-
-### Community-Features
-- [ ] Item-Sharing (QR-Code?)
-- [ ] Community-Library (öffentliche Items)
-- [ ] Bewertungen/Likes
-
-### Erweiterte Tools
-- [ ] Animations-Editor (einfache Animationen)
-- [ ] Sound-Editor (Item-Sounds)
-- [ ] Model-Editor (vereinfacht)
-
-### Plattformen
-- [ ] Web-Version (Progressive Web App?)
-- [ ] Desktop-Version (Electron?)
+**Alle non-blocking!** App funktioniert grundsätzlich.
 
 ---
 
 ## 📊 Metriken
 
 **Aktueller Stand:**
-- ✅ 6 Screens implementiert
-- ✅ 39 Vanilla Items mit Stats
-- ✅ Projekt-CRUD funktional
-- ✅ Custom Items Infrastruktur (geplant)
+- ✅ Flutter Migration komplett
+- ✅ 6 Screens implementiert (Login, Home, CreateProject, Library, Workshop, Settings)
+- ✅ Bottom Navigation funktioniert
+- ✅ WorkshopScreen MVP funktioniert
+- ✅ APK baut erfolgreich (21 MB)
+- ✅ 39 Vanilla Items mit Stats (library/vanilla_stats.json)
 
 **Nächster Meilenstein:**
-- 🎯 Item Editor mit echten Stats (Sprint 3)
-- 🎯 Custom Items erstellen (Sprint 4)
+- 🎯 Phase 3: Daten-Integration (2-3 Sessions)
+- 🎯 HomeScreen dynamisch (echte Projekte)
+- 🎯 WorkshopScreen mit echten Stats
 
 ---
 
-**Versionsnummer:** 0.3.0-alpha
-**Ziel MVP:** 0.5.0 (Ende Sprint 4)
-**Ziel Beta:** 1.0.0 (Ende Sprint 6)
+**Versionsnummer:** 0.2.0-beta
+**Ziel MVP:** 0.5.0 (Ende Phase 4)
+**Ziel Beta:** 1.0.0 (Ende Phase 6)
+
+---
+
+**Geschätzte Zeit bis MVP:** 6-8 Sessions (~20-30h)
+**Geschätzte Zeit bis Beta:** 12-15 Sessions (~50-70h)

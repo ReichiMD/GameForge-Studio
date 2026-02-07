@@ -3,10 +3,10 @@
 ## 📋 Projektübersicht
 
 **Projekt:** GameForge Studio - Multi-Game Addon Creator App
-**Typ:** Native Mobile App (React Native + Expo)
+**Typ:** Native Mobile App (Flutter + Dart)
 **Platform:** Android
-**Status:** In Entwicklung
-**Version:** 0.1.0-alpha
+**Status:** Phase 2 abgeschlossen (~85%)
+**Version:** 0.2.0-beta
 **Lizenz:** MIT
 
 ## 🎯 Projektziel
@@ -28,7 +28,7 @@ GameForge Studio ist eine **kinderfreundliche Mobile App**, die es einem 7-jähr
 
 ```
 ┌─────────────────────┐
-│  GameForge Studio   │  ← Diese App (React Native)
+│  GameForge Studio   │  ← Diese App (Flutter)
 │   (Mobile App)      │     - UI für Item-Erstellung
 │                     │     - Projekt-Management
 └──────────┬──────────┘     - GitHub Push
@@ -53,10 +53,10 @@ GameForge Studio ist eine **kinderfreundliche Mobile App**, die es einem 7-jähr
 ### Komponenten-Details
 
 **1. GameForge Studio App (dieses Projekt)**
-- React Native + Expo
-- Screens: Home, Library, Workshop, Preview, Settings
-- Services: GitHub API, Project Manager, Translations
-- Lokale Speicherung: AsyncStorage
+- Flutter + Dart (Material 3 Design)
+- Screens: Login, Home, CreateProject, Library, Workshop, Settings
+- Services: ProjectService, LibraryService (geplant)
+- Lokale Speicherung: SharedPreferences
 
 **2. Werkstatt-Repo** (externe Abhängigkeit)
 - Repository: https://github.com/ReichiMD/Werkstatt-Minecraft-Addon
@@ -68,12 +68,7 @@ GameForge Studio ist eine **kinderfreundliche Mobile App**, die es einem 7-jähr
 - Repository: https://github.com/ReichiMD/fabrik-library
 - Mojang Items mit Texturen
 - JSON-Definitionen
-- Wird von App geladen
-
-**4. Fabrik-OS-Zentrale (PWA)** (Wiederverwendung)
-- Existierende PWA mit ähnlichen Features
-- Module können portiert werden
-- UI-Komponenten als Vorlage
+- Wird von App geladen (via vanilla_stats.json)
 
 ## 🎨 Design-Prinzipien
 

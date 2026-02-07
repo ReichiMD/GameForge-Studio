@@ -2,11 +2,12 @@
 
 > **Mobile App für kinderfreundliche Minecraft Addon-Erstellung**
 
-GameForge Studio ist eine **React Native Mobile App**, die es einem 7-jährigen Kind (zusammen mit Papa) ermöglicht, **Minecraft Bedrock Addons** zu erstellen - ganz **ohne Programmieren**! Mit großen Buttons, Emojis und Schiebereglern können custom Waffen, Items und Blöcke erstellt werden.
+GameForge Studio ist eine **Flutter Mobile App**, die es einem 7-jährigen Kind (zusammen mit Papa) ermöglicht, **Minecraft Bedrock Addons** zu erstellen - ganz **ohne Programmieren**! Mit großen Buttons, Emojis und Schiebereglern können custom Waffen, Items und Blöcke erstellt werden.
 
-**Platform:** Android (React Native + Expo)
+**Platform:** Android (Flutter + Dart)
 **Zielgruppe:** Kinder & Hobby-Creators
 **Backend:** GitHub Actions + Gemini AI
+**Status:** Phase 2 abgeschlossen (~85%)
 
 ---
 
@@ -15,12 +16,11 @@ GameForge Studio ist eine **React Native Mobile App**, die es einem 7-jährigen 
 ### 🏠 HomeScreen - Projektliste
 - Alle Projekte auf einen Blick
 - Neues Projekt mit einem Tap erstellen
-- Direkt zu GitHub pushen
 - Projekt-Status: Draft oder Published
 
 ### 📚 LibraryScreen - Item-Galerie
 - Items aus **fabrik-library** durchstöbern
-- Filter: Waffen, Tools, Blöcke
+- Filter: Waffen, Rüstung, Nahrung, Blöcke
 - Suche nach Namen
 - Items zum Projekt hinzufügen
 
@@ -29,19 +29,12 @@ GameForge Studio ist eine **React Native Mobile App**, die es einem 7-jährigen 
   - ⚔️ Damage (Schaden)
   - 🛡️ Durability (Haltbarkeit)
   - ⚡ Speed (Geschwindigkeit)
-- Texture auswählen
-- Name & Beschreibung eingeben
+- **Effekt-Toggles** (Feuer, Leuchten)
 - Kinderfreundliche Bedienung
-
-### 👁️ PreviewScreen - Item-Übersicht
-- Alle Items im Projekt sehen
-- Eigenschaften auf einen Blick
-- Items bearbeiten oder löschen
 
 ### ⚙️ SettingsScreen - Einstellungen
 - GitHub Token eingeben
-- Sprache wählen (🇩🇪 DE / 🇬🇧 EN)
-- Dark/Light Mode
+- Logout-Funktion
 - Repository-Verwaltung
 
 ---
@@ -51,7 +44,7 @@ GameForge Studio ist eine **React Native Mobile App**, die es einem 7-jährigen 
 ```
 ┌─────────────────────┐
 │  GameForge Studio   │  ← Diese App
-│   (Mobile App)      │     React Native + Expo
+│   (Mobile App)      │     Flutter + Dart
 └──────────┬──────────┘
            │ project.json
            ↓
@@ -71,7 +64,6 @@ GameForge Studio ist eine **React Native Mobile App**, die es einem 7-jährigen 
 
 - **Werkstatt:** https://github.com/ReichiMD/Werkstatt-Minecraft-Addon
 - **fabrik-library:** https://github.com/ReichiMD/fabrik-library
-- **PWA (Vorlage):** Fabrik-OS-Zentrale
 
 ---
 
@@ -79,9 +71,8 @@ GameForge Studio ist eine **React Native Mobile App**, die es einem 7-jährigen 
 
 ### Voraussetzungen
 
-- **Node.js** >= 18.0.0
-- **npm** oder **pnpm**
-- **Expo CLI:** `npm install -g expo-cli`
+- **Flutter** >= 3.24.0
+- **Dart** >= 3.5.0
 - **Android Studio** (für Emulator) oder physisches Android-Gerät
 
 ### Installation
@@ -89,54 +80,43 @@ GameForge Studio ist eine **React Native Mobile App**, die es einem 7-jährigen 
 ```bash
 # Repository klonen
 git clone https://github.com/ReichiMD/GameForge-Studio.git
-cd GameForge-Studio
+cd GameForge-Studio/app
 
 # Dependencies installieren
-npm install
+flutter pub get
 
-# Expo Development Server starten
-npm start
+# App starten (Debug)
+flutter run
 
-# Auf Android-Gerät/Emulator
-# - Expo Go App auf Gerät installieren
-# - QR-Code scannen
-# ODER
-npm run android
+# APK bauen (Release)
+flutter build apk --release
 ```
 
-### Entwicklung
+### APK Download
 
-```bash
-# Development Server
-npm start
-
-# Android Emulator
-npm run android
-
-# Tests
-npm test
-
-# Linting
-npm run lint
-```
+APKs werden automatisch via GitHub Actions gebaut:
+- **Branch:** `claude/review-flutter-docs-TbN9s` (oder aktueller Branch)
+- **GitHub Actions:** https://github.com/ReichiMD/GameForge-Studio/actions
+- **Download:** Unter "Artifacts" → "GameForge-APK"
 
 ---
 
 ## 🎨 Design-Prinzipien
 
 ### Kinderfreundlich aber nicht kindisch
-- ✅ Moderne, cleane UI
-- ✅ Große Buttons (60x60px)
+- ✅ Moderne, cleane UI (Material 3)
+- ✅ Große Buttons (60x60px Touch-Targets)
 - ✅ Emojis statt viel Text
 - ✅ Intuitive Icons
 - ❌ Keine Comic-Grafiken
 - ❌ Keine Baby-Sprache
 
-### Farbschema (Minecraft)
+### Farbschema (Minecraft-inspiriert)
 - **Purple:** `#8B5CF6` (Hauptaktionen)
 - **Green:** `#10B981` (Erfolg)
 - **Blue:** `#3B82F6` (Info)
-- **Dark Mode:** `#1F2937` / `#111827`
+- **Red:** `#EF4444` (Fehler)
+- **Dark Mode:** `#1F2937` / `#111827` (Background)
 
 ---
 
@@ -144,40 +124,51 @@ npm run lint
 
 ```
 GameForge-Studio/
-├── src/
-│   ├── screens/           # 5 Haupt-Screens
-│   ├── components/        # UI-Komponenten
-│   ├── services/          # Business Logic
-│   ├── hooks/             # Custom Hooks
-│   ├── context/           # Global State
-│   ├── utils/             # Hilfsfunktionen
-│   ├── constants/         # Konstanten
-│   └── assets/            # Icons, Bilder
-├── docs/                  # Dokumentation
-├── App.js                 # Entry Point
-├── app.json               # Expo Config
-└── package.json           # Dependencies
+├── app/                       # Flutter App
+│   ├── lib/
+│   │   ├── main.dart         # Entry Point + Navigation
+│   │   ├── screens/          # 6 Screens (Login, Home, Create, Workshop, Library, Settings)
+│   │   ├── theme/            # app_colors.dart, app_spacing.dart, app_theme.dart
+│   │   ├── models/           # TODO: Project, Item Models
+│   │   ├── services/         # TODO: ProjectService, LibraryService
+│   │   └── data/             # TODO: vanilla_stats.json Loader
+│   ├── pubspec.yaml          # Dependencies
+│   └── android/              # Android-spezifische Dateien
+├── library/                   # Item-Daten
+│   ├── vanilla_stats.json    # 39 Minecraft Items mit Stats
+│   └── README.md             # Erklärt vanilla_stats.json
+├── .github/workflows/        # CI/CD (GitHub Actions)
+├── CLAUDE.md                 # Session Quick Start (lies zuerst!)
+├── FLUTTER_STATUS.md         # Technischer Status
+├── SESSION_LOG.md            # Development Historie
+├── PROJECT_INFO.md           # Projekt-Architektur
+├── ROADMAP.md                # Feature-Planung
+└── README.md                 # Diese Datei
 ```
 
 ---
 
 ## 📚 Dokumentation
 
+Für AI-Assistenten (Claude):
+- **[CLAUDE.md](CLAUDE.md)** - **START HIER!** Session Quick Start (2.000 Tokens)
+- **[FLUTTER_STATUS.md](FLUTTER_STATUS.md)** - Technischer Status (bei Bedarf, 5.000 Tokens)
+- **[SESSION_LOG.md](SESSION_LOG.md)** - Entwicklungs-Historie
+
+Für Menschen:
 - **[PROJECT_INFO.md](PROJECT_INFO.md)** - Detaillierte Projektinformationen
-- **[INDEX.md](INDEX.md)** - Modul-Verzeichnis
-- **[SESSION_LOG.md](SESSION_LOG.md)** - Development Logs
+- **[ROADMAP.md](ROADMAP.md)** - Feature-Planung & Roadmap
 
 ---
 
 ## 🔧 Technologie-Stack
 
 ### Frontend
-- **React Native** 0.73+
-- **Expo** SDK 50+
-- **React Navigation** 6
-- **React Native Paper** (UI)
-- **AsyncStorage** (Persistenz)
-- **Axios** (HTTP)
+- **Flutter** 3.27.1
+- **Dart** 3.6.0
+- **Material 3** Design
+- **SharedPreferences** (Persistenz)
+- **HTTP** Package (geplant für GitHub API)
 
 ### Backend (extern)
 - **GitHub Actions**
@@ -185,36 +176,36 @@ GameForge-Studio/
 
 ### Daten
 - **fabrik-library** (GitHub)
-- **JSON** Format
+- **vanilla_stats.json** (lokal + remote)
 
 ---
 
 ## 🗺️ Roadmap
 
-### Sprint 1 (Woche 1-2) - Setup
-- [x] Projekt-Dokumentation
-- [ ] Expo/React Native Setup
-- [ ] Navigation-Struktur
-- [ ] Theme & Design-System
-- [ ] HomeScreen
+### ✅ Phase 1: Core Setup (Komplett)
+- ✅ Flutter-Projekt Setup
+- ✅ Design-System (Material 3, Theme)
+- ✅ LoginScreen + Auth (SharedPreferences)
+- ✅ HomeScreen (Basis)
+- ✅ GitHub Actions (APK Build)
 
-### Sprint 2 (Woche 3-4) - Library & Workshop
-- [ ] LibraryScreen (fabrik-library)
-- [ ] WorkshopScreen (Editor)
-- [ ] Item-Eigenschaften (Schieberegler)
-- [ ] AsyncStorage Integration
+### ✅ Phase 2: Navigation & Screens (Komplett)
+- ✅ Bottom Navigation (4 Tabs)
+- ✅ CreateProjectScreen (6 Kategorien)
+- ✅ WorkshopScreen MVP (Slider, Toggles)
+- ✅ SettingsScreen (Logout)
 
-### Sprint 3 (Woche 5-6) - GitHub Integration
-- [ ] GitHubService (API)
-- [ ] GitHub Token Verwaltung
+### ⏳ Phase 3: Daten-Integration (In Arbeit)
+- [ ] Projekt-Speicherung (SharedPreferences)
+- [ ] vanilla_stats.json laden
+- [ ] WorkshopScreen mit echten Item-Daten
+- [ ] Item-Selection Modal
+
+### 📅 Phase 4: Features & Polish (Geplant)
+- [ ] LibraryScreen (Item-Galerie)
+- [ ] GitHub Integration (API)
 - [ ] project.json Export
-- [ ] Push zu Werkstatt
-
-### Sprint 4 (Woche 7-8) - Polish
-- [ ] PreviewScreen
-- [ ] SettingsScreen
-- [ ] Testing & Bug-Fixes
-- [ ] Alpha Release
+- [ ] App-Icon + Splash-Screen
 
 ---
 
@@ -239,7 +230,6 @@ MIT License - siehe [LICENSE](LICENSE) Datei
 ## 🙏 Credits
 
 - **Inspiriert von:** Minecraft Bedrock Edition
-- **PWA-Vorlage:** Fabrik-OS-Zentrale
 - **Backend:** Werkstatt-Minecraft-Addon
 - **Daten:** fabrik-library
 
@@ -257,6 +247,6 @@ MIT License - siehe [LICENSE](LICENSE) Datei
 
 **Made with ❤️ for young creators**
 
-[Dokumentation](PROJECT_INFO.md) • [Module](INDEX.md) • [Logs](SESSION_LOG.md)
+[Dokumentation](CLAUDE.md) • [Status](FLUTTER_STATUS.md) • [Logs](SESSION_LOG.md)
 
 </div>
