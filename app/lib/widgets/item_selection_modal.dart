@@ -312,7 +312,7 @@ class _ItemSelectionModalState extends State<ItemSelectionModal> {
           style: const TextStyle(
             fontSize: AppTypography.sm,
             fontWeight: FontWeight.w600,
-            color: AppColors.accent,
+            color: AppColors.info,
           ),
         ),
       ],

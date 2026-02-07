@@ -444,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           'Basiert auf: ${baseItem.name}',
                           style: TextStyle(
                             fontSize: AppTypography.xs,
-                            color: AppColors.accent.withOpacity(0.8),
+                            color: AppColors.info.withOpacity(0.8),
                             fontWeight: FontWeight.w500,
                           ),
                         ),

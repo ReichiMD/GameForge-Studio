@@ -84,7 +84,7 @@ import 'package:gameforge_studio/theme/app_colors.dart';
 AppColors.primary       // #8B5CF6 (Purple)
 AppColors.success       // #10B981 (Green)
 AppColors.error         // #EF4444 (Red)
-AppColors.accent        // #3B82F6 (Blue)
+AppColors.info          // #3B82F6 (Blue)
 AppColors.background    // #1F2937 (Dark Gray)
 ```
 
