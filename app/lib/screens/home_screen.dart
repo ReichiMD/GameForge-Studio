@@ -3,7 +3,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
 import '../services/project_service.dart';
-import 'workshop_screen.dart';
+import 'project_items_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onCreateProject;
@@ -53,10 +53,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _openProject(Project project) async {
-    // Navigate to Workshop with project
+    // Navigate to Project Items screen
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => WorkshopScreen(project: project),
+        builder: (context) => ProjectItemsScreen(project: project),
       ),
     );
 

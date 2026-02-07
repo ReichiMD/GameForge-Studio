@@ -8,12 +8,14 @@ class ItemSelectionModal extends StatefulWidget {
   final String categoryId;
   final String categoryName;
   final String categoryEmoji;
+  final Function(VanillaItem)? onItemSelected;
 
   const ItemSelectionModal({
     super.key,
     required this.categoryId,
     required this.categoryName,
     required this.categoryEmoji,
+    this.onItemSelected,
   });
 
   @override
@@ -232,7 +234,14 @@ class _ItemSelectionModalState extends State<ItemSelectionModal> {
 
   Widget _buildItemCard(VanillaItem item) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).pop(item),
+      onTap: () {
+        if (widget.onItemSelected != null) {
+          widget.onItemSelected!(item);
+          Navigator.of(context).pop();
+        } else {
+          Navigator.of(context).pop(item);
+        }
+      },
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.surface,
