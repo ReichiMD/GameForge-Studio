@@ -1,8 +1,8 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 2.0 (Flutter)
+**Version:** 2.1 (Flutter)
 **Letzte Aktualisierung:** 2026-02-07
-**Status:** Phase 2 abgeschlossen (~85%)
+**Status:** Phase 3 Projekt-Speicherung (~90%)
 
 ---
 
@@ -16,12 +16,14 @@
 
 ---
 
-## 📱 Was funktioniert bereits? (Phase 1 + 2)
+## 📱 Was funktioniert bereits? (Phase 1-3)
 
 ✅ **Login/Logout** - Username + GitHub Token (SharedPreferences)
 ✅ **Bottom Navigation** - 4 Tabs (Home, Bibliothek, Workshop, Settings)
-✅ **HomeScreen** - Demo-Projekte, "Neues Projekt" Button
-✅ **CreateProjectScreen** - 6 Kategorien (Waffen, Rüstung, Mobs, Nahrung, Blöcke, Werkzeuge)
+✅ **HomeScreen** - Echte Projekte mit Swipe-to-Delete, Empty State
+✅ **CreateProjectScreen** - 6 Kategorien, speichert Projekte persistent
+✅ **Projekt-Speicherung** - ProjectService mit SharedPreferences (CRUD)
+✅ **Project Model** - JSON-Serialization, Timestamps, Category-Icons
 ✅ **WorkshopScreen MVP** - Item-Editor mit Slidern (Damage, Durability), Effekt-Toggles
 ✅ **SettingsScreen** - Logout-Button
 ✅ **Theme-System** - Material 3, Purple Theme (#8B5CF6), kinderfreundliche Touch-Targets
@@ -29,22 +31,21 @@
 
 ---
 
-## ⏳ Was fehlt noch? (Phase 3 - TODOs)
+## ⏳ Was fehlt noch? (Phase 4 - TODOs)
 
 ### **Priorität 1: Daten-Integration**
 - [ ] **vanilla_stats.json laden** - Item-Daten aus `library/vanilla_stats.json` einbinden
-- [ ] **Projekt-Speicherung** - ProjectService mit SharedPreferences
-- [ ] **HomeScreen dynamisch** - Echte Projekte statt Demo-Daten
+- [ ] **Item-Selection Modal** - Nach Kategorie-Auswahl Items anzeigen
 
 ### **Priorität 2: Feature-Erweiterungen**
-- [ ] **Item-Selection Modal** - Nach Kategorie-Auswahl Items anzeigen
 - [ ] **WorkshopScreen erweitern** - Mehr Stats, echte Item-Daten
 - [ ] **LibraryScreen** - Item-Galerie mit Filter/Suche
+- [ ] **Projekt bearbeiten** - Projekte öffnen und im Workshop editieren
 
 ### **Priorität 3: Polish**
 - [ ] App-Name ändern (von "gameforge_studio" zu "GameForge Studio")
 - [ ] App-Icon + Splash-Screen
-- [ ] Error-Handling, Loading-States
+- [ ] Besseres Error-Handling, Toast-Nachrichten
 
 ---
 
@@ -55,8 +56,8 @@ app/lib/
 ├── main.dart                      ← Entry Point, MainNavigation, AuthWrapper
 ├── screens/
 │   ├── login_screen.dart          ✅ Fertig (Form Validation, Token Input)
-│   ├── home_screen.dart           ✅ Fertig (Demo-Projekte, Navigation)
-│   ├── create_project_screen.dart ✅ Fertig (6 Kategorien, Name Input)
+│   ├── home_screen.dart           ✅ Fertig (Echte Projekte, Swipe-Delete, Empty State)
+│   ├── create_project_screen.dart ✅ Fertig (6 Kategorien, Projekt-Speicherung)
 │   ├── workshop_screen.dart       ✅ MVP (Slider, Toggles, Speichern-Button)
 │   ├── library_screen.dart        ⏳ Placeholder
 │   └── settings_screen.dart       ✅ Fertig (Logout)
@@ -64,8 +65,10 @@ app/lib/
 │   ├── app_colors.dart            ✅ Purple Theme, Success/Error/Accent
 │   ├── app_spacing.dart           ✅ Spacing, Sizing, Typography
 │   └── app_theme.dart             ✅ Material 3 Config
-├── models/                        ⏳ TODO (Project, Item Models)
-├── services/                      ⏳ TODO (ProjectService, LibraryService)
+├── models/
+│   └── project.dart               ✅ JSON-Serialization, Timestamps, Icons
+├── services/
+│   └── project_service.dart       ✅ CRUD Operations (SharedPreferences)
 └── data/                          ⏳ TODO (vanilla_stats.json Loader)
 ```
 
@@ -149,27 +152,29 @@ Du:   *liest nur app/lib/screens/home_screen.dart + theme/app_colors.dart*
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #10 - 2026-02-07 - Phase 2 Abschluss**
-- ✅ Bottom Navigation mit 4 Tabs
-- ✅ CreateProjectScreen mit 6 Kategorien
-- ✅ WorkshopScreen MVP (Slider, Toggles)
-- ✅ APK baut erfolgreich (21 MB)
-- Branch: `claude/flutter-phase-2-info-BFJP1`
-- Commits: 4bce70b, 2ffdfaf, b85ea6a
+**Session #11 - 2026-02-07 - Phase 3 Projekt-Speicherung**
+- ✅ Project Model mit JSON-Serialization erstellt
+- ✅ ProjectService mit CRUD-Operationen (SharedPreferences)
+- ✅ CreateProjectScreen speichert jetzt Projekte
+- ✅ HomeScreen lädt echte Projekte + Swipe-to-Delete
+- ✅ Empty State wenn keine Projekte vorhanden
+- Branch: `claude/implement-project-saving-lCGe5`
+- Commit: 6965d74
 
 **Nächste Session:**
-👉 **Projekt-Speicherung implementieren** (SharedPreferences)
-- ProjectService erstellen
-- Project-Model mit JSON-Serialization
-- HomeScreen mit echten Projekten
+👉 **vanilla_stats.json laden + Item-Selection Modal**
+- JSON-Daten aus library/vanilla_stats.json laden
+- Item-Selection Modal nach Kategorie-Auswahl
+- Projekte mit ausgewähltem Item verknüpfen
 
 ---
 
 ## 🐛 Bekannte Issues
 
-- HomeScreen hat Demo-Daten (keine echte Speicherung)
 - vanilla_stats.json noch nicht geladen
+- Keine Item-Selection nach Kategorie-Auswahl
 - LibraryScreen nur Placeholder
+- Projekte können nicht bearbeitet werden (nur erstellen/löschen)
 - App-Name ist technisch (gameforge_studio)
 
 **Alle non-blocking** - App funktioniert grundsätzlich!
@@ -178,11 +183,11 @@ Du:   *liest nur app/lib/screens/home_screen.dart + theme/app_colors.dart*
 
 ## 🎯 Nächster Milestone
 
-**Phase 3: Daten-Integration**
-- Projekt-Speicherung (SharedPreferences)
-- vanilla_stats.json laden
-- HomeScreen dynamisch
-- Item-Selection Modal
+**Phase 4: Item-Integration**
+- vanilla_stats.json laden und parsen
+- Item-Selection Modal (nach Kategorie filtern)
+- Projekte mit Items verknüpfen
+- Item-Daten im Workshop anzeigen
 
 **Geschätzter Aufwand:** 2-3 Sessions
 

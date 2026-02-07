@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../models/project.dart';
+import '../services/project_service.dart';
 
 class CreateProjectScreen extends StatefulWidget {
   const CreateProjectScreen({super.key});
@@ -11,8 +13,10 @@ class CreateProjectScreen extends StatefulWidget {
 
 class _CreateProjectScreenState extends State<CreateProjectScreen> {
   final TextEditingController _nameController = TextEditingController();
+  final ProjectService _projectService = ProjectService();
   String? _selectedCategory;
   bool _nameError = false;
+  bool _isSaving = false;
 
   final List<Map<String, String>> _categories = [
     {
@@ -59,7 +63,7 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
     super.dispose();
   }
 
-  void _handleCategorySelect(String categoryId) {
+  Future<void> _handleCategorySelect(String categoryId) async {
     if (_nameController.text.trim().isEmpty) {
       setState(() {
         _nameError = true;
@@ -71,18 +75,52 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
     setState(() {
       _nameError = false;
       _selectedCategory = categoryId;
+      _isSaving = true;
     });
 
-    // TODO: Open item selection modal
+    // Create and save project
     final category = _categories.firstWhere((c) => c['id'] == categoryId);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${category['emoji']} Projekt "${_nameController.text.trim()}" - Item-Auswahl coming soon!',
-        ),
-        backgroundColor: AppColors.primary,
-      ),
+    final project = Project.create(
+      name: _nameController.text.trim(),
+      category: category['name']!,
+      data: {
+        'categoryId': categoryId,
+        'emoji': category['emoji'],
+        'description': category['description'],
+      },
     );
+
+    final success = await _projectService.saveProject(project);
+
+    if (!mounted) return;
+
+    setState(() {
+      _isSaving = false;
+    });
+
+    if (success) {
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '✅ ${category['emoji']} Projekt "${project.name}" erfolgreich erstellt!',
+          ),
+          backgroundColor: AppColors.success,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      // Navigate back to home screen
+      Navigator.of(context).pop();
+    } else {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('❌ Fehler beim Speichern des Projekts'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
   }
 
   @override
