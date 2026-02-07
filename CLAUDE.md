@@ -29,7 +29,7 @@
 ✅ **WorkshopScreen** - Item-Editor mit 6 Stats (damage, durability, attack_speed, armor, armor_toughness, mining_speed)
 ✅ **WorkshopScreen** - Base-Item Daten als Ausgangswerte, Projekt-Speicherung, Edit-Mode
 ✅ **LibraryScreen** - Item-Galerie mit 39 Items, Category-Filter, Suche, Detail-Modal
-✅ **SettingsScreen** - Logout-Button
+✅ **SettingsScreen** - Redesign mit allen Sections (GitHub, Darstellung, Info, Gefahrenzone)
 ✅ **Theme-System** - Material 3, Purple Theme (#8B5CF6), kinderfreundliche Touch-Targets
 ✅ **APK Build** - GitHub Actions baut erfolgreich (21 MB APK)
 ✅ **Kompletter Workflow** - Projekt erstellen → bearbeiten → speichern
@@ -158,26 +158,25 @@ Du:   *liest nur app/lib/screens/home_screen.dart + theme/app_colors.dart*
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #14 - 2026-02-07 - Phase 5 Workshop-Integration**
-- ✅ HomeScreen: Tap-to-Edit Funktionalität (öffnet Workshop mit Projekt)
-- ✅ WorkshopScreen: Projekt-Parameter hinzugefügt (optional)
-- ✅ WorkshopScreen: Base-Item Daten als Ausgangswerte laden
-- ✅ WorkshopScreen: 6 Stats implementiert (damage, durability, attack_speed, armor, armor_toughness, mining_speed)
-- ✅ WorkshopScreen: Projekt-Speicherung mit customStats und effects
-- ✅ WorkshopScreen: Back-Button im Edit-Mode
-- ✅ LibraryScreen: Vollständige Item-Galerie mit 39 Items
-- ✅ LibraryScreen: Category-Filter (horizontal scrolling chips)
-- ✅ LibraryScreen: Such-Funktionalität mit Clear-Button
-- ✅ LibraryScreen: Item-Details Modal mit Stats
-- Branch: `claude/implement-phase-5-A9Q1N`
-- Commit: 4ffb2c8
+**Session #15 - 2026-02-07 - Phase 6 Settings Redesign**
+- ✅ SettingsScreen: Komplettes Redesign mit neuer Struktur
+- ✅ GitHub Verbindung Section: Token (masked), Repository, Status
+- ✅ Darstellung Section: Dark Mode Toggle, Button Größe, Sprache
+- ✅ Info Section: App Version, Hilfe Dialog, Feedback Dialog
+- ✅ Gefahrenzone Section: Alle Projekte löschen mit Bestätigung
+- ✅ Einstellungen persistent in SharedPreferences speichern
+- ✅ GitHub Token Security: Komplett maskiert (●●●●●●) - nicht erkennbar
+- ✅ UI Design: Konsistent mit App-Theme (Purple, Dark Mode, Emojis)
+- ✅ Kinderfreundlich: Touch-Targets minimum 60px
+- Branch: `claude/redesign-settings-page-GD85G`
+- Commits: 007708a, f374f18
 
 **Nächste Session:**
 👉 **App Polish & Testing**
-- App-Name ändern
+- App-Name ändern (von "gameforge_studio" zu "GameForge Studio")
 - App-Icon + Splash-Screen
 - End-to-End Testing auf echtem Device
-- Bug-Fixes falls nötig
+- Item-Export Funktionalität (Phase 2)
 
 ---
 

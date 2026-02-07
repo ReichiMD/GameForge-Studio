@@ -202,23 +202,61 @@
 
 ---
 
-## 🎯 Nächste Session: Phase 6
+### Session #15 - 2026-02-07 - Phase 6 Settings Redesign
+
+**Branch:** `claude/redesign-settings-page-GD85G`
+
+**Durchgeführt:**
+- ✅ SettingsScreen: Komplettes Redesign mit neuer Struktur (StatefulWidget)
+- ✅ GitHub Verbindung Section: Token (masked), Repository, Status
+- ✅ Darstellung Section: Dark Mode Toggle, Button Größe, Sprache
+- ✅ Info Section: App Version, Hilfe Dialog, Feedback Dialog
+- ✅ Gefahrenzone Section: Alle Projekte löschen mit Bestätigung
+- ✅ Einstellungen persistent speichern (SharedPreferences)
+- ✅ GitHub Token Security: Komplett maskiert (●●●●●●) - nicht erkennbar
+
+**Commits:**
+- `007708a` - Redesign Settings Screen mit vollständiger Struktur
+- `f374f18` - Fix: GitHub Token komplett maskieren in Settings
+
+**Wichtige Features:**
+- 5 Settings-Sections mit Emoji-Icons (GitHub, Darstellung, Info, Logout, Gefahrenzone)
+- Dark Mode Toggle, Button Größe (Klein/Medium/Groß), Sprache (Deutsch/English)
+- GitHub Token Security: Token ist nicht erkennbar (masked mit Punkte)
+- Delete-Confirmation Dialog mit ProjectService.clearAllProjects()
+- Help/Feedback Dialoge mit Anleitung
+
+**Design Entscheidungen:**
+- StatefulWidget für Settings-Persistierung
+- Kinderfreundliche Touch-Targets (60px buttons)
+- Material 3 Dropdown statt Custom-Selector
+- Consistent with App-Theme (Purple Primary, Emojis)
+
+**Status:** ✅ Settings Screen redesigned (Phase 6 Start)
+
+**Nächstes:** App-Icon, Splash-Screen, App-Name-Änderung
+
+---
+
+## 🎯 Nächste Session: Phase 6 Fortsetzung
 
 **Geplant:**
-1. App Polish & Branding
+1. App Polish & Branding (Höchste Priorität)
    - App-Name ändern (gameforge_studio → GameForge Studio)
-   - App-Icon erstellen
+   - App-Icon erstellen + konfigurieren
    - Splash-Screen hinzufügen
 
 2. Testing & Bug-Fixes
    - End-to-End Test auf Android Device
+   - Settings-Screen auf Device testen
    - Fehlerbehandlung verbessern
 
-3. Optionale Features
+3. Optionale Features (Phase 2)
    - Item-Export (JSON für Minecraft Addon)
    - Projekt-Duplikation
+   - Werkstatt-API Integration
 
-**Geschätzter Aufwand:** 1-2 Sessions
+**Geschätzter Aufwand:** 1-2 Sessions für Phase 6
 
 ---
 
@@ -239,4 +277,4 @@
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-07 (Session #14)
+**Letzte Aktualisierung:** 2026-02-07 (Session #15)
