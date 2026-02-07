@@ -18,9 +18,9 @@ class VanillaDataService {
     if (_isLoaded) return; // Already loaded
 
     try {
-      // Load JSON file from root library folder
+      // Load JSON file from assets folder
       final String jsonString = await rootBundle.loadString(
-        'library/vanilla_stats.json',
+        'assets/library/vanilla_stats.json',
       );
 
       final Map<String, dynamic> data = json.decode(jsonString);
