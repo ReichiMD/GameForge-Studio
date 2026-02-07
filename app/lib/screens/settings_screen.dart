@@ -165,7 +165,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSettingsCard(
             title: 'GitHub Token',
             subtitle: _githubToken != null
-                ? 'ghp_${_githubToken!.substring(0, (_githubToken!.length > 20 ? 20 : _githubToken!.length))}...'
+                ? '●●●●●●●●●●●●●●●●●●●●●●●●'
                 : 'Nicht verbunden',
             icon: '🔑',
           ),
