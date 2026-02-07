@@ -135,17 +135,53 @@
 
 ---
 
-## 🎯 Nächste Session: Phase 4
+### Session #13 - 2026-02-07 - Phase 4 Item-Integration
+
+**Branch:** `claude/implement-phase-4-k05od`
+
+**Durchgeführt:**
+- ✅ VanillaItem + VanillaCategory Models (app/lib/models/vanilla_item.dart)
+- ✅ VanillaDataService mit JSON-Loader (app/lib/services/vanilla_data_service.dart)
+- ✅ ItemSelectionModal mit Grid-View, Rarity-Badges (app/lib/widgets/item_selection_modal.dart)
+- ✅ CreateProjectScreen erweitert: Kategorie → Item-Selection → Speichern
+- ✅ Project Model mit baseItem Getter, hasBaseItem Check
+- ✅ HomeScreen zeigt Base-Item in Projekt-Cards
+- ✅ Asset-Registrierung (pubspec.yaml: library/vanilla_stats.json)
+
+**Commits:**
+- `8721da6` - Implement Phase 4: Item Integration with vanilla_stats.json
+- `d110bcd` - Update documentation for Phase 4 completion
+- `f38a97d` - Fix: Replace AppColors.accent with AppColors.info
+- `94c1b7c` - Fix: Move vanilla_stats.json to app/assets/ directory
+
+**Wichtige Features:**
+- 39 vanilla Items aus JSON geladen (Waffen, Rüstung, Nahrung)
+- Item-Selection Modal öffnet automatisch nach Kategorie-Auswahl
+- Projekte speichern ausgewähltes Base-Item (JSON in Project.data)
+- HomeScreen zeigt "Basiert auf: [Item]" wenn Base-Item vorhanden
+- Kategorien ohne vanilla items (Mobs, Blöcke, Werkzeuge) speichern direkt
+
+**Bugfixes während Session:**
+- AppColors.accent existierte nicht → geändert zu AppColors.info
+- Asset-Pfad ../library/ funktionierte nicht → verschoben nach app/assets/library/
+
+**Status:** ✅ Phase 4 Item-Integration komplett (~95% Migration)
+
+**Nächstes:** Workshop-Integration mit Base-Item Daten
+
+---
+
+## 🎯 Nächste Session: Phase 5
 
 **Geplant:**
-1. vanilla_stats.json Integration
-   - Asset in pubspec.yaml einbinden
-   - Loader erstellen
-   - WorkshopScreen mit echten Item-Daten
+1. Workshop-Integration
+   - Projekte aus HomeScreen im Workshop öffnen
+   - Base-Item Daten als Ausgangswerte verwenden
+   - Workshop-Screen erweitern (mehr Stats)
 
-3. Item-Selection Modal
-   - Nach Kategorie-Auswahl Items anzeigen
-   - Suche/Filter implementieren
+2. LibraryScreen implementieren
+   - Item-Galerie mit allen vanilla items
+   - Filter/Suche nach Kategorie
 
 **Geschätzter Aufwand:** 2-3 Sessions
 
@@ -154,9 +190,9 @@
 ## 📊 Projekt-Status
 
 **Technologie:** Flutter + Dart (migriert von React Native)
-**Fortschritt:** ~90% (Phase 3 komplett)
+**Fortschritt:** ~95% (Phase 4 komplett)
 **APK:** Baut erfolgreich (21 MB)
-**Nächster Milestone:** Phase 4 - Item-Integration
+**Nächster Milestone:** Phase 5 - Workshop-Integration
 
 **Dokumentation:**
 - ✅ CLAUDE.md (Session-Start)
@@ -168,4 +204,4 @@
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-07 (Session #12)
+**Letzte Aktualisierung:** 2026-02-07 (Session #13)

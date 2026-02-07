@@ -334,6 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildProjectCard(Project project) {
     final emoji = project.data['emoji'] as String? ?? project.categoryIcon;
     final createdDate = _formatDate(project.createdAt);
+    final baseItem = project.baseItem;
 
     return Dismissible(
       key: Key(project.id),
@@ -430,6 +431,26 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
+                  if (baseItem != null) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    Row(
+                      children: [
+                        Text(
+                          baseItem.emoji,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Text(
+                          'Basiert auf: ${baseItem.name}',
+                          style: TextStyle(
+                            fontSize: AppTypography.xs,
+                            color: AppColors.info.withOpacity(0.8),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),

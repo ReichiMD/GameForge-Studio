@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
+import '../models/vanilla_item.dart';
 import '../services/project_service.dart';
+import '../services/vanilla_data_service.dart';
+import '../widgets/item_selection_modal.dart';
 
 class CreateProjectScreen extends StatefulWidget {
   const CreateProjectScreen({super.key});
@@ -14,6 +17,7 @@ class CreateProjectScreen extends StatefulWidget {
 class _CreateProjectScreenState extends State<CreateProjectScreen> {
   final TextEditingController _nameController = TextEditingController();
   final ProjectService _projectService = ProjectService();
+  final VanillaDataService _vanillaService = VanillaDataService();
   String? _selectedCategory;
   bool _nameError = false;
   bool _isSaving = false;
@@ -75,19 +79,56 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
     setState(() {
       _nameError = false;
       _selectedCategory = categoryId;
+    });
+
+    final category = _categories.firstWhere((c) => c['id'] == categoryId);
+
+    // Check if category has vanilla items
+    final vanillaCategoryId = _vanillaService.getCategoryIdByName(category['name']!);
+
+    if (vanillaCategoryId != null) {
+      // Show item selection modal
+      final selectedItem = await showItemSelectionModal(
+        context,
+        categoryId: vanillaCategoryId,
+        categoryName: category['name']!,
+        categoryEmoji: category['emoji']!,
+      );
+
+      if (selectedItem != null) {
+        // User selected an item, save project with item data
+        await _saveProject(categoryId, selectedItem);
+      }
+      // If selectedItem is null, user cancelled the modal - do nothing
+    } else {
+      // No vanilla items for this category, save directly
+      await _saveProject(categoryId, null);
+    }
+  }
+
+  Future<void> _saveProject(String categoryId, VanillaItem? baseItem) async {
+    setState(() {
       _isSaving = true;
     });
 
-    // Create and save project
     final category = _categories.firstWhere((c) => c['id'] == categoryId);
+
+    // Build project data
+    final Map<String, dynamic> projectData = {
+      'categoryId': categoryId,
+      'emoji': category['emoji'],
+      'description': category['description'],
+    };
+
+    // Add base item data if selected
+    if (baseItem != null) {
+      projectData['baseItem'] = baseItem.toJson();
+    }
+
     final project = Project.create(
       name: _nameController.text.trim(),
       category: category['name']!,
-      data: {
-        'categoryId': categoryId,
-        'emoji': category['emoji'],
-        'description': category['description'],
-      },
+      data: projectData,
     );
 
     final success = await _projectService.saveProject(project);
@@ -100,10 +141,11 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
 
     if (success) {
       // Show success message
+      final itemInfo = baseItem != null ? ' (${baseItem.emoji} ${baseItem.name})' : '';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '✅ ${category['emoji']} Projekt "${project.name}" erfolgreich erstellt!',
+            '✅ ${category['emoji']} Projekt "${project.name}"$itemInfo erfolgreich erstellt!',
           ),
           backgroundColor: AppColors.success,
           duration: const Duration(seconds: 2),
