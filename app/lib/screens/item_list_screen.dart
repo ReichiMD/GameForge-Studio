@@ -43,7 +43,7 @@ class _ItemListScreenState extends State<ItemListScreen> {
     final categoryId = _vanillaService.getCategoryIdByName(widget.category['name']!);
 
     if (categoryId != null) {
-      final items = _vanillaService.getItemsByCategory(categoryId);
+      final items = await _vanillaService.getItemsByCategory(categoryId);
       setState(() {
         _items = items;
         _isLoading = false;
