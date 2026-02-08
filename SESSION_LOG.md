@@ -273,20 +273,62 @@
 
 ---
 
-## 🎯 Nächste Session: Phase 7 App Polish
+### Session #17 - 2026-02-08 - Minecraft Item Texturen (Partial)
+
+**Branch:** `claude/minecraft-item-images-r1uWF`
+
+**Durchgeführt:**
+- 🔄 **Item-Texturen von fabrik-library:** Integration vorbereitet
+- ✅ cached_network_image: ^3.3.1 zu pubspec.yaml hinzugefügt
+- ✅ VanillaItem Model erweitert: textureUrl Getter (GitHub raw URL), hasTexture Property
+- ✅ ItemTextureWidget erstellt: CachedNetworkImage mit Emoji-Fallback, Memory-Cache
+- ✅ 4 Screens aktualisiert: ItemListScreen, WorkshopScreen, ProjectDetailScreen, LibraryScreen
+- ✅ Version Bump: 1.1.0+2 → 1.1.1+3 (APK Rebuild trigger)
+- ❌ **Problem:** Bilder werden nicht angezeigt (Ursache unklar, trotz korrekter URLs)
+
+**Commits:**
+- `4a35cfd` - feat: Add Minecraft item texture loading from fabrik-library
+- `768c487` - chore: Bump version to 1.1.1+3 for image loading fix
+
+**Wichtige Technische Details:**
+- Texture URLs: https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/{filename}.png
+- URLs funktionieren (getestet via WebFetch)
+- cached_network_image Package korrekt in pubspec.yaml
+- Code-Implementierung sauber (Fallback zu Emojis wenn keine Texture)
+
+**Debugging-Ansätze für nächste Session:**
+- Debug-Logs für Netzwerk-Requests
+- Error-Handling in ItemTextureWidget
+- Android Internet-Permissions prüfen
+- Cache-Status überprüfen
+
+**Status:** ✅ Code fertig implementiert, ❌ Bilder laden nicht (Debug pending)
+
+**User Feedback:** Benutzer nutzt nur Claude Code Handy-App (keine PC-Entwicklung), versteht keine Programmierung → Merge zu Main geplant, Debug in nächster Session
+
+**Nächstes:** Debug-Modus integrieren, um Fehlerursache zu finden
+
+---
+
+## 🎯 Nächste Session: Debug-Modus für Item-Texturen
 
 **Geplant:**
-1. App Icon & Splash-Screen
+1. **Debug-Modus für Item-Texturen** (PRIORITÄT!)
+   - Debug-Logs hinzufügen (Netzwerk, Fehler, Cache)
+   - Error-Handling verbessern
+   - Android Internet-Permissions prüfen
+   - Ursache für fehlende Bilder finden
+
+2. App Icon & Splash-Screen
    - App-Icon erstellen (1024x1024 PNG) - siehe ICON_SETUP.md
    - Splash-Screen konfigurieren
    - Testing auf Android Device
 
-2. Weitere Features
+3. Weitere Features
    - Mehr Effekte (Poison, Regeneration, etc.)
-   - Item-Vorschau mit Texture aus fabrik-library
    - Projekt-Duplikation
 
-**Geschätzter Aufwand:** 1 Session für Phase 7
+**Geschätzter Aufwand:** 1 Session für Debug-Fix
 
 ---
 
@@ -294,9 +336,9 @@
 
 **Technologie:** Flutter + Dart (100% migriert!)
 **Fortschritt:** 🎉 100% Core Features + Workflow Redesign (Phase 6 komplett!)
-**Version:** 1.1.0+2
+**Version:** 1.1.1+3
 **APK:** Baut erfolgreich (~22 MB)
-**Nächster Milestone:** Phase 7 - App Icon & Polish
+**Nächster Milestone:** Debug-Fix für Item-Texturen, dann App Icon & Polish
 
 **Neuerungen:**
 - ✅ Multi-Item Projects (1 Projekt = viele Items!)
@@ -314,4 +356,4 @@
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-08 (Session #16)
+**Letzte Aktualisierung:** 2026-02-08 (Session #17)
