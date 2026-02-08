@@ -27,7 +27,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
   }
 
   Future<void> _loadProject() async {
-    final project = await _projectService.getProject(_currentProject.id);
+    final project = await _projectService.getProjectById(_currentProject.id);
     if (project != null && mounted) {
       setState(() {
         _currentProject = project;
