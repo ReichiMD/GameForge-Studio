@@ -238,43 +238,80 @@
 
 ---
 
-## 🎯 Nächste Session: Phase 6 Fortsetzung
+### Session #16 - 2026-02-08 - Workflow Redesign (MEGA!)
+
+**Branch:** `claude/redesign-project-workflow-riINz`
+
+**Durchgeführt:**
+- ✅ **MAJOR REFACTORING:** Projekte können jetzt mehrere Items enthalten!
+- ✅ Neue Models: ProjectItem (Items in Projekten)
+- ✅ Project Model erweitert: List<ProjectItem>, addItem, removeItem, updateItem
+- ✅ 3 neue Screens: ProjectDetailScreen, CategorySelectionScreen, ItemListScreen
+- ✅ WorkshopScreen umgebaut als Item-Editor (nicht mehr als Tab)
+- ✅ CreateProjectScreen drastisch vereinfacht (nur Name!)
+- ✅ HomeScreen: Instant Refresh, zeigt Item-Count
+- ✅ MinecraftExportService: Arbeitet mit ProjectItems
+- ✅ UX-Fixes: Item bearbeiten, Export-Button 📤, APK-Update ohne Deinstall
+- ✅ Bottom Navigation: 4 Tabs → 3 Tabs (Workshop Tab entfernt)
+- ✅ App-Name: "GameForge Studio" (statt gameforge_studio)
+- ✅ Version: 1.1.0+2 für APK-Updates
+
+**Workflow (neu):**
+1. Projekt erstellen (nur Name) → 2. Projekt öffnen (Item-Liste) → 3. Item hinzufügen (Kategorie → Vanilla Item → Editor) → 4. Item bearbeiten (Tap → Editor → Update) → 5. Projekt exportieren (📤 Button)
+
+**Wichtige Entscheidungen:**
+- Ein Projekt kann nun viele Items enthalten (statt nur einem!)
+- Workshop nicht mehr als Tab, sondern nur via Navigation
+- Export-Button im ProjectDetailScreen Header
+- Komplette Workflow-Neugestaltung für bessere UX
+
+**Commits:** 8 Commits (49a5b46, 9a74cbd, 7f929c6, 2c7c104, 843335d + Fixes)
+
+**Status:** ✅ Phase 6 Workflow Redesign komplett - App 100% funktionsfähig! 🎉
+
+**Nächstes:** App-Icon, Splash-Screen, Testing
+
+---
+
+## 🎯 Nächste Session: Phase 7 App Polish
 
 **Geplant:**
-1. App Polish & Branding (Höchste Priorität)
-   - App-Name ändern (gameforge_studio → GameForge Studio)
-   - App-Icon erstellen + konfigurieren
-   - Splash-Screen hinzufügen
+1. App Icon & Splash-Screen
+   - App-Icon erstellen (1024x1024 PNG) - siehe ICON_SETUP.md
+   - Splash-Screen konfigurieren
+   - Testing auf Android Device
 
-2. Testing & Bug-Fixes
-   - End-to-End Test auf Android Device
-   - Settings-Screen auf Device testen
-   - Fehlerbehandlung verbessern
-
-3. Optionale Features (Phase 2)
-   - Item-Export (JSON für Minecraft Addon)
+2. Weitere Features
+   - Mehr Effekte (Poison, Regeneration, etc.)
+   - Item-Vorschau mit Texture aus fabrik-library
    - Projekt-Duplikation
-   - Werkstatt-API Integration
 
-**Geschätzter Aufwand:** 1-2 Sessions für Phase 6
+**Geschätzter Aufwand:** 1 Session für Phase 7
 
 ---
 
 ## 📊 Projekt-Status
 
-**Technologie:** Flutter + Dart (migriert von React Native)
-**Fortschritt:** 🎉 100% Core Features (Phase 5 komplett)
-**APK:** Baut erfolgreich (21 MB)
-**Nächster Milestone:** Phase 6 - App Polish & Release-Vorbereitung
+**Technologie:** Flutter + Dart (100% migriert!)
+**Fortschritt:** 🎉 100% Core Features + Workflow Redesign (Phase 6 komplett!)
+**Version:** 1.1.0+2
+**APK:** Baut erfolgreich (~22 MB)
+**Nächster Milestone:** Phase 7 - App Icon & Polish
+
+**Neuerungen:**
+- ✅ Multi-Item Projects (1 Projekt = viele Items!)
+- ✅ Komplett neuer Workflow
+- ✅ 3 neue Screens (ProjectDetail, CategorySelection, ItemList)
+- ✅ Export-Funktionalität für Projekte & Items
+- ✅ APK-Updates ohne Deinstallation
 
 **Dokumentation:**
-- ✅ CLAUDE.md (Session-Start)
+- ✅ CLAUDE.md (Session-Start) - Version 3.0
 - ✅ FLUTTER_STATUS.md (Technische Details)
 - ✅ SESSION_LOG.md (Historie)
 - ✅ README.md (Setup)
-- ✅ PROJECT_INFO.md (Architektur)
-- ✅ ROADMAP.md (Features)
+- ✅ ICON_SETUP.md (Icon-Anleitung)
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-07 (Session #15)
+**Letzte Aktualisierung:** 2026-02-08 (Session #16)
