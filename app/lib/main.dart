@@ -124,20 +124,10 @@ class _MainNavigationState extends State<MainNavigation> {
   void initState() {
     super.initState();
     _screens = [
-      HomeScreen(
-        onCreateProject: _navigateToCreateProject,
-      ),
+      const HomeScreen(),
       const LibraryScreen(),
       SettingsScreen(onLogout: widget.onLogout),
     ];
-  }
-
-  void _navigateToCreateProject() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const CreateProjectScreen(),
-      ),
-    );
   }
 
   @override

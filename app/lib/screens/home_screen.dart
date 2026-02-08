@@ -4,14 +4,10 @@ import '../theme/app_spacing.dart';
 import '../models/project.dart';
 import '../services/project_service.dart';
 import 'project_detail_screen.dart';
+import 'create_project_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  final VoidCallback? onCreateProject;
-
-  const HomeScreen({
-    super.key,
-    this.onCreateProject,
-  });
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -44,12 +40,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _handleCreateProject() async {
-    if (widget.onCreateProject != null) {
-      widget.onCreateProject!();
-      // Reload projects when returning from create screen
-      await Future.delayed(const Duration(milliseconds: 500));
-      _loadProjects();
-    }
+    // Navigate to create project screen
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const CreateProjectScreen(),
+      ),
+    );
+
+    // Reload projects when returning
+    _loadProjects();
   }
 
   Future<void> _openProject(Project project) async {

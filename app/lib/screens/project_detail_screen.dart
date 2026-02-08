@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
 import '../models/project_item.dart';
 import '../services/project_service.dart';
+import '../services/minecraft_export_service.dart';
 import 'category_selection_screen.dart';
+import 'workshop_screen.dart';
 
 class ProjectDetailScreen extends StatefulWidget {
   final Project project;
@@ -98,6 +101,42 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
     }
   }
 
+  Future<void> _handleExportProject() async {
+    if (_currentProject.items.isEmpty) return;
+
+    try {
+      // Generate Minecraft JSON for the project (exports all items)
+      final minecraftJson = MinecraftExportService.exportToMinecraftJSON(_currentProject);
+      final filename = MinecraftExportService.getExportFilename(_currentProject);
+
+      // Share the JSON file
+      await Share.share(
+        minecraftJson,
+        subject: 'Minecraft Addon: ${_currentProject.name}',
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ "${_currentProject.name}" als $filename exportiert!'),
+            backgroundColor: AppColors.success,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Fehler beim Exportieren: $e'),
+            backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,6 +205,22 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
               ],
             ),
           ),
+          // Export Button
+          if (_currentProject.items.isNotEmpty)
+            GestureDetector(
+              onTap: _handleExportProject,
+              child: Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: AppColors.info,
+                  borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
+                ),
+                child: const Text(
+                  '📤',
+                  style: TextStyle(fontSize: 24),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -297,14 +352,22 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
         return false; // We handle deletion manually
       },
       child: GestureDetector(
-        onTap: () {
-          // TODO: Navigate to item editor
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Item-Editor kommt gleich! 🚀'),
-              duration: Duration(seconds: 1),
+        onTap: () async {
+          // Navigate to item editor
+          final result = await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => WorkshopScreen(
+                project: _currentProject,
+                item: item,
+                isNewItem: false,
+              ),
             ),
           );
+
+          // Reload project if item was updated
+          if (result == true) {
+            await _loadProject();
+          }
         },
         child: Container(
           margin: const EdgeInsets.only(bottom: AppSpacing.md),
