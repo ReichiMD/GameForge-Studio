@@ -25,14 +25,11 @@ class _ProjectItemsScreenState extends State<ProjectItemsScreen> {
   final VanillaDataService _vanillaService = VanillaDataService();
   late Project _currentProject;
 
-  // Category list
+  // Category list (only categories with vanilla items)
   final List<Map<String, String>> _categories = [
-    {'id': 'waffen', 'name': 'Waffen', 'emoji': '⚔️'},
-    {'id': 'ruestung', 'name': 'Rüstung', 'emoji': '🛡️'},
-    {'id': 'mobs', 'name': 'Mobs', 'emoji': '👾'},
-    {'id': 'nahrung', 'name': 'Nahrung', 'emoji': '🍖'},
-    {'id': 'bloecke', 'name': 'Blöcke', 'emoji': '🧱'},
-    {'id': 'werkzeuge', 'name': 'Werkzeuge', 'emoji': '⚒️'},
+    {'id': 'weapons', 'name': 'Waffen', 'emoji': '⚔️'},
+    {'id': 'armor', 'name': 'Rüstung', 'emoji': '🛡️'},
+    {'id': 'food', 'name': 'Nahrung', 'emoji': '🍖'},
   ];
 
   @override
@@ -66,89 +63,76 @@ class _ProjectItemsScreenState extends State<ProjectItemsScreen> {
   }
 
   void _showCategorySelection() {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: const BoxDecoration(
-          color: AppColors.background,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppSizing.radiusLarge),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Header
-            Row(
-              children: [
-                const Text(
-                  '🎯 Wähle eine Gruppe',
-                  style: TextStyle(
-                    fontSize: AppTypography.lg,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.text,
-                  ),
-                ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: const Text(
-                    '✕',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            // Category Grid
-            GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: AppSpacing.md,
-                mainAxisSpacing: AppSpacing.md,
+            const Text(
+              '🎯 Wähle eine Gruppe',
+              style: TextStyle(
+                fontSize: AppTypography.lg,
+                fontWeight: FontWeight.w700,
+                color: AppColors.text,
               ),
-              itemCount: _categories.length,
-              itemBuilder: (context, index) {
-                final category = _categories[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _showItemSelection(category);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          category['emoji']!,
-                          style: const TextStyle(fontSize: 40),
-                        ),
-                        const SizedBox(height: AppSpacing.sm),
-                        Text(
-                          category['name']!,
-                          style: const TextStyle(
-                            fontSize: AppTypography.md,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.text,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+            ),
+            GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: const Text(
+                '✕',
+                style: TextStyle(
+                  fontSize: 24,
+                  color: AppColors.textSecondary,
+                ),
+              ),
             ),
           ],
+        ),
+        content: GridView.builder(
+          shrinkWrap: true,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: AppSpacing.md,
+            mainAxisSpacing: AppSpacing.md,
+          ),
+          itemCount: _categories.length,
+          itemBuilder: (context, index) {
+            final category = _categories[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+                _showItemSelection(category);
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      category['emoji']!,
+                      style: const TextStyle(fontSize: 40),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      category['name']!,
+                      style: const TextStyle(
+                        fontSize: AppTypography.md,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.text,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
