@@ -236,8 +236,11 @@ class _ItemSelectionModalState extends State<ItemSelectionModal> {
     return GestureDetector(
       onTap: () {
         if (widget.onItemSelected != null) {
-          widget.onItemSelected!(item);
           Navigator.of(context).pop();
+          // Call callback AFTER closing modal
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.onItemSelected!(item);
+          });
         } else {
           Navigator.of(context).pop(item);
         }

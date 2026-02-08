@@ -63,76 +63,104 @@ class _ProjectItemsScreenState extends State<ProjectItemsScreen> {
   }
 
   void _showCategorySelection() {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.6,
+        decoration: const BoxDecoration(
+          color: AppColors.background,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppSizing.radiusLarge),
+          ),
+        ),
+        child: Column(
           children: [
-            const Text(
-              '🎯 Wähle eine Gruppe',
-              style: TextStyle(
-                fontSize: AppTypography.lg,
-                fontWeight: FontWeight.w700,
-                color: AppColors.text,
+            // Header
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              decoration: const BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(AppSizing.radiusLarge),
+                ),
+                border: Border(
+                  bottom: BorderSide(color: AppColors.border),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    '🎯 Wähle eine Gruppe',
+                    style: TextStyle(
+                      fontSize: AppTypography.lg,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.text,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Text(
+                      '✕',
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: const Text(
-                '✕',
-                style: TextStyle(
-                  fontSize: 24,
-                  color: AppColors.textSecondary,
+            // Category Grid
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: AppSpacing.md,
+                  mainAxisSpacing: AppSpacing.md,
                 ),
+                itemCount: _categories.length,
+                itemBuilder: (context, index) {
+                  final category = _categories[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _showItemSelection(category);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            category['emoji']!,
+                            style: const TextStyle(fontSize: 48),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          Text(
+                            category['name']!,
+                            style: const TextStyle(
+                              fontSize: AppTypography.md,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.text,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
-        ),
-        content: GridView.builder(
-          shrinkWrap: true,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: AppSpacing.md,
-            mainAxisSpacing: AppSpacing.md,
-          ),
-          itemCount: _categories.length,
-          itemBuilder: (context, index) {
-            final category = _categories[index];
-            return GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-                _showItemSelection(category);
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.background,
-                  borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      category['emoji']!,
-                      style: const TextStyle(fontSize: 40),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      category['name']!,
-                      style: const TextStyle(
-                        fontSize: AppTypography.md,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.text,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
         ),
       ),
     );
