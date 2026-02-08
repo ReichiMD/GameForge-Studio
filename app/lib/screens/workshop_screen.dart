@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
 import '../models/vanilla_item.dart';
 import '../services/project_service.dart';
+import '../services/minecraft_export_service.dart';
 
 class WorkshopScreen extends StatefulWidget {
   final Project? project;
@@ -182,6 +184,11 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
 
           // Save Button
           _buildSaveButton(),
+
+          const SizedBox(height: AppSpacing.lg),
+
+          // Export Button
+          _buildExportButton(),
 
           const SizedBox(height: AppSpacing.xxl),
         ],
@@ -683,6 +690,112 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           duration: Duration(seconds: 2),
         ),
       );
+    }
+  }
+
+  Widget _buildExportButton() {
+    // Only show export button when editing an existing project
+    if (widget.project == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.info.withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: _handleExport,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.info,
+          foregroundColor: Colors.white,
+          minimumSize: const Size(double.infinity, 64),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
+          ),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('📤', style: TextStyle(fontSize: 28)),
+            SizedBox(width: AppSpacing.md),
+            Text(
+              'Als Minecraft Addon exportieren',
+              style: TextStyle(
+                fontSize: AppTypography.lg,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleExport() async {
+    if (widget.project == null) return;
+
+    try {
+      // Create updated project with current stats before exporting
+      final currentProject = widget.project!.copyWith(
+        name: _itemName,
+        data: {
+          ...widget.project!.data,
+          'emoji': _itemEmoji,
+          'customStats': {
+            'damage': _damage,
+            'durability': _durability,
+            'attack_speed': _attackSpeed,
+            'armor': _armor,
+            'armor_toughness': _armorToughness,
+            'mining_speed': _miningSpeed,
+          },
+          'effects': {
+            'fire': _fireEffect,
+            'glow': _glowEffect,
+          },
+        },
+      );
+
+      // Generate Minecraft JSON
+      final minecraftJson = MinecraftExportService.exportToMinecraftJSON(currentProject);
+      final filename = MinecraftExportService.getExportFilename(currentProject);
+
+      // Share the JSON file
+      await Share.share(
+        minecraftJson,
+        subject: 'Minecraft Addon: $_itemName',
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '✅ "$_itemName" als $filename exportiert!',
+            ),
+            backgroundColor: AppColors.success,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '❌ Fehler beim Exportieren: $e',
+            ),
+            backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 }
