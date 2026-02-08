@@ -3,7 +3,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
 import '../services/project_service.dart';
-import 'workshop_screen.dart';
+import 'project_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onCreateProject;
@@ -53,10 +53,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _openProject(Project project) async {
-    // Navigate to Workshop with project
+    // Navigate to Project Detail Screen
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => WorkshopScreen(project: project),
+        builder: (context) => ProjectDetailScreen(project: project),
       ),
     );
 
@@ -345,9 +345,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildProjectCard(Project project) {
-    final emoji = project.data['emoji'] as String? ?? project.categoryIcon;
+    final emoji = project.emoji;
     final createdDate = _formatDate(project.createdAt);
-    final baseItem = project.baseItem;
+    final itemCount = project.itemCount;
 
     return Dismissible(
       key: Key(project.id),
@@ -429,7 +429,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               BorderRadius.circular(AppSizing.radiusSmall),
                         ),
                         child: Text(
-                          project.category,
+                          '$itemCount ${itemCount == 1 ? 'Item' : 'Items'}',
                           style: const TextStyle(
                             fontSize: AppTypography.xs,
                             color: AppColors.text,
@@ -446,26 +446,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  if (baseItem != null) ...[
-                    const SizedBox(height: AppSpacing.xs),
-                    Row(
-                      children: [
-                        Text(
-                          baseItem.emoji,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        Text(
-                          'Basiert auf: ${baseItem.name}',
-                          style: TextStyle(
-                            fontSize: AppTypography.xs,
-                            color: AppColors.info.withOpacity(0.8),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
                 ],
               ),
             ),

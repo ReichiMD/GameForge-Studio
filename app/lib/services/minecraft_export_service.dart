@@ -1,23 +1,36 @@
 import 'dart:convert';
 import '../models/project.dart';
+import '../models/project_item.dart';
 
 /// Service for exporting projects to Minecraft Addon format
 class MinecraftExportService {
   /// Export project as Minecraft Bedrock Edition item JSON
+  /// If project has multiple items, exports the first item
   static String exportToMinecraftJSON(Project project) {
-    final itemIdentifier = _sanitizeIdentifier(project.name);
-    final category = _mapCategory(project.category);
+    if (project.items.isEmpty) {
+      throw Exception('Project has no items to export');
+    }
 
-    // Build components based on project data
+    // Export the first item (or all items if needed in the future)
+    final item = project.items.first;
+    return exportItemToMinecraftJSON(item);
+  }
+
+  /// Export a single ProjectItem as Minecraft Bedrock Edition item JSON
+  static String exportItemToMinecraftJSON(ProjectItem item) {
+    final itemIdentifier = _sanitizeIdentifier(item.name);
+    final category = _mapCategory(item.category);
+
+    // Build components based on item data
     final components = <String, dynamic>{
       'minecraft:max_stack_size': 1,
     };
 
-    // Get custom stats or defaults
-    final customStats = project.data['customStats'] as Map<String, dynamic>?;
+    // Get custom stats
+    final customStats = item.customStats;
 
     // Add durability if available
-    final durability = customStats?['durability'] as num?;
+    final durability = customStats['durability'] as num?;
     if (durability != null && durability > 0) {
       components['minecraft:durability'] = {
         'max_durability': durability.toInt(),
@@ -25,13 +38,13 @@ class MinecraftExportService {
     }
 
     // Add damage if available
-    final damage = customStats?['damage'] as num?;
+    final damage = customStats['damage'] as num?;
     if (damage != null && damage > 0) {
       components['minecraft:damage'] = damage.toDouble();
     }
 
     // Add armor if available
-    final armor = customStats?['armor'] as num?;
+    final armor = customStats['armor'] as num?;
     if (armor != null && armor > 0) {
       components['minecraft:armor'] = {
         'protection': armor.toInt(),
@@ -39,19 +52,19 @@ class MinecraftExportService {
     }
 
     // Add armor toughness if available
-    final armorToughness = customStats?['armor_toughness'] as num?;
+    final armorToughness = customStats['armor_toughness'] as num?;
     if (armorToughness != null && armorToughness > 0) {
       components['minecraft:armor_toughness'] = armorToughness.toDouble();
     }
 
     // Add attack speed if available
-    final attackSpeed = customStats?['attack_speed'] as num?;
+    final attackSpeed = customStats['attack_speed'] as num?;
     if (attackSpeed != null) {
       components['minecraft:attack_speed'] = attackSpeed.toDouble();
     }
 
     // Add mining speed if available
-    final miningSpeed = customStats?['mining_speed'] as num?;
+    final miningSpeed = customStats['mining_speed'] as num?;
     if (miningSpeed != null && miningSpeed > 1.0) {
       components['minecraft:digger'] = {
         'use_efficiency': true,
@@ -64,16 +77,14 @@ class MinecraftExportService {
     }
 
     // Add effects
-    final effects = project.data['effects'] as Map<String, dynamic>?;
-    if (effects != null) {
-      if (effects['fire'] == true) {
-        components['minecraft:ignite_on_use'] = {
-          'duration': 5.0,
-        };
-      }
-      if (effects['glow'] == true) {
-        components['minecraft:foil'] = true; // Enchantment glint effect
-      }
+    final effects = item.effects;
+    if (effects['fire'] == true) {
+      components['minecraft:ignite_on_use'] = {
+        'duration': 5.0,
+      };
+    }
+    if (effects['glow'] == true) {
+      components['minecraft:foil'] = true; // Enchantment glint effect
     }
 
     // Build the complete item JSON
@@ -131,7 +142,11 @@ class MinecraftExportService {
 
   /// Get filename for export
   static String getExportFilename(Project project, {bool isMinecraft = true}) {
-    final identifier = _sanitizeIdentifier(project.name);
+    if (project.items.isEmpty) {
+      return isMinecraft ? 'empty_project.json' : 'gameforge_empty_project.json';
+    }
+
+    final identifier = _sanitizeIdentifier(project.items.first.name);
     if (isMinecraft) {
       return '$identifier.json';
     } else {
