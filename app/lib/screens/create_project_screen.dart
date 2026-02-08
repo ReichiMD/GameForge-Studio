@@ -71,12 +71,18 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
         ),
       );
 
-      // Navigate to ProjectItemsScreen instead of going back
-      Navigator.of(context).pushReplacement(
+      // Navigate to ProjectItemsScreen
+      if (!mounted) return;
+      await Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => ProjectItemsScreen(project: project),
         ),
       );
+
+      // After returning from ProjectItemsScreen, go back to HomeScreen
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     } else {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
