@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/library_screen.dart';
-import 'screens/workshop_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/create_project_screen.dart';
 import 'theme/app_theme.dart';
@@ -125,21 +124,10 @@ class _MainNavigationState extends State<MainNavigation> {
   void initState() {
     super.initState();
     _screens = [
-      HomeScreen(
-        onCreateProject: _navigateToCreateProject,
-      ),
+      const HomeScreen(),
       const LibraryScreen(),
-      const WorkshopScreen(),
       SettingsScreen(onLogout: widget.onLogout),
     ];
-  }
-
-  void _navigateToCreateProject() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const CreateProjectScreen(),
-      ),
-    );
   }
 
   @override
@@ -191,14 +179,9 @@ class _MainNavigationState extends State<MainNavigation> {
             isSelected: _selectedIndex == 1,
           ),
           _buildNavigationItem(
-            emoji: '🔧',
-            label: 'Workshop',
-            isSelected: _selectedIndex == 2,
-          ),
-          _buildNavigationItem(
             emoji: '⚙️',
             label: 'Settings',
-            isSelected: _selectedIndex == 3,
+            isSelected: _selectedIndex == 2,
           ),
         ],
       ),

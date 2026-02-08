@@ -92,12 +92,6 @@ class ProjectService {
     }
   }
 
-  /// Get projects by category
-  Future<List<Project>> getProjectsByCategory(String category) async {
-    final projects = await getProjects();
-    return projects.where((p) => p.category == category).toList();
-  }
-
   /// Clear all projects (for testing/reset)
   Future<bool> clearAllProjects() async {
     try {

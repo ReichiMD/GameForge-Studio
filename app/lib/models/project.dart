@@ -1,50 +1,48 @@
 import 'package:flutter/foundation.dart';
-import 'vanilla_item.dart';
+import 'project_item.dart';
 
-/// Represents a GameForge project
+/// Represents a GameForge project (collection of custom items)
 class Project {
   final String id;
   final String name;
-  final String category;
+  final List<ProjectItem> items; // List of custom items in this project
   final DateTime createdAt;
   final DateTime updatedAt;
-  final Map<String, dynamic> data; // Flexible data storage for item properties
 
   Project({
     required this.id,
     required this.name,
-    required this.category,
+    required this.items,
     required this.createdAt,
     required this.updatedAt,
-    required this.data,
   });
 
   /// Create a new project with generated ID and timestamps
   factory Project.create({
     required String name,
-    required String category,
-    Map<String, dynamic>? data,
+    List<ProjectItem>? items,
   }) {
     final now = DateTime.now();
     return Project(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
-      category: category,
+      items: items ?? [],
       createdAt: now,
       updatedAt: now,
-      data: data ?? {},
     );
   }
 
   /// Create Project from JSON
   factory Project.fromJson(Map<String, dynamic> json) {
+    final itemsList = json['items'] as List?;
+    final items = itemsList?.map((item) => ProjectItem.fromJson(item as Map<String, dynamic>)).toList() ?? [];
+
     return Project(
       id: json['id'] as String,
       name: json['name'] as String,
-      category: json['category'] as String,
+      items: items,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
-      data: Map<String, dynamic>.from(json['data'] as Map? ?? {}),
     );
   }
 
@@ -53,66 +51,62 @@ class Project {
     return {
       'id': id,
       'name': name,
-      'category': category,
+      'items': items.map((item) => item.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
-      'data': data,
     };
   }
 
   /// Create a copy of this project with updated fields
   Project copyWith({
     String? name,
-    String? category,
+    List<ProjectItem>? items,
     DateTime? updatedAt,
-    Map<String, dynamic>? data,
   }) {
     return Project(
       id: id,
       name: name ?? this.name,
-      category: category ?? this.category,
+      items: items ?? this.items,
       createdAt: createdAt,
       updatedAt: updatedAt ?? DateTime.now(),
-      data: data ?? this.data,
     );
   }
 
-  /// Get the emoji icon for the category
-  String get categoryIcon {
-    switch (category.toLowerCase()) {
-      case 'waffen':
-        return '⚔️';
-      case 'rüstung':
-        return '🛡️';
-      case 'mobs':
-        return '👾';
-      case 'nahrung':
-        return '🍖';
-      case 'blöcke':
-        return '🧱';
-      case 'werkzeuge':
-        return '⚒️';
-      default:
-        return '📦';
-    }
+  /// Add an item to the project
+  Project addItem(ProjectItem item) {
+    return copyWith(items: [...items, item]);
   }
 
-  /// Get the base item if one was selected
-  VanillaItem? get baseItem {
-    final baseItemData = data['baseItem'];
-    if (baseItemData == null) return null;
+  /// Remove an item from the project
+  Project removeItem(String itemId) {
+    return copyWith(items: items.where((item) => item.id != itemId).toList());
+  }
 
+  /// Update an item in the project
+  Project updateItem(ProjectItem updatedItem) {
+    final updatedItems = items.map((item) {
+      return item.id == updatedItem.id ? updatedItem : item;
+    }).toList();
+    return copyWith(items: updatedItems);
+  }
+
+  /// Get item by ID
+  ProjectItem? getItem(String itemId) {
     try {
-      final itemMap = baseItemData as Map<String, dynamic>;
-      final key = itemMap['key'] as String;
-      return VanillaItem.fromJson(key, itemMap);
+      return items.firstWhere((item) => item.id == itemId);
     } catch (e) {
       return null;
     }
   }
 
-  /// Check if project has a base item
-  bool get hasBaseItem => data['baseItem'] != null;
+  /// Get emoji icon for project (first item's emoji or default)
+  String get emoji {
+    if (items.isEmpty) return '📦';
+    return items.first.emoji;
+  }
+
+  /// Get item count
+  int get itemCount => items.length;
 
   @override
   bool operator ==(Object other) {
@@ -125,6 +119,6 @@ class Project {
 
   @override
   String toString() {
-    return 'Project(id: $id, name: $name, category: $category)';
+    return 'Project(id: $id, name: $name, itemCount: ${items.length})';
   }
 }
