@@ -9,11 +9,13 @@ import '../services/vanilla_data_service.dart';
 class WorkshopScreen extends StatefulWidget {
   final Project? project;
   final ProjectItem? projectItem;
+  final bool isNewItem;
 
   const WorkshopScreen({
     super.key,
     this.project,
     this.projectItem,
+    this.isNewItem = false,
   });
 
   @override
@@ -683,7 +685,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
   }
 
   Future<void> _handleSave() async {
-    // If we're editing a ProjectItem
+    // If we're editing or adding a ProjectItem
     if (widget.projectItem != null && widget.project != null) {
       final updatedItem = widget.projectItem!.copyWith(
         name: _itemName,
@@ -701,10 +703,17 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         },
       );
 
-      // Update the project with the updated item
-      final updatedItems = widget.project!.items.map((item) {
-        return item.id == updatedItem.id ? updatedItem : item;
-      }).toList();
+      // Prepare the updated items list
+      List<ProjectItem> updatedItems;
+      if (widget.isNewItem) {
+        // Adding a new item - append to the list
+        updatedItems = [...widget.project!.items, updatedItem];
+      } else {
+        // Editing an existing item - update in place
+        updatedItems = widget.project!.items.map((item) {
+          return item.id == updatedItem.id ? updatedItem : item;
+        }).toList();
+      }
 
       final updatedProject = widget.project!.copyWith(
         items: updatedItems,

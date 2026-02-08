@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
+import '../models/vanilla_item.dart';
 import '../services/project_service.dart';
+import '../services/vanilla_data_service.dart';
 import '../widgets/item_selection_modal.dart';
 import 'workshop_screen.dart';
 
@@ -20,7 +22,18 @@ class ProjectItemsScreen extends StatefulWidget {
 
 class _ProjectItemsScreenState extends State<ProjectItemsScreen> {
   final ProjectService _projectService = ProjectService();
+  final VanillaDataService _vanillaService = VanillaDataService();
   late Project _currentProject;
+
+  // Category list
+  final List<Map<String, String>> _categories = [
+    {'id': 'waffen', 'name': 'Waffen', 'emoji': '⚔️'},
+    {'id': 'ruestung', 'name': 'Rüstung', 'emoji': '🛡️'},
+    {'id': 'mobs', 'name': 'Mobs', 'emoji': '👾'},
+    {'id': 'nahrung', 'name': 'Nahrung', 'emoji': '🍖'},
+    {'id': 'bloecke', 'name': 'Blöcke', 'emoji': '🧱'},
+    {'id': 'werkzeuge', 'name': 'Werkzeuge', 'emoji': '⚒️'},
+  ];
 
   @override
   void initState() {
@@ -52,43 +65,133 @@ class _ProjectItemsScreenState extends State<ProjectItemsScreen> {
     }
   }
 
-  void _showAddItemModal() {
+  void _showCategorySelection() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => ItemSelectionModal(
-        categoryId: _currentProject.category.toLowerCase(),
-        categoryName: _currentProject.category,
-        categoryEmoji: _currentProject.categoryIcon,
-        onItemSelected: _addItemToProject,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        decoration: const BoxDecoration(
+          color: AppColors.background,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppSizing.radiusLarge),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Row(
+              children: [
+                const Text(
+                  '🎯 Wähle eine Gruppe',
+                  style: TextStyle(
+                    fontSize: AppTypography.lg,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.text,
+                  ),
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: const Text(
+                    '✕',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            // Category Grid
+            GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: AppSpacing.md,
+                mainAxisSpacing: AppSpacing.md,
+              ),
+              itemCount: _categories.length,
+              itemBuilder: (context, index) {
+                final category = _categories[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showItemSelection(category);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          category['emoji']!,
+                          style: const TextStyle(fontSize: 40),
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          category['name']!,
+                          style: const TextStyle(
+                            fontSize: AppTypography.md,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.text,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Future<void> _addItemToProject(dynamic vanillaItem) async {
+  void _showItemSelection(Map<String, String> category) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ItemSelectionModal(
+        categoryId: category['id']!,
+        categoryName: category['name']!,
+        categoryEmoji: category['emoji']!,
+        onItemSelected: (vanillaItem) {
+          Navigator.of(context).pop();
+          _openItemEditorForNewItem(vanillaItem);
+        },
+      ),
+    );
+  }
+
+  Future<void> _openItemEditorForNewItem(VanillaItem vanillaItem) async {
+    // Create a new ProjectItem with vanilla item data
     final newItem = ProjectItem(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: vanillaItem.name,
       baseItemKey: vanillaItem.key,
     );
 
-    final updatedProject = _currentProject.copyWith(
-      items: [..._currentProject.items, newItem],
-      updatedAt: DateTime.now(),
+    // Open WorkshopScreen to edit the new item
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => WorkshopScreen(
+          project: _currentProject,
+          projectItem: newItem,
+          isNewItem: true,
+        ),
+      ),
     );
 
-    final saved = await _projectService.saveProject(updatedProject);
-    if (saved && mounted) {
-      setState(() {
-        _currentProject = updatedProject;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('✅ Item hinzugefügt'),
-          backgroundColor: AppColors.success,
-        ),
-      );
-    }
+    // Reload project when returning
+    _loadProject();
   }
 
   Future<void> _deleteItem(ProjectItem item) async {
@@ -161,7 +264,7 @@ class _ProjectItemsScreenState extends State<ProjectItemsScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddItemModal,
+        onPressed: _showCategorySelection,
         backgroundColor: AppColors.primary,
         label: const Text('Item hinzufügen'),
         icon: const Text('➕', style: TextStyle(fontSize: 20)),
@@ -179,7 +282,7 @@ class _ProjectItemsScreenState extends State<ProjectItemsScreen> {
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
@@ -216,6 +319,41 @@ class _ProjectItemsScreenState extends State<ProjectItemsScreen> {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          // Addon erstellen Button
+          ElevatedButton(
+            onPressed: () {
+              // Placeholder for addon export functionality
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('🚀 Addon-Export kommt bald!'),
+                  backgroundColor: AppColors.info,
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.info,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
+              ),
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('📦', style: TextStyle(fontSize: 20)),
+                SizedBox(width: AppSpacing.sm),
+                Text(
+                  'Addon erstellen',
+                  style: TextStyle(
+                    fontSize: AppTypography.md,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
