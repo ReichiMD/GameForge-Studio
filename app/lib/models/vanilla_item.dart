@@ -65,6 +65,24 @@ class VanillaItem {
   /// Check if item has a specific stat
   bool hasStat(String key) => stats.containsKey(key);
 
+  /// Get full texture URL from GitHub repository
+  /// Returns null if no texture is defined
+  String? get textureUrl {
+    if (texture == null) return null;
+
+    // Base URL for fabrik-library repository
+    const baseUrl = 'https://raw.githubusercontent.com/ReichiMD/fabrik-library/main';
+
+    // Extract filename from texture path
+    // Example: "assets/vanilla/textures/items/wood_sword.png" -> "wood_sword.png"
+    final filename = texture!.split('/').last;
+
+    return '$baseUrl/assets/vanilla/textures/items/$filename';
+  }
+
+  /// Check if item has a texture
+  bool get hasTexture => texture != null;
+
   @override
   String toString() {
     return 'VanillaItem(key: $key, name: $name, category: $category)';
