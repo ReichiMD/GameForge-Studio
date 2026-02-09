@@ -1,8 +1,8 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 3.4 (Flutter - .mcaddon Export System)
+**Version:** 3.5 (Flutter - Editor Polish + Custom Icon Picker)
 **Letzte Aktualisierung:** 2026-02-09
-**Status:** Phase 7 Komplett (✅ Fertig!) - Minecraft Bedrock Addon Export funktioniert!
+**Status:** Phase 7 Komplett (✅ Fertig!) - Editor verbessert + Custom Icon Auswahl!
 
 ---
 
@@ -61,6 +61,8 @@
 ✅ **.mcaddon Export** - Komplette Minecraft Bedrock Addons erstellen! 🎮
 ✅ **AddonBuilderService** - ZIP-Builder mit Auto-UUIDs, Manifest-Templates 📦
 ✅ **Downloads-Speicherung** - Addons direkt in /Download/ speichern (kein Share-Dialog) 💾
+✅ **Custom Icon Picker** - Im Editor auf Bild tippen → Custom-Icons aus fabrik-library auswählen 🎨
+✅ **Editor Bug-Fix** - Textfeld Item-Name funktioniert jetzt korrekt (Cursor + Schreibrichtung) 🔧
 
 ---
 
@@ -109,7 +111,7 @@ app/lib/
 │   ├── project_service.dart       ✅ CRUD Operations
 │   ├── vanilla_data_service.dart  ✅ JSON Loader
 │   ├── minecraft_export_service.dart ✅ Minecraft Bedrock Export (Legacy)
-│   ├── addon_builder_service.dart ✅ .mcaddon ZIP Builder (NEU!)
+│   ├── addon_builder_service.dart ✅ .mcaddon ZIP Builder
 │   └── debug_log_service.dart     ✅ Debug-Logging Singleton
 └── widgets/
     ├── item_selection_modal.dart  ✅ Item Grid (alt, nicht mehr verwendet)
@@ -173,47 +175,29 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #23 - 2026-02-09 - .mcaddon Export System (KOMPLETT!)**
-- ✅ **Minecraft Bedrock Addon Export System erstellt**
-  * AddonBuilderService - Baut komplette .mcaddon ZIP-Dateien
-  * Manifest-Template für Bedrock 1.21.130+ (format_version: 2)
-  * Auto-generierte UUIDs für jedes Addon (uuid package)
-  * Alle Items als separate JSON-Dateien exportiert
-  * Items nutzen Vanilla-Texturen (funktioniert direkt in Minecraft)
-- ✅ **Templates-System**
-  * app/assets/templates/manifest_behavior.json - Behavior Pack Template
-  * app/assets/templates/README.md - Dokumentation
-  * Platzhalter für pack_icon.png (optional, wenn vorhanden)
-- ✅ **Downloads-Speicherung statt Share-Dialog**
-  * Addons direkt in /storage/emulated/0/Download/ gespeichert
-  * WRITE_EXTERNAL_STORAGE Permission für Android < 10
-  * Success-Message: "Gespeichert in Downloads/projekt_name.mcaddon"
-  * Ein Klick → Datei fertig!
-- ✅ **Neue Packages**
-  * archive ^3.6.1 - ZIP-Erstellung
-  * uuid ^4.5.1 - UUID-Generierung
-  * path_provider ^2.1.5 - Temporäre Dateien
-- ✅ **3 Commits:** 1bdc6db (Addon Builder), 218b7f0 (Icon-Support), d3382f3 (Downloads), c0fcb06 (Build-Fix)
-- Branch: `claude/minecraft-addon-builder-qpJFX`
+**Session #24 - 2026-02-09 - Editor Polish + Custom Icon Picker**
+- ✅ **Bug-Fix: Textfeld Item-Name im Editor**
+  * TextEditingController wurde bei jedem setState neu erstellt → Cursor sprang raus
+  * Jetzt wird Controller einmal in initState erstellt und wiederverwendet
+  * Tippen, Löschen und Cursor-Position funktionieren korrekt
+- ✅ **Export-Button aus Editor entfernt**
+  * "Als Minecraft Addon exportieren" Button im Workshop-Screen entfernt
+  * Export bleibt über ProjectDetailScreen verfügbar
+- ✅ **Custom Icon Picker Feature**
+  * Auf Item-Bild im Editor tippen → Bild-Galerie öffnet sich
+  * Lädt verfügbare PNG-Icons von fabrik-library (assets/custom/icons/)
+  * GitHub API Abfrage für dynamische Icon-Liste
+  * Ausgewähltes Icon wird mit Item gespeichert (customIconUrl in ProjectItem)
+  * "Standard-Bild" Button zum Zurücksetzen
+  * Kleines Stift-Symbol am Bild als Hinweis
+- ✅ **Model-Erweiterung**
+  * ProjectItem hat neues Feld: customIconUrl (String?, optional)
+  * Wird in JSON gespeichert und geladen (Persistenz)
+- ✅ **Neues Package:** http ^1.2.2 - Für GitHub API Abfragen
+- ✅ **1 Commit:** 66118dc
+- Branch: `claude/fix-editor-image-picker-hykbs`
 
-**Status:** ✅ Fertig - Komplettes Addon-Export System funktioniert! 🎮
-
-**.mcaddon Struktur:**
-```
-projekt_name.mcaddon (ZIP)
-├── manifest.json (auto-generierte UUIDs)
-└── items/
-    ├── item1.json
-    ├── item2.json
-    └── ...
-```
-
-**Workflow:** Projekt erstellen → Items hinzufügen → 📤 drücken → Datei in Downloads → In Minecraft importieren
-
-**Nächste Session:**
-👉 **Testing & Optional Features**
-- App in Minecraft testen
-- Optional: Resource Pack für eigene Texturen (16x16 PNG Upload)
+**Status:** ✅ Fertig - Editor funktioniert korrekt + Custom Icons auswählbar! 🎨
 
 ---
 
@@ -223,6 +207,7 @@ projekt_name.mcaddon (ZIP)
 - Kein Splash-Screen
 - pack_icon.png fehlt (Minecraft nutzt Default-Icon)
 - Resource Pack für eigene Texturen noch nicht implementiert
+- Custom Icons nur für Waffen verfügbar (6 Icons in fabrik-library)
 
 **Alle non-blocking** - App ist voll funktionsfähig! 🎉
 
