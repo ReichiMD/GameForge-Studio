@@ -326,6 +326,31 @@ class _DebugScreenState extends State<DebugScreen> {
                   color: AppColors.textSecondary,
                 ),
               ),
+              const SizedBox(width: 4),
+              SizedBox(
+                width: 28,
+                height: 28,
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  iconSize: 14,
+                  icon: const Icon(Icons.copy, color: AppColors.textSecondary),
+                  tooltip: 'Log kopieren',
+                  onPressed: () async {
+                    await Clipboard.setData(
+                      ClipboardData(text: log.toFormattedString()),
+                    );
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('📋 Log-Eintrag kopiert!'),
+                          backgroundColor: AppColors.success,
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 6),
