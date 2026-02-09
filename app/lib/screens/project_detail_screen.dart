@@ -123,23 +123,21 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
       final addonBytes = await AddonBuilderService.buildAddon(_currentProject);
       final filename = AddonBuilderService.getAddonFilename(_currentProject);
 
-      // Save to temporary file
-      final tempDir = await getTemporaryDirectory();
-      final tempFile = File('${tempDir.path}/$filename');
-      await tempFile.writeAsBytes(addonBytes);
+      // Save directly to Downloads folder
+      final downloadsDir = Directory('/storage/emulated/0/Download');
+      if (!await downloadsDir.exists()) {
+        await downloadsDir.create(recursive: true);
+      }
 
-      // Share the .mcaddon file
-      await Share.shareXFiles(
-        [XFile(tempFile.path)],
-        subject: 'Minecraft Addon: ${_currentProject.name}',
-      );
+      final outputFile = File('${downloadsDir.path}/$filename');
+      await outputFile.writeAsBytes(addonBytes);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('✅ "${_currentProject.name}" als $filename exportiert!'),
+            content: Text('✅ Gespeichert in Downloads/$filename'),
             backgroundColor: AppColors.success,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -147,7 +145,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ Fehler beim Exportieren: $e'),
+            content: Text('❌ Fehler: $e'),
             backgroundColor: AppColors.error,
             duration: const Duration(seconds: 4),
           ),
