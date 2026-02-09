@@ -134,7 +134,7 @@ class _DebugScreenState extends State<DebugScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 16.0),
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: AppColors.cardBackground,
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.border),
             ),
@@ -253,7 +253,7 @@ class _DebugScreenState extends State<DebugScreen> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: color ?? AppColors.textPrimary,
+              color: color ?? AppColors.text,
             ),
           ),
         ],
@@ -334,7 +334,7 @@ class _DebugScreenState extends State<DebugScreen> {
             log.message,
             style: const TextStyle(
               fontSize: 12,
-              color: AppColors.textPrimary,
+              color: AppColors.text,
             ),
           ),
           // Data
