@@ -67,8 +67,8 @@ class _ItemTextureWidgetState extends State<ItemTextureWidget> {
       fit: widget.fit,
       // Memory-only cache (cleared on app close)
       cacheKey: widget.item.textureUrl,
-      memCacheWidth: (widget.size * 2).toInt(), // 2x for retina displays
-      memCacheHeight: (widget.size * 2).toInt(),
+      memCacheWidth: (widget.size * 4).toInt(), // 4x for high-res displays like Pixel 7
+      memCacheHeight: (widget.size * 4).toInt(),
       // Loading indicator
       placeholder: (context, url) {
         _debugService.addLog(
@@ -115,6 +115,8 @@ class _ItemTextureWidgetState extends State<ItemTextureWidget> {
           width: widget.size,
           height: widget.size,
           fit: widget.fit,
+          filterQuality: FilterQuality.none, // Pixel-art style (sharp pixels, no blur)
+          isAntiAlias: false, // Sharp edges for Minecraft style
         );
       },
     );
@@ -180,8 +182,8 @@ class _ItemTextureIconWidgetState extends State<ItemTextureIconWidget> {
       height: widget.size,
       fit: BoxFit.contain,
       cacheKey: widget.item.textureUrl,
-      memCacheWidth: (widget.size * 2).toInt(),
-      memCacheHeight: (widget.size * 2).toInt(),
+      memCacheWidth: (widget.size * 4).toInt(), // 4x for high-res displays
+      memCacheHeight: (widget.size * 4).toInt(),
       // No loading indicator for small icons
       placeholder: (context, url) => _buildEmojiFallback(),
       errorWidget: (context, url, error) {
@@ -199,6 +201,8 @@ class _ItemTextureIconWidgetState extends State<ItemTextureIconWidget> {
           width: widget.size,
           height: widget.size,
           fit: BoxFit.contain,
+          filterQuality: FilterQuality.none, // Pixel-art style (sharp pixels, no blur)
+          isAntiAlias: false, // Sharp edges for Minecraft style
         );
       },
     );

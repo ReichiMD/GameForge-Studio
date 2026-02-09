@@ -378,6 +378,34 @@
 
 ---
 
+### Session #20 - 2026-02-09 - Pixel-Art-Stil für Item-Texturen (SOLVED!)
+
+**Branch:** `claude/fix-blurry-images-CdIqd`
+
+**Durchgeführt:**
+- ✅ **Problem identifiziert:** Item-Bilder unscharf/matschig in Waffenübersicht + Editor
+- ✅ **Root-Cause:** Original-Texturen sind nur 16x16 Pixel (Minecraft-Standard)
+  * Anzeige mit 80px → 5x Vergrößerung → FilterQuality.high interpoliert → verschwommen
+- ✅ **Lösung:** Pixel-Art-Rendering (FilterQuality.none + kein AntiAlias)
+  * ItemTextureWidget: filterQuality.none, isAntiAlias: false
+  * Zeigt jeden Pixel scharf (klassischer Minecraft-Stil)
+- ✅ **Testing auf Pixel 7:** User bestätigt perfekte Darstellung
+
+**Commits:**
+- `432351f` - fix: Improve image quality for high-resolution displays (erster Versuch)
+- `2306de0` - fix: Use pixel-art style for Minecraft item textures (finale Lösung)
+
+**Technische Details:**
+- memCacheWidth/Height: 2x → 4x (für hochauflösende Displays)
+- filterQuality: high → none (keine Interpolation, scharfe Pixel)
+- isAntiAlias: true → false (scharfe Kanten)
+
+**Status:** ✅ SOLVED - Bilder perfekt scharf im Pixel-Art-Stil! 🎮
+
+**Nächstes:** App Icon & Splash-Screen (Polish)
+
+---
+
 ## 🎯 Nächste Session: App Polish & Beta Release
 
 **Geplant:**
@@ -414,7 +442,7 @@
 - ✅ Export-Funktionalität für Projekte & Items
 - ✅ APK-Updates ohne Deinstallation
 - ✅ Debug-System (DebugScreen, DebugLogService) - Session #18
-- ✅ Item-Texturen funktionieren (Internet-Permission Fix) - Session #19
+- ✅ Item-Texturen im Pixel-Art-Stil (scharf, kein Blur) - Session #19 & #20
 
 **Dokumentation:**
 - ✅ CLAUDE.md (Session-Start) - Version 3.1
@@ -425,4 +453,4 @@
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-09 (Session #19)
+**Letzte Aktualisierung:** 2026-02-09 (Session #20)
