@@ -3,6 +3,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/vanilla_item.dart';
 import '../services/vanilla_data_service.dart';
+import '../widgets/item_texture_widget.dart';
 
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
@@ -495,7 +496,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
               children: [
                 Row(
                   children: [
-                    Text(item.emoji, style: const TextStyle(fontSize: 32)),
+                    ItemTextureWidget(item: item, size: 48),
                     const SizedBox(width: AppSpacing.md),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

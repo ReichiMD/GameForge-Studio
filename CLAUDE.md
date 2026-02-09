@@ -31,7 +31,8 @@
 ✅ **Item-Export** - Minecraft Bedrock JSON Export per Share
 ✅ **Project Export** - Alle Items eines Projekts exportieren
 ✅ **Multi-Item Projects** - Ein Projekt kann viele Items enthalten! 🚀
-✅ **APK Build** - GitHub Actions, Version 1.1.0+2
+✅ **APK Build** - GitHub Actions, Version 1.1.1+3
+🔄 **Item Texturen** - Integration vorbereitet (fabrik-library), debugging pending
 
 ---
 
@@ -140,27 +141,23 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #16 - 2026-02-08 - Phase 6 Workflow Redesign (MEGA!)**
-- ✅ **Komplett neuer Workflow:** Projekte können jetzt mehrere Items enthalten!
-- ✅ **ProjectItem Model:** Neue Model-Klasse für Items in Projekten
-- ✅ **Project Model:** Erweitert mit List<ProjectItem>, addItem, removeItem, updateItem
-- ✅ **ProjectDetailScreen:** Zeigt alle Items, Export-Button, Swipe-to-Delete
-- ✅ **CategorySelectionScreen:** Kategorie-Auswahl für neues Item
-- ✅ **ItemListScreen:** Vanilla Items aus Kategorie wählen
-- ✅ **CreateProjectScreen:** Drastisch vereinfacht (nur Name!)
-- ✅ **WorkshopScreen:** Als Item-Editor umgebaut (nicht mehr als Tab)
-- ✅ **HomeScreen:** Instant Refresh, Navigation zu ProjectDetailScreen
-- ✅ **MinecraftExportService:** Arbeitet mit ProjectItems
-- ✅ **UX-Fixes:** Item bearbeiten, Export-Button, APK-Update ohne Deinstall
-- ✅ **Version:** 1.1.0+2 für APK-Updates
-- Branch: `claude/redesign-project-workflow-riINz`
-- Commits: 49a5b46 (Redesign), 2c7c104 (UX Fixes), 843335d (Version)
+**Session #17 - 2026-02-08 - Minecraft Item Texturen (Partial)**
+- 🔄 **Item-Texturen Integration:** cached_network_image Paket hinzugefügt
+- ✅ **VanillaItem Model erweitert:** textureUrl Getter, hasTexture Property
+- ✅ **ItemTextureWidget:** Widget mit CachedNetworkImage + Emoji-Fallback
+- ✅ **4 Screens aktualisiert:** ItemListScreen, WorkshopScreen, ProjectDetailScreen, LibraryScreen
+- ✅ **Version:** 1.1.1+3 (APK Rebuild für Package-Installation)
+- ❌ **Problem:** Bilder werden nicht angezeigt (Ursache unklar)
+- Branch: `claude/minecraft-item-images-r1uWF`
+- Commit: 768c487 (Version Bump), 4a35cfd (Texture Integration)
+
+**Status:** Merge zu Main geplant, Code ist sauber implementiert
 
 **Nächste Session:**
-👉 **App Icon & Polish**
-- App-Icon erstellen (siehe ICON_SETUP.md)
-- Splash-Screen
-- Testing auf echtem Device
+👉 **Debug-Modus für Item-Texturen**
+- Debug-Logs hinzufügen (Netzwerk, Fehler, Cache)
+- Error-Handling verbessern
+- Ursache für fehlende Bilder finden
 
 ---
 
@@ -169,6 +166,7 @@ AppColors.background    // #1F2937 (Dark Gray)
 - Kein App-Icon (nur Default Flutter Icon)
 - Kategorien ohne vanilla items (Mobs, Blöcke, Werkzeuge) erstellen leeres Item
 - Kein Splash-Screen
+- **Item Texturen werden nicht angezeigt** - cached_network_image integriert, aber Bilder laden nicht (Debug-Modus in nächster Session)
 
 **Alle non-blocking** - App ist voll funktionsfähig! 🎉
 

@@ -6,6 +6,7 @@ import '../models/project_item.dart';
 import '../models/vanilla_item.dart';
 import '../services/vanilla_data_service.dart';
 import '../services/project_service.dart';
+import '../widgets/item_texture_widget.dart';
 import 'workshop_screen.dart';
 
 class ItemListScreen extends StatefulWidget {
@@ -265,10 +266,10 @@ class _ItemListScreenState extends State<ItemListScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Item Icon
-            Text(
-              item.emoji,
-              style: const TextStyle(fontSize: 48),
+            // Item Icon with texture or emoji fallback
+            ItemTextureWidget(
+              item: item,
+              size: 64,
             ),
             const SizedBox(height: AppSpacing.md),
             // Item Name

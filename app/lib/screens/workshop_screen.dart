@@ -6,6 +6,7 @@ import '../models/project.dart';
 import '../models/project_item.dart';
 import '../services/project_service.dart';
 import '../services/minecraft_export_service.dart';
+import '../widgets/item_texture_widget.dart';
 
 class WorkshopScreen extends StatefulWidget {
   final Project project;
@@ -178,7 +179,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       ),
       child: Column(
         children: [
-          // Item Icon
+          // Item Icon with texture or emoji
           Container(
             width: 120,
             height: 120,
@@ -187,10 +188,15 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
               borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
             ),
             alignment: Alignment.center,
-            child: Text(
-              _itemEmoji,
-              style: const TextStyle(fontSize: 64),
-            ),
+            child: widget.item.baseItem != null
+                ? ItemTextureWidget(
+                    item: widget.item.baseItem!,
+                    size: 80,
+                  )
+                : Text(
+                    _itemEmoji,
+                    style: const TextStyle(fontSize: 64),
+                  ),
           ),
           const SizedBox(height: AppSpacing.lg),
           Text(

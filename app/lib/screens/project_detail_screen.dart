@@ -6,6 +6,7 @@ import '../models/project.dart';
 import '../models/project_item.dart';
 import '../services/project_service.dart';
 import '../services/minecraft_export_service.dart';
+import '../widgets/item_texture_widget.dart';
 import 'category_selection_screen.dart';
 import 'workshop_screen.dart';
 
@@ -379,7 +380,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
           ),
           child: Row(
             children: [
-              // Item Icon
+              // Item Icon with texture or emoji
               Container(
                 width: 60,
                 height: 60,
@@ -388,7 +389,12 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                   borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
                 ),
                 alignment: Alignment.center,
-                child: Text(item.emoji, style: const TextStyle(fontSize: 32)),
+                child: item.baseItem != null
+                    ? ItemTextureWidget(
+                        item: item.baseItem!,
+                        size: 48,
+                      )
+                    : Text(item.emoji, style: const TextStyle(fontSize: 32)),
               ),
               const SizedBox(width: AppSpacing.lg),
               // Item Info
