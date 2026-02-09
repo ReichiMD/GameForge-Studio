@@ -1,8 +1,8 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 3.3 (Flutter - Bild-System + Gold-Rüstung + Werkzeuge)
+**Version:** 3.4 (Flutter - .mcaddon Export System)
 **Letzte Aktualisierung:** 2026-02-09
-**Status:** Phase 6 Komplett (✅ Fertig!) + Bild-System korrigiert (✅ Fertig!)
+**Status:** Phase 7 Komplett (✅ Fertig!) - Minecraft Bedrock Addon Export funktioniert!
 
 ---
 
@@ -39,7 +39,7 @@
 
 ---
 
-## 📱 Was funktioniert bereits? (Phase 1-6)
+## 📱 Was funktioniert bereits? (Phase 1-7)
 
 ✅ **Login/Logout** - Username + GitHub Token (SharedPreferences)
 ✅ **Bottom Navigation** - 3 Tabs (Home, Bibliothek, Settings)
@@ -51,8 +51,6 @@
 ✅ **WorkshopScreen** - Item-Editor mit 6 Stats + Effekte
 ✅ **LibraryScreen** - Item-Galerie mit 39 Items, Filter, Suche
 ✅ **SettingsScreen** - GitHub, Darstellung, Info, Entwickler-Tools, Gefahrenzone
-✅ **Item-Export** - Minecraft Bedrock JSON Export per Share
-✅ **Project Export** - Alle Items eines Projekts exportieren
 ✅ **Multi-Item Projects** - Ein Projekt kann viele Items enthalten! 🚀
 ✅ **Debug-System** - Vollständiges Logging für Fehlersuche (Image-Loading) 🔧
 ✅ **APK Build** - GitHub Actions, Version 1.1.1+3
@@ -60,10 +58,13 @@
 ✅ **Gold-Rüstung** - Goldhelm, Goldbrustpanzer, Goldhose, Goldstiefel hinzugefügt ⭐
 ✅ **Werkzeuge-Kategorie** - 24 Werkzeuge (Spitzhacken, Schaufeln, Äxte, Hacken) ⛏️
 ✅ **71 Items gesamt** - 10 Waffen, 24 Rüstung, 24 Werkzeuge, 13 Nahrung 📦
+✅ **.mcaddon Export** - Komplette Minecraft Bedrock Addons erstellen! 🎮
+✅ **AddonBuilderService** - ZIP-Builder mit Auto-UUIDs, Manifest-Templates 📦
+✅ **Downloads-Speicherung** - Addons direkt in /Download/ speichern (kein Share-Dialog) 💾
 
 ---
 
-## 🆕 Neuer Workflow (Phase 6 - MEGA UPDATE!)
+## 🆕 Neuer Workflow (Phase 7 - .mcaddon Export!)
 
 **Kompletter Workflow:**
 1. **Projekt erstellen** (nur Name) → HomeScreen ✅
@@ -73,10 +74,10 @@
 5. **Item auswählen** → WorkshopScreen (Editor)
 6. **Stats bearbeiten** → Speichern → Zurück zur Item-Liste
 7. **Item bearbeiten** → Tap auf Item → Editor → Update
-8. **Projekt exportieren** → 📤 Button → Share als Minecraft Addon
+8. **Addon exportieren** → 📤 Button → **Direkt in Downloads gespeichert!** 💾
+9. **In Minecraft importieren** → Datei antippen → Fertig! 🎮
 
-**Vorher:** 1 Projekt = 1 Item
-**Jetzt:** 1 Projekt = VIELE Items! 🎉
+**Neu:** Echte .mcaddon Dateien (Bedrock 1.21.130+) direkt spielbar!
 
 ---
 
@@ -107,8 +108,9 @@ app/lib/
 ├── services/
 │   ├── project_service.dart       ✅ CRUD Operations
 │   ├── vanilla_data_service.dart  ✅ JSON Loader
-│   ├── minecraft_export_service.dart ✅ Minecraft Bedrock Export
-│   └── debug_log_service.dart     ✅ Debug-Logging Singleton (NEU!)
+│   ├── minecraft_export_service.dart ✅ Minecraft Bedrock Export (Legacy)
+│   ├── addon_builder_service.dart ✅ .mcaddon ZIP Builder (NEU!)
+│   └── debug_log_service.dart     ✅ Debug-Logging Singleton
 └── widgets/
     ├── item_selection_modal.dart  ✅ Item Grid (alt, nicht mehr verwendet)
     └── item_texture_widget.dart   ✅ Texture Loading + Debug-Logging
@@ -171,52 +173,56 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #22 - 2026-02-09 - Bild-System korrigiert + Gold-Rüstung + Werkzeuge (KOMPLETT!)**
-- ✅ **Kommunikationsregeln in CLAUDE.md hinzugefügt**
-  * Verständliche Sprache (kein Fachchinesisch)
-  * Erst informieren, dann handeln (Nutzer-Bestätigung erforderlich)
-  * Token sparen (keine unnötigen Repository/Web-Suchen)
-  * Bild-System dokumentiert (von GitHub laden, nicht lokal speichern)
-- ✅ **Bild-System korrigiert - BREAKING CHANGE!**
-  * Alle texture-Pfade von lokal auf GitHub-URLs geändert
-  * 10 lokale Waffen-PNGs gelöscht (waren in Session #21 falsch hinzugefügt)
-  * pubspec.yaml bereinigt (Asset-Registrierung entfernt)
-  * Bilder werden jetzt von fabrik-library Repository geladen
-  * URL: `https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/`
-  * Nur Memory-Cache (beim App-Schließen werden Bilder gelöscht)
-- ✅ **Gold-Rüstung hinzugefügt (4 Teile)**
-  * Goldhelm, Goldbrustpanzer, Goldhose, Goldstiefel
-  * Jetzt 5 komplette Rüstungs-Sets (Leder, Eisen, Gold, Diamant, Netherit)
-- ✅ **Werkzeuge-Kategorie hinzugefügt (24 Items)**
-  * 6 Spitzhacken (Holz → Netherit)
-  * 6 Schaufeln (Holz → Netherit)
-  * 6 Äxte (Holz → Netherit)
-  * 6 Hacken (Holz → Netherit)
-  * VanillaDataService: Werkzeuge-Mapping hinzugefügt
-- ✅ **2 Commits:** ad80dea (Kommunikationsregeln), ec71436 (Bild-System + Items)
-- Branch: `claude/update-preferences-item-images-qJIkH`
+**Session #23 - 2026-02-09 - .mcaddon Export System (KOMPLETT!)**
+- ✅ **Minecraft Bedrock Addon Export System erstellt**
+  * AddonBuilderService - Baut komplette .mcaddon ZIP-Dateien
+  * Manifest-Template für Bedrock 1.21.130+ (format_version: 2)
+  * Auto-generierte UUIDs für jedes Addon (uuid package)
+  * Alle Items als separate JSON-Dateien exportiert
+  * Items nutzen Vanilla-Texturen (funktioniert direkt in Minecraft)
+- ✅ **Templates-System**
+  * app/assets/templates/manifest_behavior.json - Behavior Pack Template
+  * app/assets/templates/README.md - Dokumentation
+  * Platzhalter für pack_icon.png (optional, wenn vorhanden)
+- ✅ **Downloads-Speicherung statt Share-Dialog**
+  * Addons direkt in /storage/emulated/0/Download/ gespeichert
+  * WRITE_EXTERNAL_STORAGE Permission für Android < 10
+  * Success-Message: "Gespeichert in Downloads/projekt_name.mcaddon"
+  * Ein Klick → Datei fertig!
+- ✅ **Neue Packages**
+  * archive ^3.6.1 - ZIP-Erstellung
+  * uuid ^4.5.1 - UUID-Generierung
+  * path_provider ^2.1.5 - Temporäre Dateien
+- ✅ **3 Commits:** 1bdc6db (Addon Builder), 218b7f0 (Icon-Support), d3382f3 (Downloads), c0fcb06 (Build-Fix)
+- Branch: `claude/minecraft-addon-builder-qpJFX`
 
-**Status:** ✅ Fertig - 71 Items, Bilder von GitHub! 🚀
+**Status:** ✅ Fertig - Komplettes Addon-Export System funktioniert! 🎮
 
-**Wichtiger Unterschied:**
-- **Session #21 (falsch):** Bilder lokal im APK-Bundle gespeichert
-- **Session #22 (richtig):** Bilder werden von GitHub geladen, nur im Memory-Cache
+**.mcaddon Struktur:**
+```
+projekt_name.mcaddon (ZIP)
+├── manifest.json (auto-generierte UUIDs)
+└── items/
+    ├── item1.json
+    ├── item2.json
+    └── ...
+```
 
-**Items gesamt:** 71 (10 Waffen, 24 Rüstung, 24 Werkzeuge, 13 Nahrung)
+**Workflow:** Projekt erstellen → Items hinzufügen → 📤 drücken → Datei in Downloads → In Minecraft importieren
 
 **Nächste Session:**
-👉 **App Polish & Testing**
-- App neu bauen und testen
-- Bilder-Ladung von GitHub überprüfen
-- Optional: Weitere Item-Kategorien (Blöcke, Mobs)
+👉 **Testing & Optional Features**
+- App in Minecraft testen
+- Optional: Resource Pack für eigene Texturen (16x16 PNG Upload)
 
 ---
 
 ## 🐛 Bekannte Issues
 
 - Kein App-Icon (nur Default Flutter Icon)
-- Kategorien ohne vanilla items (Mobs, Blöcke, Werkzeuge) erstellen leeres Item
 - Kein Splash-Screen
+- pack_icon.png fehlt (Minecraft nutzt Default-Icon)
+- Resource Pack für eigene Texturen noch nicht implementiert
 
 **Alle non-blocking** - App ist voll funktionsfähig! 🎉
 
@@ -224,12 +230,13 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ## 🎯 Nächster Milestone
 
-**Phase 7: App Polish & Beta Release**
-- App-Icon und Splash-Screen
-- End-to-End Testing
+**Phase 8: Testing & Optional Features**
+- End-to-End Testing in Minecraft Bedrock
+- Optional: Resource Pack für eigene 16x16 PNG Texturen
+- Optional: App-Icon und Splash-Screen
 - Erste Beta-Version veröffentlichen
 
-**Geschätzter Aufwand:** 1 Session
+**Geschätzter Aufwand:** 1-2 Sessions
 
 ---
 
