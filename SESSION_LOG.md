@@ -406,7 +406,49 @@
 
 ---
 
-## 🎯 Nächste Session: App Polish & Beta Release
+### Session #21 - 2026-02-09 - Waffen-Texturen Integration (KOMPLETT!)
+
+**Branch:** `claude/add-weapon-images-62C9u`
+
+**Durchgeführt:**
+- ✅ **10 Waffen-Texturen hinzugefügt:**
+  * Von fabrik-library heruntergeladen: bow, crossbow, trident, mace + 6 Schwerter (wood, stone, iron, gold, diamond, netherite)
+  * Alle 16x16 PNG (Minecraft-Standard)
+  * In zwei Verzeichnisse kopiert: `/assets/vanilla/textures/items/` + `app/assets/vanilla/textures/items/`
+- ✅ **Mace (Keule) zu vanilla_stats.json hinzugefügt:**
+  * Neue Waffe mit Epic-Rarity, Damage: 6, Attack Speed: 0.6, Durability: 500
+  * Sowohl in root vanilla_stats.json als auch in app/assets/library/vanilla_stats.json
+- ✅ **pubspec.yaml erweitert:**
+  * Asset-Pfad hinzugefügt: `assets/vanilla/textures/items/`
+  * Texturen werden jetzt in APK-Bundle gepackt
+- ✅ **ItemTextureWidget refactored:**
+  * Intelligente Pfad-Erkennung: `textureUrl.startsWith('assets/')` → lokales Asset
+  * Image.asset() für lokale Texturen (instant loading, offline)
+  * CachedNetworkImage für URLs (legacy Support)
+  * Debug-Logging für Asset-Loading
+- ✅ **404-Fehler behoben:**
+  * App versuchte vorher, `assets/...` als GitHub-URL zu laden → 404
+  * Jetzt lädt sie direkt aus APK-Bundle → blitzschnell
+
+**Commits:**
+- `7b6bccb` - feat: Add weapon textures and mace to vanilla items
+- `a3bb02e` - feat: Integrate weapon textures directly into Flutter app
+- `9059734` - fix: Load weapon textures from local assets instead of network
+
+**Wichtige Änderungen:**
+- Waffen-Bilder sind jetzt komplett offline verfügbar (kein Netzwerk mehr nötig)
+- Instant loading aus APK-Bundle (keine Latenz)
+- Pixel-Art-Stil beibehalten (FilterQuality.none, isAntiAlias: false)
+
+**Status:** ✅ Waffen-Texturen vollständig integriert - 10 Waffen funktionieren offline! 🎉
+
+**User Request:** Debug-Log zeigte 404-Fehler → Problem identifiziert und gelöst
+
+**Nächstes:** Weitere Item-Kategorien (Rüstung, Nahrung, Tools)
+
+---
+
+## 🎯 Nächste Session: Weitere Item-Texturen oder App Polish
 
 **Geplant:**
 1. **App Icon & Splash-Screen** (PRIORITÄT!)
