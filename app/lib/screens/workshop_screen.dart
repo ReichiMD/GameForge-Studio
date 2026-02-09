@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
 import '../models/project_item.dart';
 import '../services/project_service.dart';
-import '../services/minecraft_export_service.dart';
 import '../widgets/item_texture_widget.dart';
 
 class WorkshopScreen extends StatefulWidget {
@@ -26,11 +27,13 @@ class WorkshopScreen extends StatefulWidget {
 
 class _WorkshopScreenState extends State<WorkshopScreen> {
   final ProjectService _projectService = ProjectService();
+  late TextEditingController _nameController;
 
   // Item State
   late String _itemName;
   late String _itemEmoji;
   late String _category;
+  String? _customIconUrl;
 
   // Stats
   late double _damage;
@@ -48,6 +51,13 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
   void initState() {
     super.initState();
     _loadItemData();
+    _nameController = TextEditingController(text: _itemName);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
   }
 
   void _loadItemData() {
@@ -57,6 +67,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       _itemName = item.name;
       _itemEmoji = item.emoji;
       _category = item.category;
+      _customIconUrl = item.customIconUrl;
 
       // Load stats
       _damage = (item.customStats['damage'] as num?)?.toDouble() ?? 1.0;
@@ -157,12 +168,6 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           // Save Button
           _buildSaveButton(),
 
-          if (!widget.isNewItem) ...[
-            const SizedBox(height: AppSpacing.lg),
-            // Export Button
-            _buildExportButton(),
-          ],
-
           const SizedBox(height: AppSpacing.xxl),
         ],
       ),
@@ -179,26 +184,78 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       ),
       child: Column(
         children: [
-          // Item Icon with texture or emoji
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceLight,
-              borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
-            ),
-            alignment: Alignment.center,
-            child: widget.item.baseItem != null
-                ? ItemTextureWidget(
-                    item: widget.item.baseItem!,
-                    size: 80,
-                  )
-                : Text(
-                    _itemEmoji,
-                    style: const TextStyle(fontSize: 64),
+          // Item Icon - tappable to change
+          GestureDetector(
+            onTap: _showIconPicker,
+            child: Stack(
+              children: [
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceLight,
+                    borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
                   ),
+                  alignment: Alignment.center,
+                  child: _customIconUrl != null
+                      ? CachedNetworkImage(
+                          imageUrl: _customIconUrl!,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.contain,
+                          filterQuality: FilterQuality.none,
+                          placeholder: (context, url) => const SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          errorWidget: (context, url, error) => Text(
+                            _itemEmoji,
+                            style: const TextStyle(fontSize: 64),
+                          ),
+                        )
+                      : widget.item.baseItem != null
+                          ? ItemTextureWidget(
+                              item: widget.item.baseItem!,
+                              size: 80,
+                            )
+                          : Text(
+                              _itemEmoji,
+                              style: const TextStyle(fontSize: 64),
+                            ),
+                ),
+                // Edit badge
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.surface, width: 2),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.edit,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            'Tippe auf das Bild zum Ändern',
+            style: TextStyle(
+              fontSize: AppTypography.xs,
+              color: AppColors.textSecondary.withOpacity(0.6),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
           Text(
             _itemName,
             style: const TextStyle(
@@ -247,7 +304,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         ),
         const SizedBox(height: AppSpacing.md),
         TextField(
-          controller: TextEditingController(text: _itemName),
+          controller: _nameController,
           onChanged: (value) {
             setState(() {
               _itemName = value;
@@ -612,6 +669,8 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
     final updatedItem = widget.item.copyWith(
       name: _itemName,
       emoji: _itemEmoji,
+      customIconUrl: _customIconUrl,
+      clearCustomIcon: _customIconUrl == null,
       customStats: {
         'damage': _damage,
         'durability': _durability,
@@ -662,87 +721,229 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
     }
   }
 
-  Widget _buildExportButton() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.info.withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+  Future<void> _showIconPicker() async {
+    showDialog(
+      context: context,
+      builder: (context) => _IconPickerDialog(
+        currentIconUrl: _customIconUrl,
+        onIconSelected: (url) {
+          setState(() {
+            _customIconUrl = url;
+          });
+        },
+        onIconRemoved: () {
+          setState(() {
+            _customIconUrl = null;
+          });
+        },
       ),
-      child: ElevatedButton(
-        onPressed: _handleExport,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.info,
-          foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 64),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
-          ),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    );
+  }
+}
+
+class _IconPickerDialog extends StatefulWidget {
+  final String? currentIconUrl;
+  final ValueChanged<String> onIconSelected;
+  final VoidCallback onIconRemoved;
+
+  const _IconPickerDialog({
+    required this.currentIconUrl,
+    required this.onIconSelected,
+    required this.onIconRemoved,
+  });
+
+  @override
+  State<_IconPickerDialog> createState() => _IconPickerDialogState();
+}
+
+class _IconPickerDialogState extends State<_IconPickerDialog> {
+  List<String> _iconUrls = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadIcons();
+  }
+
+  Future<void> _loadIcons() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://api.github.com/repos/ReichiMD/fabrik-library/contents/assets/custom/icons'),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> files = json.decode(response.body);
+        final urls = <String>[];
+        for (final file in files) {
+          final name = file['name'] as String;
+          if (name.toLowerCase().endsWith('.png')) {
+            urls.add(file['download_url'] as String);
+          }
+        }
+        if (mounted) {
+          setState(() {
+            _iconUrls = urls;
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _error = 'Fehler beim Laden (${response.statusCode})';
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = 'Keine Internetverbindung';
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text('📤', style: TextStyle(fontSize: 28)),
-            SizedBox(width: AppSpacing.md),
-            Text(
-              'Als Minecraft Addon exportieren',
+            const Text(
+              'Icon auswählen',
               style: TextStyle(
-                fontSize: AppTypography.lg,
+                fontSize: AppTypography.xl,
                 fontWeight: FontWeight.w700,
+                color: AppColors.text,
               ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'Wähle ein Custom-Icon für dein Item',
+              style: TextStyle(
+                fontSize: AppTypography.sm,
+                color: AppColors.textSecondary.withOpacity(0.7),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            if (_isLoading)
+              const Padding(
+                padding: EdgeInsets.all(AppSpacing.xxl),
+                child: CircularProgressIndicator(color: AppColors.primary),
+              )
+            else if (_error != null)
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.xl),
+                child: Column(
+                  children: [
+                    const Text('❌', style: TextStyle(fontSize: 40)),
+                    const SizedBox(height: AppSpacing.md),
+                    Text(
+                      _error!,
+                      style: const TextStyle(
+                        color: AppColors.error,
+                        fontSize: AppTypography.md,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              )
+            else
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 300),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: AppSpacing.md,
+                    mainAxisSpacing: AppSpacing.md,
+                  ),
+                  itemCount: _iconUrls.length,
+                  itemBuilder: (context, index) {
+                    final url = _iconUrls[index];
+                    final isSelected = url == widget.currentIconUrl;
+                    return GestureDetector(
+                      onTap: () {
+                        widget.onIconSelected(url);
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceLight,
+                          borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
+                          border: Border.all(
+                            color: isSelected ? AppColors.primary : AppColors.border,
+                            width: isSelected ? 3 : 1,
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(AppSpacing.sm),
+                        child: CachedNetworkImage(
+                          imageUrl: url,
+                          fit: BoxFit.contain,
+                          filterQuality: FilterQuality.none,
+                          placeholder: (context, url) => const Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.broken_image,
+                            color: AppColors.error,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            const SizedBox(height: AppSpacing.xl),
+            Row(
+              children: [
+                if (widget.currentIconUrl != null)
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        widget.onIconRemoved();
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text(
+                        'Standard-Bild',
+                        style: TextStyle(
+                          color: AppColors.error,
+                          fontSize: AppTypography.md,
+                        ),
+                      ),
+                    ),
+                  ),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text(
+                      'Abbrechen',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: AppTypography.md,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
-  }
-
-  Future<void> _handleExport() async {
-    try {
-      // Create temporary project with just this item for export
-      final tempProject = Project.create(
-        name: _itemName,
-        items: [widget.item.copyWith(name: _itemName)],
-      );
-
-      // Generate Minecraft JSON
-      final minecraftJson = MinecraftExportService.exportToMinecraftJSON(tempProject);
-      final filename = MinecraftExportService.getExportFilename(tempProject);
-
-      // Share the JSON file
-      await Share.share(
-        minecraftJson,
-        subject: 'Minecraft Addon: $_itemName',
-      );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '✅ "$_itemName" als $filename exportiert!',
-            ),
-            backgroundColor: AppColors.success,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '❌ Fehler beim Exportieren: $e',
-            ),
-            backgroundColor: AppColors.error,
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    }
   }
 }

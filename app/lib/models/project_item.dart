@@ -7,6 +7,7 @@ class ProjectItem {
   final String category;
   final String emoji;
   final VanillaItem? baseItem;
+  final String? customIconUrl;
   final Map<String, dynamic> customStats;
   final Map<String, dynamic> effects;
   final DateTime createdAt;
@@ -17,6 +18,7 @@ class ProjectItem {
     required this.category,
     required this.emoji,
     this.baseItem,
+    this.customIconUrl,
     required this.customStats,
     required this.effects,
     required this.createdAt,
@@ -28,6 +30,7 @@ class ProjectItem {
     required String category,
     required String emoji,
     VanillaItem? baseItem,
+    String? customIconUrl,
     Map<String, dynamic>? customStats,
     Map<String, dynamic>? effects,
   }) {
@@ -37,6 +40,7 @@ class ProjectItem {
       category: category,
       emoji: emoji,
       baseItem: baseItem,
+      customIconUrl: customIconUrl,
       customStats: customStats ?? _defaultStatsForCategory(category),
       effects: effects ?? {'fire': false, 'glow': false},
       createdAt: DateTime.now(),
@@ -62,6 +66,7 @@ class ProjectItem {
       category: json['category'] as String,
       emoji: json['emoji'] as String? ?? '📦',
       baseItem: baseItem,
+      customIconUrl: json['customIconUrl'] as String?,
       customStats: Map<String, dynamic>.from(json['customStats'] as Map? ?? {}),
       effects: Map<String, dynamic>.from(json['effects'] as Map? ?? {}),
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -76,6 +81,7 @@ class ProjectItem {
       'category': category,
       'emoji': emoji,
       'baseItem': baseItem?.toJson(),
+      'customIconUrl': customIconUrl,
       'customStats': customStats,
       'effects': effects,
       'createdAt': createdAt.toIso8601String(),
@@ -88,6 +94,8 @@ class ProjectItem {
     String? category,
     String? emoji,
     VanillaItem? baseItem,
+    String? customIconUrl,
+    bool clearCustomIcon = false,
     Map<String, dynamic>? customStats,
     Map<String, dynamic>? effects,
   }) {
@@ -97,6 +105,7 @@ class ProjectItem {
       category: category ?? this.category,
       emoji: emoji ?? this.emoji,
       baseItem: baseItem ?? this.baseItem,
+      customIconUrl: clearCustomIcon ? null : (customIconUrl ?? this.customIconUrl),
       customStats: customStats ?? this.customStats,
       effects: effects ?? this.effects,
       createdAt: createdAt,

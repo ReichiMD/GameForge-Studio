@@ -41,6 +41,9 @@ dependencies:
   # File sharing
   share_plus: ^10.1.3
 
+  # HTTP requests for GitHub API
+  http: ^1.2.2
+
   # Network image loading and caching
   cached_network_image: ^3.3.1
 
