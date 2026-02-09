@@ -169,10 +169,9 @@ class AddonBuilderService {
     if (item.customIconUrl != null && item.customIconUrl!.isNotEmpty) {
       // Use custom icon
       imageUrl = item.customIconUrl!;
-    } else if (item.baseItem != null) {
+    } else if (item.baseItem != null && item.baseItem!.textureUrl != null) {
       // Use vanilla item texture
-      final vanillaPath = item.baseItem!.texturePath;
-      imageUrl = '$_githubRawUrl/$vanillaPath';
+      imageUrl = item.baseItem!.textureUrl!;
     } else {
       throw Exception('Item has no texture source');
     }
