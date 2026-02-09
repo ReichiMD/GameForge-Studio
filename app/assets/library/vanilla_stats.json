@@ -1,10 +1,10 @@
 {
   "meta": {
-    "version": "1.0.0",
-    "last_update": "2026-02-06",
+    "version": "1.1.0",
+    "last_update": "2026-02-09",
     "source": "Minecraft Wiki (https://minecraft.wiki)",
     "description": "Vanilla Minecraft item stats for GameForge Studio",
-    "note": "Stats collected from Minecraft Wiki for educational purposes"
+    "note": "Stats collected from Minecraft Wiki for educational purposes. Images loaded from fabrik-library repository."
   },
   "items": {
     "_comment_weapons": "=== WAFFEN ===",
@@ -23,7 +23,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/wood_sword.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/wood_sword.png"
     },
     "stone_sword": {
       "id": "minecraft:stone_sword",
@@ -40,7 +40,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/stone_sword.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/stone_sword.png"
     },
     "iron_sword": {
       "id": "minecraft:iron_sword",
@@ -57,7 +57,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/iron_sword.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/iron_sword.png"
     },
     "golden_sword": {
       "id": "minecraft:golden_sword",
@@ -74,7 +74,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/gold_sword.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/gold_sword.png"
     },
     "diamond_sword": {
       "id": "minecraft:diamond_sword",
@@ -91,7 +91,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/diamond_sword.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/diamond_sword.png"
     },
     "netherite_sword": {
       "id": "minecraft:netherite_sword",
@@ -108,7 +108,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/netherite_sword.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/netherite_sword.png"
     },
     "bow": {
       "id": "minecraft:bow",
@@ -126,7 +126,7 @@
         "stackable": false,
         "projectile": "arrow"
       },
-      "texture": "assets/vanilla/textures/items/bow.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/bow.png"
     },
     "crossbow": {
       "id": "minecraft:crossbow",
@@ -144,7 +144,7 @@
         "stackable": false,
         "projectile": "arrow"
       },
-      "texture": "assets/vanilla/textures/items/crossbow.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/crossbow.png"
     },
     "trident": {
       "id": "minecraft:trident",
@@ -162,7 +162,7 @@
         "stackable": false,
         "throwable": true
       },
-      "texture": "assets/vanilla/textures/items/trident.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/trident.png"
     },
     "mace": {
       "id": "minecraft:mace",
@@ -180,7 +180,7 @@
         "stackable": false,
         "smash_attack": true
       },
-      "texture": "assets/vanilla/textures/items/mace.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/mace.png"
     },
 
     "_comment_armor": "=== RÜSTUNG ===",
@@ -199,7 +199,7 @@
         "stackable": false,
         "dyeable": true
       },
-      "texture": "assets/vanilla/textures/items/leather_helmet.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/leather_helmet.png"
     },
     "leather_chestplate": {
       "id": "minecraft:leather_chestplate",
@@ -216,7 +216,7 @@
         "stackable": false,
         "dyeable": true
       },
-      "texture": "assets/vanilla/textures/items/leather_chestplate.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/leather_chestplate.png"
     },
     "leather_leggings": {
       "id": "minecraft:leather_leggings",
@@ -233,7 +233,7 @@
         "stackable": false,
         "dyeable": true
       },
-      "texture": "assets/vanilla/textures/items/leather_leggings.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/leather_leggings.png"
     },
     "leather_boots": {
       "id": "minecraft:leather_boots",
@@ -250,7 +250,7 @@
         "stackable": false,
         "dyeable": true
       },
-      "texture": "assets/vanilla/textures/items/leather_boots.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/leather_boots.png"
     },
     "iron_helmet": {
       "id": "minecraft:iron_helmet",
@@ -266,7 +266,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/iron_helmet.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/iron_helmet.png"
     },
     "iron_chestplate": {
       "id": "minecraft:iron_chestplate",
@@ -282,7 +282,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/iron_chestplate.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/iron_chestplate.png"
     },
     "iron_leggings": {
       "id": "minecraft:iron_leggings",
@@ -298,7 +298,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/iron_leggings.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/iron_leggings.png"
     },
     "iron_boots": {
       "id": "minecraft:iron_boots",
@@ -314,7 +314,71 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/iron_boots.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/iron_boots.png"
+    },
+    "golden_helmet": {
+      "id": "minecraft:golden_helmet",
+      "name": "Goldhelm",
+      "name_en": "Golden Helmet",
+      "category": "armor",
+      "type": "helmet",
+      "emoji": "🪖",
+      "rarity": "rare",
+      "stats": {
+        "armor": 2,
+        "durability": 77,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/gold_helmet.png"
+    },
+    "golden_chestplate": {
+      "id": "minecraft:golden_chestplate",
+      "name": "Goldbrustpanzer",
+      "name_en": "Golden Chestplate",
+      "category": "armor",
+      "type": "chestplate",
+      "emoji": "🛡️",
+      "rarity": "rare",
+      "stats": {
+        "armor": 5,
+        "durability": 112,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/gold_chestplate.png"
+    },
+    "golden_leggings": {
+      "id": "minecraft:golden_leggings",
+      "name": "Goldbeinschutz",
+      "name_en": "Golden Leggings",
+      "category": "armor",
+      "type": "leggings",
+      "emoji": "👖",
+      "rarity": "rare",
+      "stats": {
+        "armor": 3,
+        "durability": 105,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/gold_leggings.png"
+    },
+    "golden_boots": {
+      "id": "minecraft:golden_boots",
+      "name": "Goldstiefel",
+      "name_en": "Golden Boots",
+      "category": "armor",
+      "type": "boots",
+      "emoji": "🥾",
+      "rarity": "rare",
+      "stats": {
+        "armor": 1,
+        "durability": 91,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/gold_boots.png"
     },
     "diamond_helmet": {
       "id": "minecraft:diamond_helmet",
@@ -331,7 +395,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/diamond_helmet.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/diamond_helmet.png"
     },
     "diamond_chestplate": {
       "id": "minecraft:diamond_chestplate",
@@ -348,7 +412,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/diamond_chestplate.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/diamond_chestplate.png"
     },
     "diamond_leggings": {
       "id": "minecraft:diamond_leggings",
@@ -365,7 +429,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/diamond_leggings.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/diamond_leggings.png"
     },
     "diamond_boots": {
       "id": "minecraft:diamond_boots",
@@ -382,7 +446,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/diamond_boots.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/diamond_boots.png"
     },
     "netherite_helmet": {
       "id": "minecraft:netherite_helmet",
@@ -400,7 +464,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/netherite_helmet.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/netherite_helmet.png"
     },
     "netherite_chestplate": {
       "id": "minecraft:netherite_chestplate",
@@ -418,7 +482,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/netherite_chestplate.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/netherite_chestplate.png"
     },
     "netherite_leggings": {
       "id": "minecraft:netherite_leggings",
@@ -436,7 +500,7 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/netherite_leggings.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/netherite_leggings.png"
     },
     "netherite_boots": {
       "id": "minecraft:netherite_boots",
@@ -454,7 +518,405 @@
         "enchantable": true,
         "stackable": false
       },
-      "texture": "assets/vanilla/textures/items/netherite_boots.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/netherite_boots.png"
+    },
+
+    "_comment_tools": "=== WERKZEUGE ===",
+    "wooden_pickaxe": {
+      "id": "minecraft:wooden_pickaxe",
+      "name": "Holzspitzhacke",
+      "name_en": "Wooden Pickaxe",
+      "category": "tools",
+      "type": "pickaxe",
+      "emoji": "⛏️",
+      "rarity": "common",
+      "stats": {
+        "mining_speed": 2.0,
+        "durability": 59,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/wood_pickaxe.png"
+    },
+    "stone_pickaxe": {
+      "id": "minecraft:stone_pickaxe",
+      "name": "Steinspitzhacke",
+      "name_en": "Stone Pickaxe",
+      "category": "tools",
+      "type": "pickaxe",
+      "emoji": "⛏️",
+      "rarity": "common",
+      "stats": {
+        "mining_speed": 4.0,
+        "durability": 131,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/stone_pickaxe.png"
+    },
+    "iron_pickaxe": {
+      "id": "minecraft:iron_pickaxe",
+      "name": "Eisenspitzhacke",
+      "name_en": "Iron Pickaxe",
+      "category": "tools",
+      "type": "pickaxe",
+      "emoji": "⛏️",
+      "rarity": "uncommon",
+      "stats": {
+        "mining_speed": 6.0,
+        "durability": 250,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/iron_pickaxe.png"
+    },
+    "golden_pickaxe": {
+      "id": "minecraft:golden_pickaxe",
+      "name": "Goldspitzhacke",
+      "name_en": "Golden Pickaxe",
+      "category": "tools",
+      "type": "pickaxe",
+      "emoji": "⛏️",
+      "rarity": "rare",
+      "stats": {
+        "mining_speed": 12.0,
+        "durability": 32,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/gold_pickaxe.png"
+    },
+    "diamond_pickaxe": {
+      "id": "minecraft:diamond_pickaxe",
+      "name": "Diamantspitzhacke",
+      "name_en": "Diamond Pickaxe",
+      "category": "tools",
+      "type": "pickaxe",
+      "emoji": "⛏️",
+      "rarity": "rare",
+      "stats": {
+        "mining_speed": 8.0,
+        "durability": 1561,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/diamond_pickaxe.png"
+    },
+    "netherite_pickaxe": {
+      "id": "minecraft:netherite_pickaxe",
+      "name": "Netheritspitzhacke",
+      "name_en": "Netherite Pickaxe",
+      "category": "tools",
+      "type": "pickaxe",
+      "emoji": "⛏️",
+      "rarity": "epic",
+      "stats": {
+        "mining_speed": 9.0,
+        "durability": 2031,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/netherite_pickaxe.png"
+    },
+    "wooden_axe": {
+      "id": "minecraft:wooden_axe",
+      "name": "Holzaxt",
+      "name_en": "Wooden Axe",
+      "category": "tools",
+      "type": "axe",
+      "emoji": "🪓",
+      "rarity": "common",
+      "stats": {
+        "damage": 7,
+        "attack_speed": 0.8,
+        "mining_speed": 2.0,
+        "durability": 59,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/wood_axe.png"
+    },
+    "stone_axe": {
+      "id": "minecraft:stone_axe",
+      "name": "Steinaxt",
+      "name_en": "Stone Axe",
+      "category": "tools",
+      "type": "axe",
+      "emoji": "🪓",
+      "rarity": "common",
+      "stats": {
+        "damage": 9,
+        "attack_speed": 0.8,
+        "mining_speed": 4.0,
+        "durability": 131,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/stone_axe.png"
+    },
+    "iron_axe": {
+      "id": "minecraft:iron_axe",
+      "name": "Eisenaxt",
+      "name_en": "Iron Axe",
+      "category": "tools",
+      "type": "axe",
+      "emoji": "🪓",
+      "rarity": "uncommon",
+      "stats": {
+        "damage": 9,
+        "attack_speed": 0.9,
+        "mining_speed": 6.0,
+        "durability": 250,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/iron_axe.png"
+    },
+    "golden_axe": {
+      "id": "minecraft:golden_axe",
+      "name": "Goldaxt",
+      "name_en": "Golden Axe",
+      "category": "tools",
+      "type": "axe",
+      "emoji": "🪓",
+      "rarity": "rare",
+      "stats": {
+        "damage": 7,
+        "attack_speed": 1.0,
+        "mining_speed": 12.0,
+        "durability": 32,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/gold_axe.png"
+    },
+    "diamond_axe": {
+      "id": "minecraft:diamond_axe",
+      "name": "Diamantaxt",
+      "name_en": "Diamond Axe",
+      "category": "tools",
+      "type": "axe",
+      "emoji": "🪓",
+      "rarity": "rare",
+      "stats": {
+        "damage": 9,
+        "attack_speed": 1.0,
+        "mining_speed": 8.0,
+        "durability": 1561,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/diamond_axe.png"
+    },
+    "netherite_axe": {
+      "id": "minecraft:netherite_axe",
+      "name": "Netheritaxt",
+      "name_en": "Netherite Axe",
+      "category": "tools",
+      "type": "axe",
+      "emoji": "🪓",
+      "rarity": "epic",
+      "stats": {
+        "damage": 10,
+        "attack_speed": 1.0,
+        "mining_speed": 9.0,
+        "durability": 2031,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/netherite_axe.png"
+    },
+    "wooden_shovel": {
+      "id": "minecraft:wooden_shovel",
+      "name": "Holzschaufel",
+      "name_en": "Wooden Shovel",
+      "category": "tools",
+      "type": "shovel",
+      "emoji": "🥄",
+      "rarity": "common",
+      "stats": {
+        "mining_speed": 2.0,
+        "durability": 59,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/wood_shovel.png"
+    },
+    "stone_shovel": {
+      "id": "minecraft:stone_shovel",
+      "name": "Steinschaufel",
+      "name_en": "Stone Shovel",
+      "category": "tools",
+      "type": "shovel",
+      "emoji": "🥄",
+      "rarity": "common",
+      "stats": {
+        "mining_speed": 4.0,
+        "durability": 131,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/stone_shovel.png"
+    },
+    "iron_shovel": {
+      "id": "minecraft:iron_shovel",
+      "name": "Eisenschaufel",
+      "name_en": "Iron Shovel",
+      "category": "tools",
+      "type": "shovel",
+      "emoji": "🥄",
+      "rarity": "uncommon",
+      "stats": {
+        "mining_speed": 6.0,
+        "durability": 250,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/iron_shovel.png"
+    },
+    "golden_shovel": {
+      "id": "minecraft:golden_shovel",
+      "name": "Goldschaufel",
+      "name_en": "Golden Shovel",
+      "category": "tools",
+      "type": "shovel",
+      "emoji": "🥄",
+      "rarity": "rare",
+      "stats": {
+        "mining_speed": 12.0,
+        "durability": 32,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/gold_shovel.png"
+    },
+    "diamond_shovel": {
+      "id": "minecraft:diamond_shovel",
+      "name": "Diamantschaufel",
+      "name_en": "Diamond Shovel",
+      "category": "tools",
+      "type": "shovel",
+      "emoji": "🥄",
+      "rarity": "rare",
+      "stats": {
+        "mining_speed": 8.0,
+        "durability": 1561,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/diamond_shovel.png"
+    },
+    "netherite_shovel": {
+      "id": "minecraft:netherite_shovel",
+      "name": "Netheritschaufel",
+      "name_en": "Netherite Shovel",
+      "category": "tools",
+      "type": "shovel",
+      "emoji": "🥄",
+      "rarity": "epic",
+      "stats": {
+        "mining_speed": 9.0,
+        "durability": 2031,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/netherite_shovel.png"
+    },
+    "wooden_hoe": {
+      "id": "minecraft:wooden_hoe",
+      "name": "Holzhacke",
+      "name_en": "Wooden Hoe",
+      "category": "tools",
+      "type": "hoe",
+      "emoji": "🧺",
+      "rarity": "common",
+      "stats": {
+        "mining_speed": 2.0,
+        "durability": 59,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/wood_hoe.png"
+    },
+    "stone_hoe": {
+      "id": "minecraft:stone_hoe",
+      "name": "Steinhacke",
+      "name_en": "Stone Hoe",
+      "category": "tools",
+      "type": "hoe",
+      "emoji": "🧺",
+      "rarity": "common",
+      "stats": {
+        "mining_speed": 4.0,
+        "durability": 131,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/stone_hoe.png"
+    },
+    "iron_hoe": {
+      "id": "minecraft:iron_hoe",
+      "name": "Eisenhacke",
+      "name_en": "Iron Hoe",
+      "category": "tools",
+      "type": "hoe",
+      "emoji": "🧺",
+      "rarity": "uncommon",
+      "stats": {
+        "mining_speed": 6.0,
+        "durability": 250,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/iron_hoe.png"
+    },
+    "golden_hoe": {
+      "id": "minecraft:golden_hoe",
+      "name": "Goldhacke",
+      "name_en": "Golden Hoe",
+      "category": "tools",
+      "type": "hoe",
+      "emoji": "🧺",
+      "rarity": "rare",
+      "stats": {
+        "mining_speed": 12.0,
+        "durability": 32,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/gold_hoe.png"
+    },
+    "diamond_hoe": {
+      "id": "minecraft:diamond_hoe",
+      "name": "Diamanthacke",
+      "name_en": "Diamond Hoe",
+      "category": "tools",
+      "type": "hoe",
+      "emoji": "🧺",
+      "rarity": "rare",
+      "stats": {
+        "mining_speed": 8.0,
+        "durability": 1561,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/diamond_hoe.png"
+    },
+    "netherite_hoe": {
+      "id": "minecraft:netherite_hoe",
+      "name": "Netherithacke",
+      "name_en": "Netherite Hoe",
+      "category": "tools",
+      "type": "hoe",
+      "emoji": "🧺",
+      "rarity": "epic",
+      "stats": {
+        "mining_speed": 9.0,
+        "durability": 2031,
+        "enchantable": true,
+        "stackable": false
+      },
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/netherite_hoe.png"
     },
 
     "_comment_food": "=== NAHRUNG ===",
@@ -472,7 +934,7 @@
         "stackable": true,
         "stack_size": 64
       },
-      "texture": "assets/vanilla/textures/items/apple.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/apple.png"
     },
     "golden_apple": {
       "id": "minecraft:golden_apple",
@@ -489,7 +951,7 @@
         "stack_size": 64,
         "effects": ["regeneration_ii_5s", "absorption_2m"]
       },
-      "texture": "assets/vanilla/textures/items/apple_golden.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/apple_golden.png"
     },
     "enchanted_golden_apple": {
       "id": "minecraft:enchanted_golden_apple",
@@ -506,7 +968,7 @@
         "stack_size": 64,
         "effects": ["regeneration_ii_30s", "absorption_iv_2m", "resistance_5m", "fire_resistance_5m"]
       },
-      "texture": "assets/vanilla/textures/items/apple_golden.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/apple_golden.png"
     },
     "bread": {
       "id": "minecraft:bread",
@@ -522,7 +984,7 @@
         "stackable": true,
         "stack_size": 64
       },
-      "texture": "assets/vanilla/textures/items/bread.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/bread.png"
     },
     "cooked_beef": {
       "id": "minecraft:cooked_beef",
@@ -538,7 +1000,7 @@
         "stackable": true,
         "stack_size": 64
       },
-      "texture": "assets/vanilla/textures/items/beef_cooked.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/beef_cooked.png"
     },
     "cooked_porkchop": {
       "id": "minecraft:cooked_porkchop",
@@ -554,7 +1016,7 @@
         "stackable": true,
         "stack_size": 64
       },
-      "texture": "assets/vanilla/textures/items/porkchop_cooked.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/porkchop_cooked.png"
     },
     "cooked_chicken": {
       "id": "minecraft:cooked_chicken",
@@ -570,7 +1032,7 @@
         "stackable": true,
         "stack_size": 64
       },
-      "texture": "assets/vanilla/textures/items/chicken_cooked.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/chicken_cooked.png"
     },
     "cooked_salmon": {
       "id": "minecraft:cooked_salmon",
@@ -586,7 +1048,7 @@
         "stackable": true,
         "stack_size": 64
       },
-      "texture": "assets/vanilla/textures/items/fish_salmon_cooked.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/fish_salmon_cooked.png"
     },
     "cooked_cod": {
       "id": "minecraft:cooked_cod",
@@ -602,7 +1064,7 @@
         "stackable": true,
         "stack_size": 64
       },
-      "texture": "assets/vanilla/textures/items/fish_cod_cooked.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/fish_cod_cooked.png"
     },
     "baked_potato": {
       "id": "minecraft:baked_potato",
@@ -618,7 +1080,7 @@
         "stackable": true,
         "stack_size": 64
       },
-      "texture": "assets/vanilla/textures/items/potato_baked.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/potato_baked.png"
     },
     "carrot": {
       "id": "minecraft:carrot",
@@ -634,7 +1096,7 @@
         "stackable": true,
         "stack_size": 64
       },
-      "texture": "assets/vanilla/textures/items/carrot.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/carrot.png"
     },
     "melon_slice": {
       "id": "minecraft:melon_slice",
@@ -650,7 +1112,7 @@
         "stackable": true,
         "stack_size": 64
       },
-      "texture": "assets/vanilla/textures/items/melon.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/melon.png"
     },
     "cookie": {
       "id": "minecraft:cookie",
@@ -666,7 +1128,7 @@
         "stackable": true,
         "stack_size": 64
       },
-      "texture": "assets/vanilla/textures/items/cookie.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/cookie.png"
     },
     "cake": {
       "id": "minecraft:cake",
@@ -682,7 +1144,7 @@
         "stackable": false,
         "slices": 7
       },
-      "texture": "assets/vanilla/textures/items/cake.png"
+      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/cake.png"
     }
   },
   "categories": {
@@ -697,6 +1159,12 @@
       "name_en": "Armor",
       "emoji": "🛡️",
       "description": "Helme, Brustpanzer, Hosen, Stiefel"
+    },
+    "tools": {
+      "name": "Werkzeuge",
+      "name_en": "Tools",
+      "emoji": "⛏️",
+      "description": "Spitzhacken, Schaufeln, Äxte, Hacken"
     },
     "food": {
       "name": "Nahrung",

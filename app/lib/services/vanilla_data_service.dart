@@ -93,8 +93,9 @@ class VanillaDataService {
     final Map<String, String> categoryMapping = {
       'Waffen': 'weapons',
       'Rüstung': 'armor',
+      'Werkzeuge': 'tools',
       'Nahrung': 'food',
-      // Note: 'Mobs', 'Blöcke', 'Werkzeuge' don't have vanilla items yet
+      // Note: 'Mobs', 'Blöcke' don't have vanilla items yet
     };
 
     return categoryMapping[germanName];
