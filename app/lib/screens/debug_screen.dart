@@ -183,7 +183,7 @@ class _DebugScreenState extends State<DebugScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 16.0),
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: AppColors.cardBackground,
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.border),
               ),
