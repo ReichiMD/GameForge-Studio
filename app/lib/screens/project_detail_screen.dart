@@ -1,11 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
 import '../models/project_item.dart';
 import '../services/project_service.dart';
-import '../services/minecraft_export_service.dart';
+import '../services/addon_builder_service.dart';
 import '../widgets/item_texture_widget.dart';
 import 'category_selection_screen.dart';
 import 'workshop_screen.dart';
@@ -106,22 +108,36 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
     if (_currentProject.items.isEmpty) return;
 
     try {
-      // Generate Minecraft JSON for the project (exports all items)
-      final minecraftJson = MinecraftExportService.exportToMinecraftJSON(_currentProject);
-      final filename = MinecraftExportService.getExportFilename(_currentProject);
+      // Show loading indicator
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('⏳ Erstelle Addon...'),
+            backgroundColor: AppColors.info,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
 
-      // Share the JSON file
-      await Share.share(
-        minecraftJson,
-        subject: 'Minecraft Addon: ${_currentProject.name}',
-      );
+      // Build .mcaddon file
+      final addonBytes = await AddonBuilderService.buildAddon(_currentProject);
+      final filename = AddonBuilderService.getAddonFilename(_currentProject);
+
+      // Save directly to Downloads folder
+      final downloadsDir = Directory('/storage/emulated/0/Download');
+      if (!await downloadsDir.exists()) {
+        await downloadsDir.create(recursive: true);
+      }
+
+      final outputFile = File('${downloadsDir.path}/$filename');
+      await outputFile.writeAsBytes(addonBytes);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('✅ "${_currentProject.name}" als $filename exportiert!'),
+            content: Text('✅ Gespeichert in Downloads/$filename'),
             backgroundColor: AppColors.success,
-            duration: const Duration(seconds: 2),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -129,9 +145,9 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ Fehler beim Exportieren: $e'),
+            content: Text('❌ Fehler: $e'),
             backgroundColor: AppColors.error,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
