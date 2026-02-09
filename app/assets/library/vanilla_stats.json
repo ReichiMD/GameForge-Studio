@@ -164,6 +164,24 @@
       },
       "texture": "assets/vanilla/textures/items/trident.png"
     },
+    "mace": {
+      "id": "minecraft:mace",
+      "name": "Keule",
+      "name_en": "Mace",
+      "category": "weapons",
+      "type": "melee",
+      "emoji": "🔨",
+      "rarity": "epic",
+      "stats": {
+        "damage": 6,
+        "attack_speed": 0.6,
+        "durability": 500,
+        "enchantable": true,
+        "stackable": false,
+        "smash_attack": true
+      },
+      "texture": "assets/vanilla/textures/items/mace.png"
+    },
 
     "_comment_armor": "=== RÜSTUNG ===",
     "leather_helmet": {
