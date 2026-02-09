@@ -448,22 +448,66 @@
 
 ---
 
-## 🎯 Nächste Session: Weitere Item-Texturen oder App Polish
+### Session #22 - 2026-02-09 - Bild-System korrigiert + Gold-Rüstung + Werkzeuge (KOMPLETT!)
+
+**Branch:** `claude/update-preferences-item-images-qJIkH`
+
+**Durchgeführt:**
+- ✅ **Kommunikationsregeln in CLAUDE.md hinzugefügt:**
+  * Verständliche Sprache (kein Fachchinesisch für nicht-Programmierer)
+  * Erst informieren, dann handeln (User-Bestätigung erforderlich)
+  * Token sparen (keine unnötigen Repo/Web-Suchen)
+  * Bild-System dokumentiert (von GitHub laden, nicht lokal)
+- ✅ **BREAKING CHANGE: Bild-System korrigiert:**
+  * Alle texture-Pfade von lokal (`assets/...`) auf GitHub-URLs geändert
+  * 10 lokale Waffen-PNGs gelöscht (Session #21 hatte es falsch gemacht)
+  * pubspec.yaml bereinigt (Asset-Registrierung entfernt)
+  * Bilder werden jetzt von fabrik-library geladen: `https://raw.githubusercontent.com/.../items/`
+  * Nur Memory-Cache (beim App-Schließen werden Bilder gelöscht)
+- ✅ **Gold-Rüstung hinzugefügt (4 Teile):**
+  * Goldhelm, Goldbrustpanzer, Goldhose, Goldstiefel
+  * Jetzt 5 komplette Rüstungs-Sets verfügbar (Leder, Eisen, Gold, Diamant, Netherit)
+- ✅ **Werkzeuge-Kategorie hinzugefügt (24 Items):**
+  * 6 Spitzhacken (Holz → Netherit)
+  * 6 Schaufeln (Holz → Netherit)
+  * 6 Äxte (Holz → Netherit, auch Damage-Stats für Kämpfe)
+  * 6 Hacken (Holz → Netherit)
+  * VanillaDataService: 'Werkzeuge' → 'tools' Mapping hinzugefügt
+- ✅ **vanilla_stats.json komplett überarbeitet:**
+  * Version: 1.0.0 → 1.1.0
+  * Items: 39 → 71 (10 Waffen, 24 Rüstung, 24 Werkzeuge, 13 Nahrung)
+  * Alle texture-Pfade auf GitHub-URLs geändert
+
+**Commits:**
+- `ad80dea` - Kommunikationsregeln zur CLAUDE.md hinzugefügt
+- `ec71436` - Bild-System korrigiert + Gold-Rüstung + Werkzeuge hinzugefügt
+
+**Wichtige Entscheidung:**
+- Session #21 hatte Bilder falsch lokal gespeichert → Session #22 korrigiert auf GitHub-Loading
+- User-Anforderung: Bilder sollen von GitHub geladen und nur im Memory gecacht werden
+
+**Status:** ✅ Bild-System korrigiert, 71 Items verfügbar, bereit zum Merge! 🎉
+
+**Nächstes:** App neu bauen, Bilder-Loading testen, optional weitere Kategorien (Blöcke, Mobs)
+
+---
+
+## 🎯 Nächste Session: App Testing & Optional weitere Items
 
 **Geplant:**
-1. **App Icon & Splash-Screen** (PRIORITÄT!)
+1. **App neu bauen & Testing** (PRIORITÄT!)
+   - APK neu bauen mit korrigierten Bild-URLs
+   - Testen, ob Bilder von GitHub korrekt laden
+   - Performance-Check (Netzwerk-Latenz)
+   - Gold-Rüstung & Werkzeuge ausprobieren
+
+2. **App Icon & Splash-Screen** (Nice-to-have)
    - App-Icon erstellen (1024x1024 PNG) - siehe ICON_SETUP.md
    - Splash-Screen konfigurieren
-   - Testing auf Android Device
-
-2. **End-to-End Testing**
-   - Kompletten Workflow testen (Projekt → Items → Export)
-   - Item-Texturen auf echtem Device prüfen
-   - Performance-Check
 
 3. **Weitere Features** (Optional)
+   - Weitere Item-Kategorien (Blöcke, Mobs)
    - Mehr Effekte (Poison, Regeneration, etc.)
-   - Projekt-Duplikation
 
 **Geschätzter Aufwand:** 1 Session
 
@@ -472,10 +516,10 @@
 ## 📊 Projekt-Status
 
 **Technologie:** Flutter + Dart (100% migriert!)
-**Fortschritt:** 🎉 100% Core Features + Workflow Redesign (Phase 6 komplett!)
+**Fortschritt:** 🎉 100% Core Features + Workflow Redesign + Items (Phase 6 komplett!)
 **Version:** 1.1.1+3
-**APK:** Baut erfolgreich (~22 MB)
-**Nächster Milestone:** App Icon & Splash-Screen (Polish für Beta Release)
+**APK:** Baut erfolgreich (~22 MB, ohne lokale Texturen leichter)
+**Nächster Milestone:** App Testing + optional App Icon & Splash-Screen
 
 **Neuerungen:**
 - ✅ Multi-Item Projects (1 Projekt = viele Items!)
@@ -485,9 +529,12 @@
 - ✅ APK-Updates ohne Deinstallation
 - ✅ Debug-System (DebugScreen, DebugLogService) - Session #18
 - ✅ Item-Texturen im Pixel-Art-Stil (scharf, kein Blur) - Session #19 & #20
+- ✅ Bild-System: Von GitHub laden (Memory-Cache) - Session #22
+- ✅ 71 Items (10 Waffen, 24 Rüstung, 24 Werkzeuge, 13 Nahrung) - Session #22
+- ✅ Gold-Rüstung komplett - Session #22
 
 **Dokumentation:**
-- ✅ CLAUDE.md (Session-Start) - Version 3.1
+- ✅ CLAUDE.md (Session-Start) - Version 3.3
 - ✅ FLUTTER_STATUS.md (Technische Details)
 - ✅ SESSION_LOG.md (Historie)
 - ✅ README.md (Setup)
@@ -495,4 +542,4 @@
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-09 (Session #20)
+**Letzte Aktualisierung:** 2026-02-09 (Session #22)

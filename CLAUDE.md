@@ -1,8 +1,8 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 3.2 (Flutter - Waffen-Texturen)
+**Version:** 3.3 (Flutter - Bild-System + Gold-Rüstung + Werkzeuge)
 **Letzte Aktualisierung:** 2026-02-09
-**Status:** Phase 6 Workflow Redesign (✅ Fertig!) + Waffen-Texturen (✅ Fertig!)
+**Status:** Phase 6 Komplett (✅ Fertig!) + Bild-System korrigiert (✅ Fertig!)
 
 ---
 
@@ -56,7 +56,10 @@
 ✅ **Multi-Item Projects** - Ein Projekt kann viele Items enthalten! 🚀
 ✅ **Debug-System** - Vollständiges Logging für Fehlersuche (Image-Loading) 🔧
 ✅ **APK Build** - GitHub Actions, Version 1.1.1+3
-✅ **Waffen-Texturen** - 10 Waffen lokal im App-Bundle (instant loading, offline!) 🖼️
+✅ **Bild-System** - Alle Bilder werden von GitHub (fabrik-library) geladen 🖼️
+✅ **Gold-Rüstung** - Goldhelm, Goldbrustpanzer, Goldhose, Goldstiefel hinzugefügt ⭐
+✅ **Werkzeuge-Kategorie** - 24 Werkzeuge (Spitzhacken, Schaufeln, Äxte, Hacken) ⛏️
+✅ **71 Items gesamt** - 10 Waffen, 24 Rüstung, 24 Werkzeuge, 13 Nahrung 📦
 
 ---
 
@@ -162,37 +165,50 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 - **fabrik-library:** https://github.com/ReichiMD/fabrik-library (Item-Daten + Texturen)
 - **Werkstatt-Repo:** https://github.com/ReichiMD/Werkstatt-Minecraft-Addon (Backend)
-- **Item-Daten lokal:** `/library/vanilla_stats.json` (39 Items mit echten Stats)
+- **Item-Daten lokal:** `app/assets/library/vanilla_stats.json` (71 Items mit echten Stats)
 
 ---
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #21 - 2026-02-09 - Waffen-Texturen Integration (KOMPLETT!)**
-- ✅ **10 Waffen-Texturen hinzugefügt:** Bogen, Armbrust, Dreizack, Keule + 6 Schwerter
-  * Von fabrik-library Repository heruntergeladen (16x16 PNG)
-  * In App-Bundle integriert (`app/assets/vanilla/textures/items/`)
-  * pubspec.yaml aktualisiert für Asset-Registrierung
-- ✅ **Mace (Keule) zu vanilla_stats.json hinzugefügt**
-  * Neue Waffe mit Epic-Rarity, Damage: 6, Attack Speed: 0.6
-- ✅ **ItemTextureWidget angepasst für lokale Assets**
-  * Intelligente Erkennung: `assets/` → Image.asset(), URLs → CachedNetworkImage
-  * Keine 404-Fehler mehr, instant loading aus APK-Bundle
-  * Pixel-Art-Stil beibehalten (FilterQuality.none)
-- ✅ **3 Commits:** 7b6bccb (Texturen), a3bb02e (App-Integration), 9059734 (Asset-Loading-Fix)
-- Branch: `claude/add-weapon-images-62C9u`
+**Session #22 - 2026-02-09 - Bild-System korrigiert + Gold-Rüstung + Werkzeuge (KOMPLETT!)**
+- ✅ **Kommunikationsregeln in CLAUDE.md hinzugefügt**
+  * Verständliche Sprache (kein Fachchinesisch)
+  * Erst informieren, dann handeln (Nutzer-Bestätigung erforderlich)
+  * Token sparen (keine unnötigen Repository/Web-Suchen)
+  * Bild-System dokumentiert (von GitHub laden, nicht lokal speichern)
+- ✅ **Bild-System korrigiert - BREAKING CHANGE!**
+  * Alle texture-Pfade von lokal auf GitHub-URLs geändert
+  * 10 lokale Waffen-PNGs gelöscht (waren in Session #21 falsch hinzugefügt)
+  * pubspec.yaml bereinigt (Asset-Registrierung entfernt)
+  * Bilder werden jetzt von fabrik-library Repository geladen
+  * URL: `https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/`
+  * Nur Memory-Cache (beim App-Schließen werden Bilder gelöscht)
+- ✅ **Gold-Rüstung hinzugefügt (4 Teile)**
+  * Goldhelm, Goldbrustpanzer, Goldhose, Goldstiefel
+  * Jetzt 5 komplette Rüstungs-Sets (Leder, Eisen, Gold, Diamant, Netherit)
+- ✅ **Werkzeuge-Kategorie hinzugefügt (24 Items)**
+  * 6 Spitzhacken (Holz → Netherit)
+  * 6 Schaufeln (Holz → Netherit)
+  * 6 Äxte (Holz → Netherit)
+  * 6 Hacken (Holz → Netherit)
+  * VanillaDataService: Werkzeuge-Mapping hinzugefügt
+- ✅ **2 Commits:** ad80dea (Kommunikationsregeln), ec71436 (Bild-System + Items)
+- Branch: `claude/update-preferences-item-images-qJIkH`
 
-**Status:** ✅ Fertig - Waffen-Texturen funktionieren offline aus App-Bundle! 🚀
+**Status:** ✅ Fertig - 71 Items, Bilder von GitHub! 🚀
 
 **Wichtiger Unterschied:**
-- **Vorher:** Bilder wurden vom Netzwerk geladen (langsam, erfordert Internet)
-- **Jetzt:** Bilder sind im APK-Bundle (blitzschnell, komplett offline)
+- **Session #21 (falsch):** Bilder lokal im APK-Bundle gespeichert
+- **Session #22 (richtig):** Bilder werden von GitHub geladen, nur im Memory-Cache
+
+**Items gesamt:** 71 (10 Waffen, 24 Rüstung, 24 Werkzeuge, 13 Nahrung)
 
 **Nächste Session:**
-👉 **Weitere Item-Kategorien**
-- Rüstungs-Texturen (Helm, Brustpanzer, Hose, Stiefel)
-- Nahrungs-Texturen (Essen & Getränke)
-- Tool-Texturen (Spitzhacke, Schaufel, Axt, etc.)
+👉 **App Polish & Testing**
+- App neu bauen und testen
+- Bilder-Ladung von GitHub überprüfen
+- Optional: Weitere Item-Kategorien (Blöcke, Mobs)
 
 ---
 
