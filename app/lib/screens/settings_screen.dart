@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../services/project_service.dart';
+import 'debug_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback? onLogout;
@@ -234,6 +235,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: 'Schreib uns deine Gedanken',
             icon: '💬',
             onTap: () => _showFeedbackDialog(),
+          ),
+          const SizedBox(height: AppSpacing.xxl),
+
+          // Entwickler-Tools
+          _buildSectionTitle('🔧 ENTWICKLER-TOOLS'),
+          const SizedBox(height: AppSpacing.lg),
+          _buildClickableCard(
+            title: 'Debug-Informationen',
+            subtitle: 'Technische Logs für Fehlersuche',
+            icon: '🐛',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const DebugScreen(),
+                ),
+              );
+            },
           ),
           const SizedBox(height: AppSpacing.xxl),
 
