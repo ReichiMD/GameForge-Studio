@@ -3,12 +3,15 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:archive/archive.dart';
 import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
 import '../models/project.dart';
 import '../models/project_item.dart';
 
 /// Service for building complete Minecraft Bedrock Addons (.mcaddon files)
+/// with both Behavior Pack and Resource Pack
 class AddonBuilderService {
   static const _uuid = Uuid();
+  static const _githubRawUrl = 'https://raw.githubusercontent.com/ReichiMD/fabrik-library/main';
 
   /// Build a complete .mcaddon file from a project
   /// Returns the ZIP file as bytes
@@ -20,37 +23,132 @@ class AddonBuilderService {
     // Create ZIP archive
     final archive = Archive();
 
-    // 1. Add manifest.json
-    final manifestJson = await _generateManifest(project);
-    final manifestBytes = utf8.encode(manifestJson);
+    // Generate UUIDs for both packs
+    final behaviorHeaderUuid = _uuid.v4();
+    final behaviorModuleUuid = _uuid.v4();
+    final resourceHeaderUuid = _uuid.v4();
+    final resourceModuleUuid = _uuid.v4();
+
+    // ========== BEHAVIOR PACK ==========
+
+    // 1. Add behavior pack manifest.json
+    final behaviorManifestJson = await _generateBehaviorManifest(
+      project,
+      behaviorHeaderUuid,
+      behaviorModuleUuid,
+      resourceHeaderUuid, // Dependency on resource pack
+    );
+    final behaviorManifestBytes = utf8.encode(behaviorManifestJson);
     archive.addFile(
-      ArchiveFile('manifest.json', manifestBytes.length, manifestBytes),
+      ArchiveFile(
+        'behavior_pack/manifest.json',
+        behaviorManifestBytes.length,
+        behaviorManifestBytes,
+      ),
     );
 
-    // 2. Add items/*.json
+    // 2. Add behavior pack items/*.json
     for (final item in project.items) {
       final itemJson = _exportItemToMinecraftJSON(item);
       final itemBytes = utf8.encode(itemJson);
-      final itemFilename = 'items/${_sanitizeIdentifier(item.name)}.json';
+      final itemFilename = 'behavior_pack/items/${_sanitizeIdentifier(item.name)}.json';
       archive.addFile(
         ArchiveFile(itemFilename, itemBytes.length, itemBytes),
       );
     }
 
-    // 3. Add pack_icon.png (optional)
+    // 3. Add behavior pack pack_icon.png (optional)
     try {
       final iconBytes = await rootBundle.load('assets/templates/pack_icon.png');
       archive.addFile(
         ArchiveFile(
-          'pack_icon.png',
+          'behavior_pack/pack_icon.png',
           iconBytes.lengthInBytes,
           iconBytes.buffer.asUint8List(),
         ),
       );
     } catch (e) {
       // Icon not found - Minecraft will use a default icon
-      // This is not an error, just a missing optional file
     }
+
+    // ========== RESOURCE PACK ==========
+
+    // 4. Add resource pack manifest.json
+    final resourceManifestJson = await _generateResourceManifest(
+      project,
+      resourceHeaderUuid,
+      resourceModuleUuid,
+    );
+    final resourceManifestBytes = utf8.encode(resourceManifestJson);
+    archive.addFile(
+      ArchiveFile(
+        'resource_pack/manifest.json',
+        resourceManifestBytes.length,
+        resourceManifestBytes,
+      ),
+    );
+
+    // 5. Add resource pack pack_icon.png (optional)
+    try {
+      final iconBytes = await rootBundle.load('assets/templates/pack_icon.png');
+      archive.addFile(
+        ArchiveFile(
+          'resource_pack/pack_icon.png',
+          iconBytes.lengthInBytes,
+          iconBytes.buffer.asUint8List(),
+        ),
+      );
+    } catch (e) {
+      // Icon not found - Minecraft will use a default icon
+    }
+
+    // 6. Download and add item textures
+    final textureData = <String, dynamic>{};
+    for (final item in project.items) {
+      final itemIdentifier = _sanitizeIdentifier(item.name);
+
+      try {
+        // Download texture from GitHub
+        final imageBytes = await _downloadItemTexture(item);
+
+        // Add to archive
+        final texturePath = 'resource_pack/textures/items/$itemIdentifier.png';
+        archive.addFile(
+          ArchiveFile(texturePath, imageBytes.length, imageBytes),
+        );
+
+        // Add to texture data for item_texture.json
+        textureData[itemIdentifier] = {
+          'textures': 'textures/items/$itemIdentifier',
+        };
+      } catch (e) {
+        // If texture download fails, skip this item's texture
+        // Minecraft will use a default/missing texture
+        print('Warning: Could not download texture for ${item.name}: $e');
+      }
+    }
+
+    // 7. Add item_texture.json
+    final itemTextureJson = _generateItemTextureJson(textureData);
+    final itemTextureBytes = utf8.encode(itemTextureJson);
+    archive.addFile(
+      ArchiveFile(
+        'resource_pack/textures/item_texture.json',
+        itemTextureBytes.length,
+        itemTextureBytes,
+      ),
+    );
+
+    // 8. Add terrain_texture.json (required even if empty)
+    final terrainTextureJson = _generateTerrainTextureJson();
+    final terrainTextureBytes = utf8.encode(terrainTextureJson);
+    archive.addFile(
+      ArchiveFile(
+        'resource_pack/textures/terrain_texture.json',
+        terrainTextureBytes.length,
+        terrainTextureBytes,
+      ),
+    );
 
     // Encode to ZIP
     final zipEncoder = ZipEncoder();
@@ -63,16 +161,78 @@ class AddonBuilderService {
     return Uint8List.fromList(zipBytes);
   }
 
-  /// Generate manifest.json from template
-  static Future<String> _generateManifest(Project project) async {
+  /// Download item texture from GitHub
+  /// Uses custom icon if available, otherwise falls back to vanilla texture
+  static Future<Uint8List> _downloadItemTexture(ProjectItem item) async {
+    String imageUrl;
+
+    if (item.customIconUrl != null && item.customIconUrl!.isNotEmpty) {
+      // Use custom icon
+      imageUrl = item.customIconUrl!;
+    } else if (item.baseItem != null) {
+      // Use vanilla item texture
+      final vanillaPath = item.baseItem!.texturePath;
+      imageUrl = '$_githubRawUrl/$vanillaPath';
+    } else {
+      throw Exception('Item has no texture source');
+    }
+
+    // Download image
+    final response = await http.get(Uri.parse(imageUrl));
+
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      throw Exception('Failed to download texture: HTTP ${response.statusCode}');
+    }
+  }
+
+  /// Generate behavior pack manifest.json from template
+  static Future<String> _generateBehaviorManifest(
+    Project project,
+    String headerUuid,
+    String moduleUuid,
+    String resourcePackUuid,
+  ) async {
     // Load template
     final templateString = await rootBundle.loadString(
       'assets/templates/manifest_behavior.json',
     );
 
-    // Generate UUIDs
-    final headerUuid = _uuid.v4();
-    final moduleUuid = _uuid.v4();
+    // Parse JSON to add dependency
+    final manifestMap = jsonDecode(templateString) as Map<String, dynamic>;
+
+    // Add dependency on resource pack
+    manifestMap['dependencies'] = [
+      {
+        'uuid': resourcePackUuid,
+        'version': [0, 0, 1],
+      }
+    ];
+
+    // Replace placeholders
+    String manifestJson = jsonEncode(manifestMap);
+    manifestJson = manifestJson
+        .replaceAll('{{NAME}}', project.name)
+        .replaceAll('{{DESCRIPTION}}', 'Created with GameForge Studio')
+        .replaceAll('{{HEADER_UUID}}', headerUuid)
+        .replaceAll('{{MODULE_UUID}}', moduleUuid);
+
+    // Format nicely
+    final encoder = JsonEncoder.withIndent('    ');
+    return encoder.convert(jsonDecode(manifestJson));
+  }
+
+  /// Generate resource pack manifest.json from template
+  static Future<String> _generateResourceManifest(
+    Project project,
+    String headerUuid,
+    String moduleUuid,
+  ) async {
+    // Load template
+    final templateString = await rootBundle.loadString(
+      'assets/templates/manifest_resource.json',
+    );
 
     // Replace placeholders
     final manifestJson = templateString
@@ -84,8 +244,32 @@ class AddonBuilderService {
     return manifestJson;
   }
 
+  /// Generate item_texture.json
+  static String _generateItemTextureJson(Map<String, dynamic> textureData) {
+    final itemTextureJson = {
+      'resource_pack_name': 'vanilla',
+      'texture_name': 'atlas.items',
+      'texture_data': textureData,
+    };
+
+    const encoder = JsonEncoder.withIndent('  ');
+    return encoder.convert(itemTextureJson);
+  }
+
+  /// Generate terrain_texture.json (empty but required)
+  static String _generateTerrainTextureJson() {
+    final terrainTextureJson = {
+      'resource_pack_name': 'vanilla',
+      'texture_name': 'atlas.terrain',
+      'texture_data': <String, dynamic>{},
+    };
+
+    const encoder = JsonEncoder.withIndent('  ');
+    return encoder.convert(terrainTextureJson);
+  }
+
   /// Export a single ProjectItem as Minecraft Bedrock Edition item JSON
-  /// (Updated version with format_version 1.21.100)
+  /// (Format version 1.21.100 compatible with 1.21.131)
   static String _exportItemToMinecraftJSON(ProjectItem item) {
     final itemIdentifier = _sanitizeIdentifier(item.name);
     final category = _mapCategory(item.category);
