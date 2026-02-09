@@ -1,8 +1,8 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 3.0 (Flutter - Major Workflow Redesign!)
-**Letzte Aktualisierung:** 2026-02-08
-**Status:** Phase 6 Workflow Redesign (✅ Fertig!)
+**Version:** 3.1 (Flutter - Debug System)
+**Letzte Aktualisierung:** 2026-02-09
+**Status:** Phase 6 Workflow Redesign (✅ Fertig!) + Debug System (✅ Fertig!)
 
 ---
 
@@ -27,12 +27,13 @@
 ✅ **ItemListScreen** - Vanilla Items aus vanilla_stats.json auswählen
 ✅ **WorkshopScreen** - Item-Editor mit 6 Stats + Effekte
 ✅ **LibraryScreen** - Item-Galerie mit 39 Items, Filter, Suche
-✅ **SettingsScreen** - GitHub, Darstellung, Info, Gefahrenzone
+✅ **SettingsScreen** - GitHub, Darstellung, Info, Entwickler-Tools, Gefahrenzone
 ✅ **Item-Export** - Minecraft Bedrock JSON Export per Share
 ✅ **Project Export** - Alle Items eines Projekts exportieren
 ✅ **Multi-Item Projects** - Ein Projekt kann viele Items enthalten! 🚀
+✅ **Debug-System** - Vollständiges Logging für Fehlersuche (Image-Loading) 🔧
 ✅ **APK Build** - GitHub Actions, Version 1.1.1+3
-🔄 **Item Texturen** - Integration vorbereitet (fabrik-library), debugging pending
+🔄 **Item Texturen** - Integration vorbereitet (fabrik-library), debugging mit neuem Debug-System
 
 ---
 
@@ -67,21 +68,24 @@ app/lib/
 │   ├── item_list_screen.dart      ✅ Vanilla Items Auswahl
 │   ├── workshop_screen.dart       ✅ Item-Editor (6 Stats + Effekte)
 │   ├── library_screen.dart        ✅ Item-Galerie, Filter, Suche
-│   └── settings_screen.dart       ✅ Alle Settings-Sections
+│   ├── settings_screen.dart       ✅ Alle Settings-Sections + Debug-Button
+│   └── debug_screen.dart          ✅ Debug-Logs, Statistiken, Export (NEU!)
 ├── theme/
 │   ├── app_colors.dart            ✅ Purple Theme (#8B5CF6)
 │   ├── app_spacing.dart           ✅ Spacing, Touch-Targets
 │   └── app_theme.dart             ✅ Material 3 Config
 ├── models/
 │   ├── project.dart               ✅ List<ProjectItem>, addItem, removeItem
-│   ├── project_item.dart          ✅ Item im Projekt (NEU!)
+│   ├── project_item.dart          ✅ Item im Projekt
 │   └── vanilla_item.dart          ✅ Vanilla Items aus JSON
 ├── services/
 │   ├── project_service.dart       ✅ CRUD Operations
 │   ├── vanilla_data_service.dart  ✅ JSON Loader
-│   └── minecraft_export_service.dart ✅ Minecraft Bedrock Export
+│   ├── minecraft_export_service.dart ✅ Minecraft Bedrock Export
+│   └── debug_log_service.dart     ✅ Debug-Logging Singleton (NEU!)
 └── widgets/
-    └── item_selection_modal.dart  ✅ Item Grid (alt, nicht mehr verwendet)
+    ├── item_selection_modal.dart  ✅ Item Grid (alt, nicht mehr verwendet)
+    └── item_texture_widget.dart   ✅ Texture Loading + Debug-Logging
 ```
 
 ---
@@ -141,23 +145,24 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #17 - 2026-02-08 - Minecraft Item Texturen (Partial)**
-- 🔄 **Item-Texturen Integration:** cached_network_image Paket hinzugefügt
-- ✅ **VanillaItem Model erweitert:** textureUrl Getter, hasTexture Property
-- ✅ **ItemTextureWidget:** Widget mit CachedNetworkImage + Emoji-Fallback
-- ✅ **4 Screens aktualisiert:** ItemListScreen, WorkshopScreen, ProjectDetailScreen, LibraryScreen
-- ✅ **Version:** 1.1.1+3 (APK Rebuild für Package-Installation)
-- ❌ **Problem:** Bilder werden nicht angezeigt (Ursache unklar)
-- Branch: `claude/minecraft-item-images-r1uWF`
-- Commit: 768c487 (Version Bump), 4a35cfd (Texture Integration)
+**Session #18 - 2026-02-09 - Debug-System Implementation**
+- ✅ **DebugLogService:** Singleton für zentrales Logging (500 Logs max)
+- ✅ **DebugScreen:** Vollständige Debug-UI mit Statistiken, Live-Logs, Auto-Refresh
+- ✅ **Settings erweitert:** Neue Section "Entwickler-Tools" mit Debug-Button
+- ✅ **ItemTextureWidget:** Erweitert mit vollständigem Error-Logging
+- ✅ **Logging Features:** Image-Attempts, Successes, Errors mit Stack-Traces
+- ✅ **Export-Funktion:** "Alle Logs kopieren" Button für einfaches Teilen
+- Branch: `claude/add-debug-window-button-1MNr4`
+- Commits: 296987d (Debug System), d153fd8 + cc1763b (AppColors Fixes)
 
-**Status:** Merge zu Main geplant, Code ist sauber implementiert
+**Status:** ✅ Fertig, APK-Build erfolgreich, bereit zum Merge
 
 **Nächste Session:**
-👉 **Debug-Modus für Item-Texturen**
-- Debug-Logs hinzufügen (Netzwerk, Fehler, Cache)
-- Error-Handling verbessern
-- Ursache für fehlende Bilder finden
+👉 **Debug-Logs analysieren & Bilder-Problem lösen**
+- APK installieren und Debug-Screen nutzen
+- Logs kopieren und analysieren
+- Root-Cause für fehlende Bilder finden
+- Fix implementieren
 
 ---
 
@@ -166,7 +171,7 @@ AppColors.background    // #1F2937 (Dark Gray)
 - Kein App-Icon (nur Default Flutter Icon)
 - Kategorien ohne vanilla items (Mobs, Blöcke, Werkzeuge) erstellen leeres Item
 - Kein Splash-Screen
-- **Item Texturen werden nicht angezeigt** - cached_network_image integriert, aber Bilder laden nicht (Debug-Modus in nächster Session)
+- **Item Texturen werden nicht angezeigt** - cached_network_image integriert, Debug-System bereit zur Fehlersuche
 
 **Alle non-blocking** - App ist voll funktionsfähig! 🎉
 

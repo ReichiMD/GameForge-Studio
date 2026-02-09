@@ -310,14 +310,58 @@
 
 ---
 
-## 🎯 Nächste Session: Debug-Modus für Item-Texturen
+### Session #18 - 2026-02-09 - Debug-System Implementation
+
+**Branch:** `claude/add-debug-window-button-1MNr4`
+
+**Durchgeführt:**
+- ✅ **DebugLogService erstellt:** Singleton-Service für zentrales Logging
+  * Sammelt alle Image-Load-Attempts, Successes, Errors
+  * Statistiken (Success-Rate, Error-Types, URLs)
+  * Export-Funktion für alle Logs als Text
+  * 500 Logs Limit für Memory-Management
+- ✅ **DebugScreen erstellt:** Vollständige Debug-UI
+  * Live-Log-Anzeige mit Auto-Refresh (2 Sekunden)
+  * Statistik-Dashboard (Attempts, Successes, Errors, Success-Rate)
+  * "Alle Logs kopieren" Button (Copy to Clipboard)
+  * "Löschen" Button für Log-Reset
+  * Farbkodierte Log-Levels (INFO, WARNING, ERROR)
+- ✅ **Settings erweitert:** Neue Section "Entwickler-Tools"
+  * Button "Debug-Informationen" öffnet DebugScreen
+- ✅ **ItemTextureWidget erweitert:** StatefulWidget mit Logging
+  * Loggt jeden Image-Load-Attempt mit URL, Item-ID, Item-Name
+  * Loggt Successes mit imageBuilder Callback
+  * Loggt Errors mit vollständigem Error-Object + StackTrace
+  * Beide Widgets (ItemTextureWidget + ItemTextureIconWidget) unterstützt
+
+**Commits:**
+- `296987d` - feat: Add comprehensive debug logging system for image loading
+- `d153fd8` - fix: Correct AppColors references in debug_screen (cardBackground → surface)
+- `cc1763b` - fix: Remove last cardBackground reference in debug_screen
+
+**Build-Probleme gelöst:**
+- APK-Build schlug fehl wegen nicht-existierender Farben (`AppColors.cardBackground`, `AppColors.textPrimary`)
+- Fixed durch Verwendung der korrekten Farbnamen (`AppColors.surface`, `AppColors.text`)
+- APK-Build erfolgreich nach Fixes
+
+**Status:** ✅ Debug-System komplett implementiert, APK baut erfolgreich, bereit zum Merge
+
+**User Context:** Nutzer arbeitet nur via Handy (Claude Code App), kein Programmierer → Debug-System wurde bewusst technisch gehalten (für Claude zur Fehlersuche), nicht für Endnutzer
+
+**Nächstes:** APK installieren, Debug-Screen nutzen, Logs kopieren und analysieren, dann Root-Cause für Bilder-Problem finden
+
+---
+
+## 🎯 Nächste Session: Debug-Logs analysieren & Bilder-Problem lösen
 
 **Geplant:**
-1. **Debug-Modus für Item-Texturen** (PRIORITÄT!)
-   - Debug-Logs hinzufügen (Netzwerk, Fehler, Cache)
-   - Error-Handling verbessern
-   - Android Internet-Permissions prüfen
-   - Ursache für fehlende Bilder finden
+1. **Debug-Logs analysieren** (PRIORITÄT!)
+   - APK installieren auf Handy
+   - Debug-Screen öffnen (Einstellungen → Entwickler-Tools → Debug-Informationen)
+   - App nutzen (Bibliothek, Projekte öffnen) um Logs zu generieren
+   - "Alle Logs kopieren" Button drücken und Logs hier einfügen
+   - Root-Cause für fehlende Bilder identifizieren
+   - Fix implementieren basierend auf Logs
 
 2. App Icon & Splash-Screen
    - App-Icon erstellen (1024x1024 PNG) - siehe ICON_SETUP.md
@@ -328,7 +372,7 @@
    - Mehr Effekte (Poison, Regeneration, etc.)
    - Projekt-Duplikation
 
-**Geschätzter Aufwand:** 1 Session für Debug-Fix
+**Geschätzter Aufwand:** 1 Session für Debug-Analyse + Fix
 
 ---
 
@@ -346,9 +390,10 @@
 - ✅ 3 neue Screens (ProjectDetail, CategorySelection, ItemList)
 - ✅ Export-Funktionalität für Projekte & Items
 - ✅ APK-Updates ohne Deinstallation
+- ✅ Debug-System (DebugScreen, DebugLogService) - NEU in Session #18!
 
 **Dokumentation:**
-- ✅ CLAUDE.md (Session-Start) - Version 3.0
+- ✅ CLAUDE.md (Session-Start) - Version 3.1
 - ✅ FLUTTER_STATUS.md (Technische Details)
 - ✅ SESSION_LOG.md (Historie)
 - ✅ README.md (Setup)
@@ -356,4 +401,4 @@
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-08 (Session #17)
+**Letzte Aktualisierung:** 2026-02-09 (Session #18)
