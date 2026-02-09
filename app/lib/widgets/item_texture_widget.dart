@@ -60,13 +60,54 @@ class _ItemTextureWidgetState extends State<ItemTextureWidget> {
       return _buildEmojiFallback();
     }
 
+    final textureUrl = widget.item.textureUrl!;
+
+    // Check if it's a local asset path or a network URL
+    final isAsset = textureUrl.startsWith('assets/');
+
+    if (isAsset) {
+      // Load from local assets (bundled in APK)
+      _debugService.addLog(
+        level: 'INFO',
+        category: 'ASSET',
+        message: 'Loading image from app bundle',
+        data: {
+          'path': textureUrl,
+          'itemId': widget.item.id,
+          'itemName': widget.item.name,
+        },
+      );
+
+      return Image.asset(
+        textureUrl,
+        width: widget.size,
+        height: widget.size,
+        fit: widget.fit,
+        filterQuality: FilterQuality.none, // Pixel-art style (sharp pixels, no blur)
+        isAntiAlias: false, // Sharp edges for Minecraft style
+        errorBuilder: (context, error, stackTrace) {
+          _debugService.addLog(
+            level: 'ERROR',
+            category: 'ASSET',
+            message: 'Asset load failed',
+            data: {
+              'path': textureUrl,
+              'error': error.toString(),
+            },
+          );
+          return _buildEmojiFallback();
+        },
+      );
+    }
+
+    // Load from network (legacy support for URLs)
     return CachedNetworkImage(
-      imageUrl: widget.item.textureUrl!,
+      imageUrl: textureUrl,
       width: widget.size,
       height: widget.size,
       fit: widget.fit,
       // Memory-only cache (cleared on app close)
-      cacheKey: widget.item.textureUrl,
+      cacheKey: textureUrl,
       memCacheWidth: (widget.size * 4).toInt(), // 4x for high-res displays like Pixel 7
       memCacheHeight: (widget.size * 4).toInt(),
       // Loading indicator
@@ -107,7 +148,7 @@ class _ItemTextureWidgetState extends State<ItemTextureWidget> {
       // Success listener
       imageBuilder: (context, imageProvider) {
         if (_hasLoggedAttempt) {
-          _debugService.logImageLoadSuccess(widget.item.textureUrl!);
+          _debugService.logImageLoadSuccess(textureUrl);
           _hasLoggedAttempt = false; // Only log success once
         }
         return Image(
@@ -176,12 +217,42 @@ class _ItemTextureIconWidgetState extends State<ItemTextureIconWidget> {
       return _buildEmojiFallback();
     }
 
+    final textureUrl = widget.item.textureUrl!;
+
+    // Check if it's a local asset path or a network URL
+    final isAsset = textureUrl.startsWith('assets/');
+
+    if (isAsset) {
+      // Load from local assets (bundled in APK)
+      return Image.asset(
+        textureUrl,
+        width: widget.size,
+        height: widget.size,
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.none, // Pixel-art style (sharp pixels, no blur)
+        isAntiAlias: false, // Sharp edges for Minecraft style
+        errorBuilder: (context, error, stackTrace) {
+          _debugService.addLog(
+            level: 'ERROR',
+            category: 'ASSET',
+            message: 'Asset load failed',
+            data: {
+              'path': textureUrl,
+              'error': error.toString(),
+            },
+          );
+          return _buildEmojiFallback();
+        },
+      );
+    }
+
+    // Load from network (legacy support for URLs)
     return CachedNetworkImage(
-      imageUrl: widget.item.textureUrl!,
+      imageUrl: textureUrl,
       width: widget.size,
       height: widget.size,
       fit: BoxFit.contain,
-      cacheKey: widget.item.textureUrl,
+      cacheKey: textureUrl,
       memCacheWidth: (widget.size * 4).toInt(), // 4x for high-res displays
       memCacheHeight: (widget.size * 4).toInt(),
       // No loading indicator for small icons
@@ -193,7 +264,7 @@ class _ItemTextureIconWidgetState extends State<ItemTextureIconWidget> {
       // Success listener
       imageBuilder: (context, imageProvider) {
         if (_hasLoggedAttempt) {
-          _debugService.logImageLoadSuccess(widget.item.textureUrl!);
+          _debugService.logImageLoadSuccess(textureUrl);
           _hasLoggedAttempt = false;
         }
         return Image(

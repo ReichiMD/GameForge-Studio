@@ -1,8 +1,8 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 3.1 (Flutter - Debug System)
+**Version:** 3.2 (Flutter - Waffen-Texturen)
 **Letzte Aktualisierung:** 2026-02-09
-**Status:** Phase 6 Workflow Redesign (✅ Fertig!) + Debug System (✅ Fertig!)
+**Status:** Phase 6 Workflow Redesign (✅ Fertig!) + Waffen-Texturen (✅ Fertig!)
 
 ---
 
@@ -33,7 +33,7 @@
 ✅ **Multi-Item Projects** - Ein Projekt kann viele Items enthalten! 🚀
 ✅ **Debug-System** - Vollständiges Logging für Fehlersuche (Image-Loading) 🔧
 ✅ **APK Build** - GitHub Actions, Version 1.1.1+3
-✅ **Item Texturen** - Minecraft Items aus fabrik-library im Pixel-Art-Stil 🖼️
+✅ **Waffen-Texturen** - 10 Waffen lokal im App-Bundle (instant loading, offline!) 🖼️
 
 ---
 
@@ -145,29 +145,31 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #20 - 2026-02-09 - Pixel-Art-Stil für Item-Texturen (SOLVED!)**
-- ✅ **Problem:** Item-Bilder waren unscharf/matschig (Waffenübersicht + Editor)
-- ✅ **Root-Cause gefunden:** Original-Bilder sind nur 16x16 Pixel (Minecraft-Textur-Größe)
-  * Anzeige: 80px im Editor → 5x Vergrößerung → Interpolation macht sie unscharf
-- ✅ **Lösung implementiert:** Pixel-Art-Stil (FilterQuality.none, kein AntiAlias)
-  * Zeigt jeden Pixel als scharfes Quadrat an (klassischer Minecraft-Look!)
-  * Keine Weichzeichnung mehr, scharfe Pixel-Kanten
-- ✅ **Commits:** 432351f (High-Quality-Versuch), 2306de0 (Pixel-Art-Fix)
-- Branch: `claude/fix-blurry-images-CdIqd`
+**Session #21 - 2026-02-09 - Waffen-Texturen Integration (KOMPLETT!)**
+- ✅ **10 Waffen-Texturen hinzugefügt:** Bogen, Armbrust, Dreizack, Keule + 6 Schwerter
+  * Von fabrik-library Repository heruntergeladen (16x16 PNG)
+  * In App-Bundle integriert (`app/assets/vanilla/textures/items/`)
+  * pubspec.yaml aktualisiert für Asset-Registrierung
+- ✅ **Mace (Keule) zu vanilla_stats.json hinzugefügt**
+  * Neue Waffe mit Epic-Rarity, Damage: 6, Attack Speed: 0.6
+- ✅ **ItemTextureWidget angepasst für lokale Assets**
+  * Intelligente Erkennung: `assets/` → Image.asset(), URLs → CachedNetworkImage
+  * Keine 404-Fehler mehr, instant loading aus APK-Bundle
+  * Pixel-Art-Stil beibehalten (FilterQuality.none)
+- ✅ **3 Commits:** 7b6bccb (Texturen), a3bb02e (App-Integration), 9059734 (Asset-Loading-Fix)
+- Branch: `claude/add-weapon-images-62C9u`
 
-**Status:** ✅ Fertig, Bilder sind jetzt scharf im Pixel-Art-Stil! 🎮
+**Status:** ✅ Fertig - Waffen-Texturen funktionieren offline aus App-Bundle! 🚀
 
-**Technische Details:**
-- Original-Texturen: 16x16 PNG (via fabrik-library)
-- Filter: FilterQuality.high → FilterQuality.none
-- AntiAlias: true → false
-- Resultat: Scharfe Pixel-Darstellung statt verschwommene Interpolation
+**Wichtiger Unterschied:**
+- **Vorher:** Bilder wurden vom Netzwerk geladen (langsam, erfordert Internet)
+- **Jetzt:** Bilder sind im APK-Bundle (blitzschnell, komplett offline)
 
 **Nächste Session:**
-👉 **App Polish & Beta Release**
-- App-Icon erstellen (1024x1024 PNG)
-- Splash-Screen
-- End-to-End Testing auf Device
+👉 **Weitere Item-Kategorien**
+- Rüstungs-Texturen (Helm, Brustpanzer, Hose, Stiefel)
+- Nahrungs-Texturen (Essen & Getränke)
+- Tool-Texturen (Spitzhacke, Schaufel, Axt, etc.)
 
 ---
 
