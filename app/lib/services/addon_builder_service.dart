@@ -37,8 +37,20 @@ class AddonBuilderService {
       );
     }
 
-    // 3. TODO: Add pack_icon.png (optional, needs to be created by user)
-    // For now, we skip the icon - Minecraft will use a default icon
+    // 3. Add pack_icon.png (optional)
+    try {
+      final iconBytes = await rootBundle.load('assets/templates/pack_icon.png');
+      archive.addFile(
+        ArchiveFile(
+          'pack_icon.png',
+          iconBytes.lengthInBytes,
+          iconBytes.buffer.asUint8List(),
+        ),
+      );
+    } catch (e) {
+      // Icon not found - Minecraft will use a default icon
+      // This is not an error, just a missing optional file
+    }
 
     // Encode to ZIP
     final zipEncoder = ZipEncoder();
