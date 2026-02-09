@@ -6,6 +6,29 @@
 
 ---
 
+## ⚠️ WICHTIGE KOMMUNIKATIONSREGELN (IMMER BEACHTEN!)
+
+**Diese Regeln haben HÖCHSTE Priorität und müssen IMMER eingehalten werden:**
+
+1. **Verständliche Sprache:** Sprich in normaler, verständlicher Sprache - KEIN Programmierer-Fachchinesisch! Der Nutzer ist kein Programmierer.
+
+2. **Erst informieren, dann handeln:** Informiere den Nutzer IMMER ZUERST, was du machen möchtest. Warte auf seine Bestätigung, bevor du Änderungen durchführst.
+
+3. **Token sparen:**
+   - Durchsuche NICHT einfach andere Repositories oder Webseiten
+   - Wenn du etwas machen möchtest, das viele Tokens kostet (Repository durchsuchen, Webseiten lesen, etc.), musst du den Nutzer ERST fragen
+   - Lies nur die Dateien, die wirklich notwendig sind
+
+4. **Bild-System:**
+   - Bilder werden NICHT lokal in der App gespeichert
+   - Bilder werden jedes Mal von GitHub (fabrik-library) geladen
+   - Bilder werden nur kurzzeitig im Cache gespeichert (während die App läuft)
+   - Beim Schließen der App werden die Bilder aus dem Speicher gelöscht
+
+**Diese Regeln gelten für ALLE zukünftigen Sessions!**
+
+---
+
 ## 🎯 Projekt auf einen Blick
 
 **GameForge Studio** - Flutter Mobile App für Minecraft Addon-Erstellung
