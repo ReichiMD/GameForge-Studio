@@ -1,11 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
 import '../models/project_item.dart';
 import '../services/project_service.dart';
-import '../services/minecraft_export_service.dart';
+import '../services/addon_builder_service.dart';
 import '../widgets/item_texture_widget.dart';
 import 'category_selection_screen.dart';
 import 'workshop_screen.dart';
@@ -106,13 +108,29 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
     if (_currentProject.items.isEmpty) return;
 
     try {
-      // Generate Minecraft JSON for the project (exports all items)
-      final minecraftJson = MinecraftExportService.exportToMinecraftJSON(_currentProject);
-      final filename = MinecraftExportService.getExportFilename(_currentProject);
+      // Show loading indicator
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('⏳ Erstelle Addon...'),
+            backgroundColor: AppColors.info,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
 
-      // Share the JSON file
-      await Share.share(
-        minecraftJson,
+      // Build .mcaddon file
+      final addonBytes = await AddonBuilderService.buildAddon(_currentProject);
+      final filename = AddonBuilderService.getAddonFilename(_currentProject);
+
+      // Save to temporary file
+      final tempDir = await getTemporaryDirectory();
+      final tempFile = File('${tempDir.path}/$filename');
+      await tempFile.writeAsBytes(addonBytes);
+
+      // Share the .mcaddon file
+      await Share.shareXFiles(
+        [XFile(tempFile.path)],
         subject: 'Minecraft Addon: ${_currentProject.name}',
       );
 
@@ -121,7 +139,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
           SnackBar(
             content: Text('✅ "${_currentProject.name}" als $filename exportiert!'),
             backgroundColor: AppColors.success,
-            duration: const Duration(seconds: 2),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -131,7 +149,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
           SnackBar(
             content: Text('❌ Fehler beim Exportieren: $e'),
             backgroundColor: AppColors.error,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
