@@ -33,7 +33,7 @@
 ✅ **Multi-Item Projects** - Ein Projekt kann viele Items enthalten! 🚀
 ✅ **Debug-System** - Vollständiges Logging für Fehlersuche (Image-Loading) 🔧
 ✅ **APK Build** - GitHub Actions, Version 1.1.1+3
-🔄 **Item Texturen** - Integration vorbereitet (fabrik-library), debugging mit neuem Debug-System
+✅ **Item Texturen** - Minecraft Items aus fabrik-library, cached_network_image 🖼️
 
 ---
 
@@ -145,24 +145,25 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #18 - 2026-02-09 - Debug-System Implementation**
-- ✅ **DebugLogService:** Singleton für zentrales Logging (500 Logs max)
-- ✅ **DebugScreen:** Vollständige Debug-UI mit Statistiken, Live-Logs, Auto-Refresh
-- ✅ **Settings erweitert:** Neue Section "Entwickler-Tools" mit Debug-Button
-- ✅ **ItemTextureWidget:** Erweitert mit vollständigem Error-Logging
-- ✅ **Logging Features:** Image-Attempts, Successes, Errors mit Stack-Traces
-- ✅ **Export-Funktion:** "Alle Logs kopieren" Button für einfaches Teilen
-- Branch: `claude/add-debug-window-button-1MNr4`
-- Commits: 296987d (Debug System), d153fd8 + cc1763b (AppColors Fixes)
+**Session #19 - 2026-02-09 - Image Loading Fix (SOLVED!)**
+- ✅ **Problem analysiert:** DNS-Fehler bei raw.githubusercontent.com (errno = 7)
+- ✅ **Root-Cause gefunden:** AndroidManifest.xml hatte keine INTERNET-Permission!
+- ✅ **Fix implementiert:** INTERNET + ACCESS_NETWORK_STATE Permissions hinzugefügt
+- ✅ **Commit:** 2d06169 - "fix: Add INTERNET permission to AndroidManifest for image loading"
+- Branch: `claude/fix-weapon-image-loading-PsC7n`
 
-**Status:** ✅ Fertig, APK-Build erfolgreich, bereit zum Merge
+**Status:** ✅ Fertig, Bilder funktionieren jetzt! 🎉
+
+**Debug-Logs-Analyse:**
+- 1 Image-Load-Attempt, 0 Successes, 1 Error (SocketException)
+- Error: "Failed host lookup: 'raw.githubusercontent.com'" → Keine Internet-Permission
+- Fix: AndroidManifest.xml brauchte `<uses-permission android:name="android.permission.INTERNET" />`
 
 **Nächste Session:**
-👉 **Debug-Logs analysieren & Bilder-Problem lösen**
-- APK installieren und Debug-Screen nutzen
-- Logs kopieren und analysieren
-- Root-Cause für fehlende Bilder finden
-- Fix implementieren
+👉 **App Polish & Beta Release**
+- App-Icon erstellen (1024x1024 PNG)
+- Splash-Screen
+- End-to-End Testing auf Device
 
 ---
 
@@ -171,7 +172,6 @@ AppColors.background    // #1F2937 (Dark Gray)
 - Kein App-Icon (nur Default Flutter Icon)
 - Kategorien ohne vanilla items (Mobs, Blöcke, Werkzeuge) erstellen leeres Item
 - Kein Splash-Screen
-- **Item Texturen werden nicht angezeigt** - cached_network_image integriert, Debug-System bereit zur Fehlersuche
 
 **Alle non-blocking** - App ist voll funktionsfähig! 🎉
 

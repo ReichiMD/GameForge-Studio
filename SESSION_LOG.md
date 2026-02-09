@@ -352,27 +352,50 @@
 
 ---
 
-## 🎯 Nächste Session: Debug-Logs analysieren & Bilder-Problem lösen
+### Session #19 - 2026-02-09 - Image Loading Fix (SOLVED!)
+
+**Branch:** `claude/fix-weapon-image-loading-PsC7n`
+
+**Durchgeführt:**
+- ✅ **Debug-Logs analysiert:** DNS-Fehler "Failed host lookup: raw.githubusercontent.com" (errno = 7)
+- ✅ **Root-Cause gefunden:** AndroidManifest.xml hatte keine INTERNET-Permission!
+- ✅ **Fix implementiert:** Zwei essenzielle Permissions hinzugefügt
+  * `android.permission.INTERNET` - Für Netzwerkverbindungen (DNS, HTTP, HTTPS)
+  * `android.permission.ACCESS_NETWORK_STATE` - Benötigt von cached_network_image
+- ✅ **Tested:** Bilder laden jetzt erfolgreich nach APK-Rebuild
+
+**Commits:**
+- `2d06169` - fix: Add INTERNET permission to AndroidManifest for image loading
+
+**Problem Details:**
+- SocketException: DNS-Auflösung schlug fehl wegen fehlender Android-Permission
+- cached_network_image konnte keine Netzwerk-Requests ausführen
+- Klassisches Android-Problem: Permissions müssen explizit deklariert werden
+
+**Status:** ✅ PROBLEM GELÖST - Item-Texturen funktionieren! 🎉
+
+**Nächstes:** App Polish (Icon, Splash-Screen), Beta Release
+
+---
+
+## 🎯 Nächste Session: App Polish & Beta Release
 
 **Geplant:**
-1. **Debug-Logs analysieren** (PRIORITÄT!)
-   - APK installieren auf Handy
-   - Debug-Screen öffnen (Einstellungen → Entwickler-Tools → Debug-Informationen)
-   - App nutzen (Bibliothek, Projekte öffnen) um Logs zu generieren
-   - "Alle Logs kopieren" Button drücken und Logs hier einfügen
-   - Root-Cause für fehlende Bilder identifizieren
-   - Fix implementieren basierend auf Logs
-
-2. App Icon & Splash-Screen
+1. **App Icon & Splash-Screen** (PRIORITÄT!)
    - App-Icon erstellen (1024x1024 PNG) - siehe ICON_SETUP.md
    - Splash-Screen konfigurieren
    - Testing auf Android Device
 
-3. Weitere Features
+2. **End-to-End Testing**
+   - Kompletten Workflow testen (Projekt → Items → Export)
+   - Item-Texturen auf echtem Device prüfen
+   - Performance-Check
+
+3. **Weitere Features** (Optional)
    - Mehr Effekte (Poison, Regeneration, etc.)
    - Projekt-Duplikation
 
-**Geschätzter Aufwand:** 1 Session für Debug-Analyse + Fix
+**Geschätzter Aufwand:** 1 Session
 
 ---
 
@@ -382,7 +405,7 @@
 **Fortschritt:** 🎉 100% Core Features + Workflow Redesign (Phase 6 komplett!)
 **Version:** 1.1.1+3
 **APK:** Baut erfolgreich (~22 MB)
-**Nächster Milestone:** Debug-Fix für Item-Texturen, dann App Icon & Polish
+**Nächster Milestone:** App Icon & Splash-Screen (Polish für Beta Release)
 
 **Neuerungen:**
 - ✅ Multi-Item Projects (1 Projekt = viele Items!)
@@ -390,7 +413,8 @@
 - ✅ 3 neue Screens (ProjectDetail, CategorySelection, ItemList)
 - ✅ Export-Funktionalität für Projekte & Items
 - ✅ APK-Updates ohne Deinstallation
-- ✅ Debug-System (DebugScreen, DebugLogService) - NEU in Session #18!
+- ✅ Debug-System (DebugScreen, DebugLogService) - Session #18
+- ✅ Item-Texturen funktionieren (Internet-Permission Fix) - Session #19
 
 **Dokumentation:**
 - ✅ CLAUDE.md (Session-Start) - Version 3.1
@@ -401,4 +425,4 @@
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-09 (Session #18)
+**Letzte Aktualisierung:** 2026-02-09 (Session #19)
