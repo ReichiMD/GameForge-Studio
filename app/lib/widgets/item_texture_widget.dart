@@ -115,8 +115,8 @@ class _ItemTextureWidgetState extends State<ItemTextureWidget> {
           width: widget.size,
           height: widget.size,
           fit: widget.fit,
-          filterQuality: FilterQuality.high, // High-quality image rendering
-          isAntiAlias: true, // Smooth edges
+          filterQuality: FilterQuality.none, // Pixel-art style (sharp pixels, no blur)
+          isAntiAlias: false, // Sharp edges for Minecraft style
         );
       },
     );
@@ -201,8 +201,8 @@ class _ItemTextureIconWidgetState extends State<ItemTextureIconWidget> {
           width: widget.size,
           height: widget.size,
           fit: BoxFit.contain,
-          filterQuality: FilterQuality.high, // High-quality image rendering
-          isAntiAlias: true, // Smooth edges
+          filterQuality: FilterQuality.none, // Pixel-art style (sharp pixels, no blur)
+          isAntiAlias: false, // Sharp edges for Minecraft style
         );
       },
     );
