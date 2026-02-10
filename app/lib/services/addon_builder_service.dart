@@ -396,11 +396,15 @@ class AddonBuilderService {
       };
     }
 
-    // Enchantability
+    // Enchantability (mit korrektem slot-Parameter!)
     if (enchantability > 0) {
-      components['minecraft:enchantable'] = {
-        'value': enchantability,
-      };
+      final enchantableSlot = _getEnchantableSlot(item.category, item.baseItem?.type);
+      if (enchantableSlot != null) {
+        components['minecraft:enchantable'] = {
+          'slot': enchantableSlot,
+          'value': enchantability,
+        };
+      }
     }
 
     // Effects
@@ -493,6 +497,33 @@ class AddonBuilderService {
       return 'slot.armor.feet';
     }
     return null;
+  }
+
+  /// Get enchantable slot based on item category and type
+  static String? _getEnchantableSlot(String category, String? itemType) {
+    switch (category.toLowerCase()) {
+      case 'waffen':
+        return 'sword';
+      case 'werkzeuge':
+        return 'pickaxe';
+      case 'rüstung':
+        // Determine armor slot based on item type
+        if (itemType == null) return 'armor_torso'; // Default to chestplate
+
+        final type = itemType.toLowerCase();
+        if (type.contains('helmet') || type.contains('helm')) {
+          return 'armor_head';
+        } else if (type.contains('chestplate') || type.contains('brustpanzer')) {
+          return 'armor_torso';
+        } else if (type.contains('leggings') || type.contains('hose')) {
+          return 'armor_legs';
+        } else if (type.contains('boots') || type.contains('stiefel')) {
+          return 'armor_feet';
+        }
+        return 'armor_torso'; // Default
+      default:
+        return null; // No enchantability for other categories
+    }
   }
 
   /// Get filename for .mcaddon export
