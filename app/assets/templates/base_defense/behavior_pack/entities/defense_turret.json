@@ -1,0 +1,42 @@
+{
+  "format_version": "1.21.10",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "{{PROJECT_NAME}}:defense_turret",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+    "components": {
+      "minecraft:health": {
+        "value": 50,
+        "max": 50
+      },
+      "minecraft:shooter": {
+        "def": "minecraft:arrow"
+      },
+      "minecraft:nearest_attackable_target": {
+        "priority": 0,
+        "must_see": true,
+        "re_evaluate_description": true,
+        "within_radius": {{TURRET_RANGE}},
+        "entity_types": [
+          {
+            "filters": {
+              "test": "is_family",
+              "subject": "other",
+              "operator": "==",
+              "value": "monster"
+            },
+            "max_dist": {{TURRET_RANGE}}
+          }
+        ]
+      },
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": false
+      }
+    }
+  }
+}
