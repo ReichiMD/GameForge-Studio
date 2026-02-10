@@ -86,6 +86,8 @@ flutter:
   assets:
     - assets/library/vanilla_stats.json
     - assets/templates/manifest_behavior.json
+    - assets/templates/manifest_resource.json
+    - assets/templates/pack_icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

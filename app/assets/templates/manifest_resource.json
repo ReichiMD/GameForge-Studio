@@ -2,7 +2,7 @@
     "format_version": 2,
     "header": {
         "description": "{{DESCRIPTION}}",
-        "name": "{{NAME}}",
+        "name": "{{NAME}} Resources",
         "uuid": "{{HEADER_UUID}}",
         "version": [0, 0, 1],
         "min_engine_version": [1, 21, 131]
@@ -10,7 +10,7 @@
     "modules": [
         {
             "description": "{{DESCRIPTION}}",
-            "type": "data",
+            "type": "resources",
             "uuid": "{{MODULE_UUID}}",
             "version": [0, 0, 1]
         }

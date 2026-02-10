@@ -1,0 +1,201 @@
+{
+  "_comment": "This is a REFERENCE file for Minecraft Bedrock 1.21.130+ item syntax",
+  "_comment2": "This file is NOT loaded by the app - it's only documentation for developers",
+  "_comment3": "The actual JSON is built programmatically in addon_builder_service.dart",
+
+  "weapon_example": {
+    "format_version": "1.21.130",
+    "minecraft:item": {
+      "description": {
+        "identifier": "custom:diamond_sword",
+        "menu_category": {
+          "category": "equipment",
+          "group": "itemGroup.name.sword"
+        }
+      },
+      "components": {
+        "minecraft:display_name": {
+          "value": "Custom Diamond Sword"
+        },
+        "minecraft:icon": {
+          "textures": {
+            "default": "diamond_sword"
+          }
+        },
+        "minecraft:hand_equipped": true,
+        "minecraft:max_stack_size": 1,
+        "minecraft:durability": {
+          "max_durability": 1561
+        },
+        "minecraft:damage": {
+          "value": 7
+        },
+        "minecraft:attribute_modifiers": {
+          "modifiers": [
+            {
+              "attribute": "minecraft:player.attack_damage",
+              "amount": 7,
+              "operation": "add_value",
+              "slot": "mainhand"
+            }
+          ]
+        },
+        "minecraft:can_destroy_in_creative": false,
+        "minecraft:foil": true
+      }
+    }
+  },
+
+  "armor_example": {
+    "format_version": "1.21.130",
+    "minecraft:item": {
+      "description": {
+        "identifier": "custom:diamond_chestplate",
+        "menu_category": {
+          "category": "equipment",
+          "group": "itemGroup.name.chestplate"
+        }
+      },
+      "components": {
+        "minecraft:display_name": {
+          "value": "Custom Diamond Chestplate"
+        },
+        "minecraft:icon": {
+          "textures": {
+            "default": "diamond_chestplate"
+          }
+        },
+        "minecraft:max_stack_size": 1,
+        "minecraft:durability": {
+          "max_durability": 528
+        },
+        "minecraft:wearable": {
+          "slot": "slot.armor.chest"
+        },
+        "minecraft:attribute_modifiers": {
+          "modifiers": [
+            {
+              "attribute": "minecraft:player.armor",
+              "amount": 8,
+              "operation": "add_value",
+              "slot": "slot.armor.chest"
+            },
+            {
+              "attribute": "minecraft:player.armor_toughness",
+              "amount": 2,
+              "operation": "add_value",
+              "slot": "slot.armor.chest"
+            }
+          ]
+        },
+        "minecraft:can_destroy_in_creative": false
+      }
+    }
+  },
+
+  "tool_example": {
+    "format_version": "1.21.130",
+    "minecraft:item": {
+      "description": {
+        "identifier": "custom:diamond_pickaxe",
+        "menu_category": {
+          "category": "equipment",
+          "group": "itemGroup.name.pickaxe"
+        }
+      },
+      "components": {
+        "minecraft:display_name": {
+          "value": "Custom Diamond Pickaxe"
+        },
+        "minecraft:icon": {
+          "textures": {
+            "default": "diamond_pickaxe"
+          }
+        },
+        "minecraft:hand_equipped": true,
+        "minecraft:max_stack_size": 1,
+        "minecraft:durability": {
+          "max_durability": 1561
+        },
+        "minecraft:damage": {
+          "value": 5
+        },
+        "minecraft:digger": {
+          "use_efficiency": true,
+          "destroy_speeds": [
+            {
+              "block": {
+                "tags": "query.any_tag('stone', 'metal', 'diamond_pick_diggable')"
+              },
+              "speed": 8
+            }
+          ]
+        },
+        "minecraft:attribute_modifiers": {
+          "modifiers": [
+            {
+              "attribute": "minecraft:player.attack_damage",
+              "amount": 5,
+              "operation": "add_value",
+              "slot": "mainhand"
+            }
+          ]
+        },
+        "minecraft:can_destroy_in_creative": false
+      }
+    }
+  },
+
+  "food_example": {
+    "format_version": "1.21.130",
+    "minecraft:item": {
+      "description": {
+        "identifier": "custom:golden_apple",
+        "menu_category": {
+          "category": "nature",
+          "group": "itemGroup.name.food"
+        }
+      },
+      "components": {
+        "minecraft:display_name": {
+          "value": "Custom Golden Apple"
+        },
+        "minecraft:icon": {
+          "textures": {
+            "default": "golden_apple"
+          }
+        },
+        "minecraft:max_stack_size": 64,
+        "minecraft:use_duration": 32,
+        "minecraft:food": {
+          "nutrition": 4,
+          "saturation_modifier": 9.6
+        },
+        "minecraft:foil": true
+      }
+    }
+  },
+
+  "_notes": {
+    "key_changes_in_1_21_130": {
+      "icon_format": "Changed from 'texture' to 'textures: { default: ... }'",
+      "attribute_modifiers": "NEW - Used for attack_damage, armor, armor_toughness, etc.",
+      "armor_component": "DEPRECATED - Use minecraft:wearable + attribute_modifiers instead",
+      "damage_component": "Still works but attribute_modifiers is recommended for weapons",
+      "menu_category": "NEW - Defines creative inventory tab and group",
+      "hand_equipped": "Recommended for weapons and tools"
+    },
+    "attribute_types": {
+      "minecraft:player.attack_damage": "Weapon damage",
+      "minecraft:player.armor": "Armor protection",
+      "minecraft:player.armor_toughness": "Armor toughness",
+      "minecraft:player.movement_speed": "Movement speed modifier"
+    },
+    "wearable_slots": {
+      "head": "slot.armor.head",
+      "chest": "slot.armor.chest",
+      "legs": "slot.armor.legs",
+      "feet": "slot.armor.feet"
+    }
+  }
+}

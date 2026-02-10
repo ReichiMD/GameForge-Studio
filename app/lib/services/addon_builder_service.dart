@@ -3,12 +3,15 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:archive/archive.dart';
 import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
 import '../models/project.dart';
 import '../models/project_item.dart';
 
 /// Service for building complete Minecraft Bedrock Addons (.mcaddon files)
+/// with both Behavior Pack and Resource Pack
 class AddonBuilderService {
   static const _uuid = Uuid();
+  static const _githubRawUrl = 'https://raw.githubusercontent.com/ReichiMD/fabrik-library/main';
 
   /// Build a complete .mcaddon file from a project
   /// Returns the ZIP file as bytes
@@ -20,37 +23,132 @@ class AddonBuilderService {
     // Create ZIP archive
     final archive = Archive();
 
-    // 1. Add manifest.json
-    final manifestJson = await _generateManifest(project);
-    final manifestBytes = utf8.encode(manifestJson);
+    // Generate UUIDs for both packs
+    final behaviorHeaderUuid = _uuid.v4();
+    final behaviorModuleUuid = _uuid.v4();
+    final resourceHeaderUuid = _uuid.v4();
+    final resourceModuleUuid = _uuid.v4();
+
+    // ========== BEHAVIOR PACK ==========
+
+    // 1. Add behavior pack manifest.json
+    final behaviorManifestJson = await _generateBehaviorManifest(
+      project,
+      behaviorHeaderUuid,
+      behaviorModuleUuid,
+      resourceHeaderUuid, // Dependency on resource pack
+    );
+    final behaviorManifestBytes = utf8.encode(behaviorManifestJson);
     archive.addFile(
-      ArchiveFile('manifest.json', manifestBytes.length, manifestBytes),
+      ArchiveFile(
+        'behavior_pack/manifest.json',
+        behaviorManifestBytes.length,
+        behaviorManifestBytes,
+      ),
     );
 
-    // 2. Add items/*.json
+    // 2. Add behavior pack items/*.json
     for (final item in project.items) {
       final itemJson = _exportItemToMinecraftJSON(item);
       final itemBytes = utf8.encode(itemJson);
-      final itemFilename = 'items/${_sanitizeIdentifier(item.name)}.json';
+      final itemFilename = 'behavior_pack/items/${_sanitizeIdentifier(item.name)}.json';
       archive.addFile(
         ArchiveFile(itemFilename, itemBytes.length, itemBytes),
       );
     }
 
-    // 3. Add pack_icon.png (optional)
+    // 3. Add behavior pack pack_icon.png (optional)
     try {
       final iconBytes = await rootBundle.load('assets/templates/pack_icon.png');
       archive.addFile(
         ArchiveFile(
-          'pack_icon.png',
+          'behavior_pack/pack_icon.png',
           iconBytes.lengthInBytes,
           iconBytes.buffer.asUint8List(),
         ),
       );
     } catch (e) {
       // Icon not found - Minecraft will use a default icon
-      // This is not an error, just a missing optional file
     }
+
+    // ========== RESOURCE PACK ==========
+
+    // 4. Add resource pack manifest.json
+    final resourceManifestJson = await _generateResourceManifest(
+      project,
+      resourceHeaderUuid,
+      resourceModuleUuid,
+    );
+    final resourceManifestBytes = utf8.encode(resourceManifestJson);
+    archive.addFile(
+      ArchiveFile(
+        'resource_pack/manifest.json',
+        resourceManifestBytes.length,
+        resourceManifestBytes,
+      ),
+    );
+
+    // 5. Add resource pack pack_icon.png (optional)
+    try {
+      final iconBytes = await rootBundle.load('assets/templates/pack_icon.png');
+      archive.addFile(
+        ArchiveFile(
+          'resource_pack/pack_icon.png',
+          iconBytes.lengthInBytes,
+          iconBytes.buffer.asUint8List(),
+        ),
+      );
+    } catch (e) {
+      // Icon not found - Minecraft will use a default icon
+    }
+
+    // 6. Download and add item textures
+    final textureData = <String, dynamic>{};
+    for (final item in project.items) {
+      final itemIdentifier = _sanitizeIdentifier(item.name);
+
+      try {
+        // Download texture from GitHub
+        final imageBytes = await _downloadItemTexture(item);
+
+        // Add to archive
+        final texturePath = 'resource_pack/textures/items/$itemIdentifier.png';
+        archive.addFile(
+          ArchiveFile(texturePath, imageBytes.length, imageBytes),
+        );
+
+        // Add to texture data for item_texture.json
+        textureData[itemIdentifier] = {
+          'textures': 'textures/items/$itemIdentifier',
+        };
+      } catch (e) {
+        // If texture download fails, skip this item's texture
+        // Minecraft will use a default/missing texture
+        print('Warning: Could not download texture for ${item.name}: $e');
+      }
+    }
+
+    // 7. Add item_texture.json
+    final itemTextureJson = _generateItemTextureJson(textureData);
+    final itemTextureBytes = utf8.encode(itemTextureJson);
+    archive.addFile(
+      ArchiveFile(
+        'resource_pack/textures/item_texture.json',
+        itemTextureBytes.length,
+        itemTextureBytes,
+      ),
+    );
+
+    // 8. Add terrain_texture.json (required even if empty)
+    final terrainTextureJson = _generateTerrainTextureJson();
+    final terrainTextureBytes = utf8.encode(terrainTextureJson);
+    archive.addFile(
+      ArchiveFile(
+        'resource_pack/textures/terrain_texture.json',
+        terrainTextureBytes.length,
+        terrainTextureBytes,
+      ),
+    );
 
     // Encode to ZIP
     final zipEncoder = ZipEncoder();
@@ -63,16 +161,77 @@ class AddonBuilderService {
     return Uint8List.fromList(zipBytes);
   }
 
-  /// Generate manifest.json from template
-  static Future<String> _generateManifest(Project project) async {
+  /// Download item texture from GitHub
+  /// Uses custom icon if available, otherwise falls back to vanilla texture
+  static Future<Uint8List> _downloadItemTexture(ProjectItem item) async {
+    String imageUrl;
+
+    if (item.customIconUrl != null && item.customIconUrl!.isNotEmpty) {
+      // Use custom icon
+      imageUrl = item.customIconUrl!;
+    } else if (item.baseItem != null && item.baseItem!.textureUrl != null) {
+      // Use vanilla item texture
+      imageUrl = item.baseItem!.textureUrl!;
+    } else {
+      throw Exception('Item has no texture source');
+    }
+
+    // Download image
+    final response = await http.get(Uri.parse(imageUrl));
+
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      throw Exception('Failed to download texture: HTTP ${response.statusCode}');
+    }
+  }
+
+  /// Generate behavior pack manifest.json from template
+  static Future<String> _generateBehaviorManifest(
+    Project project,
+    String headerUuid,
+    String moduleUuid,
+    String resourcePackUuid,
+  ) async {
     // Load template
     final templateString = await rootBundle.loadString(
       'assets/templates/manifest_behavior.json',
     );
 
-    // Generate UUIDs
-    final headerUuid = _uuid.v4();
-    final moduleUuid = _uuid.v4();
+    // Parse JSON to add dependency
+    final manifestMap = jsonDecode(templateString) as Map<String, dynamic>;
+
+    // Add dependency on resource pack
+    manifestMap['dependencies'] = [
+      {
+        'uuid': resourcePackUuid,
+        'version': [0, 0, 1],
+      }
+    ];
+
+    // Replace placeholders
+    String manifestJson = jsonEncode(manifestMap);
+    manifestJson = manifestJson
+        .replaceAll('{{NAME}}', project.name)
+        .replaceAll('{{DESCRIPTION}}', 'Created with GameForge Studio')
+        .replaceAll('{{HEADER_UUID}}', headerUuid)
+        .replaceAll('{{MODULE_UUID}}', moduleUuid);
+
+    // Format nicely
+    final encoder = JsonEncoder.withIndent('    ');
+    return encoder.convert(jsonDecode(manifestJson));
+  }
+
+  /// Generate resource pack manifest.json from template
+  static Future<String> _generateResourceManifest(
+    Project project,
+    String headerUuid,
+    String moduleUuid,
+  ) async {
+    // Load template
+    final templateString = await rootBundle.loadString(
+      'assets/templates/manifest_resource.json',
+    );
 
     // Replace placeholders
     final manifestJson = templateString
@@ -84,75 +243,153 @@ class AddonBuilderService {
     return manifestJson;
   }
 
+  /// Generate item_texture.json
+  static String _generateItemTextureJson(Map<String, dynamic> textureData) {
+    final itemTextureJson = {
+      'resource_pack_name': 'vanilla',
+      'texture_name': 'atlas.items',
+      'texture_data': textureData,
+    };
+
+    const encoder = JsonEncoder.withIndent('  ');
+    return encoder.convert(itemTextureJson);
+  }
+
+  /// Generate terrain_texture.json (empty but required)
+  static String _generateTerrainTextureJson() {
+    final terrainTextureJson = {
+      'resource_pack_name': 'vanilla',
+      'texture_name': 'atlas.terrain',
+      'texture_data': <String, dynamic>{},
+    };
+
+    const encoder = JsonEncoder.withIndent('  ');
+    return encoder.convert(terrainTextureJson);
+  }
+
   /// Export a single ProjectItem as Minecraft Bedrock Edition item JSON
-  /// (Updated version with format_version 1.21.100)
+  /// Updated for format version 1.21.130 (compatible with 1.21.131)
+  ///
+  /// Key changes in 1.21.130+:
+  /// - Icon format: textures: { default: "name" } instead of texture: "name"
+  /// - Attribute modifiers: New way to set attack_damage, armor, armor_toughness
+  /// - minecraft:armor component is deprecated - use attribute_modifiers instead
+  /// - menu_category: Defines creative inventory placement
   static String _exportItemToMinecraftJSON(ProjectItem item) {
     final itemIdentifier = _sanitizeIdentifier(item.name);
-    final category = _mapCategory(item.category);
-
-    // Build components based on item data
-    final components = <String, dynamic>{
-      'minecraft:max_stack_size': 1,
-    };
+    final menuCategory = _getMenuCategory(item.category);
 
     // Get custom stats
     final customStats = item.customStats;
+    final damage = (customStats['damage'] as num?)?.toDouble() ?? 0.0;
+    final durability = (customStats['durability'] as num?)?.toInt() ?? 100;
+    final armor = (customStats['armor'] as num?)?.toDouble() ?? 0.0;
+    final armorToughness = (customStats['armor_toughness'] as num?)?.toDouble() ?? 0.0;
+    final miningSpeed = (customStats['mining_speed'] as num?)?.toDouble() ?? 1.0;
 
-    // Add durability if available
-    final durability = customStats['durability'] as num?;
-    if (durability != null && durability > 0) {
+    // Build components
+    final components = <String, dynamic>{};
+
+    // Display name
+    components['minecraft:display_name'] = {
+      'value': item.name,
+    };
+
+    // Icon - NEW FORMAT in 1.21.130+
+    components['minecraft:icon'] = {
+      'textures': {
+        'default': itemIdentifier,
+      }
+    };
+
+    // Max stack size
+    components['minecraft:max_stack_size'] = 1;
+
+    // Durability
+    if (durability > 0) {
       components['minecraft:durability'] = {
-        'max_durability': durability.toInt(),
+        'max_durability': durability,
       };
     }
 
-    // Add damage if available
-    final damage = customStats['damage'] as num?;
-    if (damage != null && damage > 0) {
+    // Hand equipped (for weapons and tools)
+    if (item.category.toLowerCase() == 'waffen' ||
+        item.category.toLowerCase() == 'werkzeuge') {
+      components['minecraft:hand_equipped'] = true;
+    }
+
+    // Damage component (still used for base damage)
+    if (damage > 0) {
       components['minecraft:damage'] = {
-        'value': damage.toDouble(),
+        'value': damage,
       };
     }
 
-    // Add armor if available
-    final armor = customStats['armor'] as num?;
-    if (armor != null && armor > 0) {
-      components['minecraft:armor'] = {
-        'protection': armor.toInt(),
+    // Attribute modifiers - NEW in 1.21.130+
+    final attributeModifiers = <Map<String, dynamic>>[];
+
+    // Attack damage (for weapons and tools)
+    if (damage > 0) {
+      attributeModifiers.add({
+        'attribute': 'minecraft:player.attack_damage',
+        'amount': damage,
+        'operation': 'add_value',
+        'slot': 'mainhand',
+      });
+    }
+
+    // Armor and toughness (for armor items)
+    if (armor > 0 || armorToughness > 0) {
+      final armorSlot = _getArmorSlot(item.baseItem?.type);
+
+      // Wearable component (required for armor)
+      if (armorSlot != null) {
+        components['minecraft:wearable'] = {
+          'slot': armorSlot,
+        };
+
+        // Armor protection
+        if (armor > 0) {
+          attributeModifiers.add({
+            'attribute': 'minecraft:player.armor',
+            'amount': armor,
+            'operation': 'add_value',
+            'slot': armorSlot,
+          });
+        }
+
+        // Armor toughness
+        if (armorToughness > 0) {
+          attributeModifiers.add({
+            'attribute': 'minecraft:player.armor_toughness',
+            'amount': armorToughness,
+            'operation': 'add_value',
+            'slot': armorSlot,
+          });
+        }
+      }
+    }
+
+    // Add attribute modifiers if any exist
+    if (attributeModifiers.isNotEmpty) {
+      components['minecraft:attribute_modifiers'] = {
+        'modifiers': attributeModifiers,
       };
     }
 
-    // Add armor toughness if available
-    final armorToughness = customStats['armor_toughness'] as num?;
-    if (armorToughness != null && armorToughness > 0) {
-      components['minecraft:armor'] = {
-        ...?components['minecraft:armor'] as Map<String, dynamic>?,
-        'toughness': armorToughness.toDouble(),
-      };
-    }
-
-    // Add attack speed if available
-    final attackSpeed = customStats['attack_speed'] as num?;
-    if (attackSpeed != null) {
-      components['minecraft:attack_speed'] = {
-        'value': attackSpeed.toDouble(),
-      };
-    }
-
-    // Add mining speed if available
-    final miningSpeed = customStats['mining_speed'] as num?;
-    if (miningSpeed != null && miningSpeed > 1.0) {
+    // Mining speed (for tools)
+    if (miningSpeed > 1.0) {
       components['minecraft:digger'] = {
         'use_efficiency': true,
         'destroy_speeds': [
           {
-            'speed': miningSpeed.toDouble(),
+            'speed': miningSpeed,
           }
         ],
       };
     }
 
-    // Add effects
+    // Effects
     final effects = item.effects;
     if (effects['fire'] == true) {
       components['minecraft:ignite_on_use'] = {
@@ -160,26 +397,19 @@ class AddonBuilderService {
       };
     }
     if (effects['glow'] == true) {
-      components['minecraft:foil'] = true; // Enchantment glint effect
+      components['minecraft:foil'] = true;
     }
 
-    // Add icon component (texture reference)
-    components['minecraft:icon'] = {
-      'texture': itemIdentifier,
-    };
+    // Can destroy in creative (prevent accidental deletion)
+    components['minecraft:can_destroy_in_creative'] = false;
 
-    // Add display name
-    components['minecraft:display_name'] = {
-      'value': item.name,
-    };
-
-    // Build the complete item JSON
+    // Build the complete item JSON with menu_category
     final itemJson = {
-      'format_version': '1.21.100',
+      'format_version': '1.21.130',
       'minecraft:item': {
         'description': {
           'identifier': 'custom:$itemIdentifier',
-          'category': category,
+          'menu_category': menuCategory,
         },
         'components': components,
       }
@@ -200,24 +430,55 @@ class AddonBuilderService {
         .replaceAll(RegExp(r'^_|_$'), '');
   }
 
-  /// Map GameForge category to Minecraft category
-  static String _mapCategory(String category) {
+  /// Get menu category for creative inventory (1.21.130+ format)
+  static Map<String, dynamic> _getMenuCategory(String category) {
     switch (category.toLowerCase()) {
       case 'waffen':
-        return 'equipment';
+        return {
+          'category': 'equipment',
+          'group': 'itemGroup.name.sword',
+        };
       case 'rüstung':
-        return 'equipment';
+        return {
+          'category': 'equipment',
+          'group': 'itemGroup.name.chestplate',
+        };
       case 'werkzeuge':
-        return 'equipment';
+        return {
+          'category': 'equipment',
+          'group': 'itemGroup.name.pickaxe',
+        };
       case 'nahrung':
-        return 'nature';
+        return {
+          'category': 'nature',
+          'group': 'itemGroup.name.food',
+        };
       case 'blöcke':
-        return 'construction';
-      case 'mobs':
-        return 'items';
+        return {
+          'category': 'construction',
+        };
       default:
-        return 'items';
+        return {
+          'category': 'items',
+        };
     }
+  }
+
+  /// Get armor slot based on item type
+  static String? _getArmorSlot(String? itemType) {
+    if (itemType == null) return null;
+
+    final type = itemType.toLowerCase();
+    if (type.contains('helmet') || type.contains('helm')) {
+      return 'slot.armor.head';
+    } else if (type.contains('chestplate') || type.contains('brustpanzer')) {
+      return 'slot.armor.chest';
+    } else if (type.contains('leggings') || type.contains('hose')) {
+      return 'slot.armor.legs';
+    } else if (type.contains('boots') || type.contains('stiefel')) {
+      return 'slot.armor.feet';
+    }
+    return null;
   }
 
   /// Get filename for .mcaddon export

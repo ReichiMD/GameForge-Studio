@@ -1,8 +1,8 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 3.5 (Flutter - Editor Polish + Custom Icon Picker)
-**Letzte Aktualisierung:** 2026-02-09
-**Status:** Phase 7 Komplett (✅ Fertig!) - Editor verbessert + Custom Icon Auswahl!
+**Version:** 3.6 (Flutter - Complete Addon Export + Minecraft 1.21.130+)
+**Letzte Aktualisierung:** 2026-02-10
+**Status:** Phase 7 Komplett (✅ Fertig!) - Vollständige .mcaddon Dateien mit Behavior + Resource Pack!
 
 ---
 
@@ -63,6 +63,9 @@
 ✅ **Downloads-Speicherung** - Addons direkt in /Download/ speichern (kein Share-Dialog) 💾
 ✅ **Custom Icon Picker** - Im Editor auf Bild tippen → Custom-Icons aus fabrik-library auswählen 🎨
 ✅ **Editor Bug-Fix** - Textfeld Item-Name funktioniert jetzt korrekt (Cursor + Schreibrichtung) 🔧
+✅ **Resource Pack** - Vollständiges Resource Pack mit allen Item-Texturen! 🖼️
+✅ **Minecraft 1.21.130+** - Kompatibel mit neuester Bedrock Version (1.21.131) 🎮
+✅ **Attribute Modifiers** - Alle Stats funktionieren (Schaden, Rüstung, Mining Speed) ⚡
 
 ---
 
@@ -175,29 +178,32 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ## 📝 Letzte Session (für Kontext)
 
-**Session #24 - 2026-02-09 - Editor Polish + Custom Icon Picker**
-- ✅ **Bug-Fix: Textfeld Item-Name im Editor**
-  * TextEditingController wurde bei jedem setState neu erstellt → Cursor sprang raus
-  * Jetzt wird Controller einmal in initState erstellt und wiederverwendet
-  * Tippen, Löschen und Cursor-Position funktionieren korrekt
-- ✅ **Export-Button aus Editor entfernt**
-  * "Als Minecraft Addon exportieren" Button im Workshop-Screen entfernt
-  * Export bleibt über ProjectDetailScreen verfügbar
-- ✅ **Custom Icon Picker Feature**
-  * Auf Item-Bild im Editor tippen → Bild-Galerie öffnet sich
-  * Lädt verfügbare PNG-Icons von fabrik-library (assets/custom/icons/)
-  * GitHub API Abfrage für dynamische Icon-Liste
-  * Ausgewähltes Icon wird mit Item gespeichert (customIconUrl in ProjectItem)
-  * "Standard-Bild" Button zum Zurücksetzen
-  * Kleines Stift-Symbol am Bild als Hinweis
-- ✅ **Model-Erweiterung**
-  * ProjectItem hat neues Feld: customIconUrl (String?, optional)
-  * Wird in JSON gespeichert und geladen (Persistenz)
-- ✅ **Neues Package:** http ^1.2.2 - Für GitHub API Abfragen
-- ✅ **1 Commit:** 66118dc
-- Branch: `claude/fix-editor-image-picker-hykbs`
+**Session #25 - 2026-02-10 - Complete Addon Export + Minecraft 1.21.130+ Update**
+- ✅ **Resource Pack Implementation**
+  * Vollständiges Resource Pack mit Behavior Pack
+  * Beide Manifests (behavior + resource) mit Dependencies
+  * Texturen werden von GitHub heruntergeladen (Custom oder Vanilla)
+  * item_texture.json automatisch generiert
+  * terrain_texture.json hinzugefügt (Pflicht-Datei)
+  * Korrekte ZIP-Struktur: behavior_pack/ und resource_pack/
+- ✅ **Minecraft 1.21.130+ Syntax Update**
+  * Icon-Format geändert: `textures: { default: ... }` (statt `texture`)
+  * Attribute Modifiers für alle Stats (attack_damage, armor, armor_toughness)
+  * minecraft:armor deprecated → jetzt minecraft:wearable + attribute_modifiers
+  * menu_category hinzugefügt (Creative Inventory Platzierung)
+  * minecraft:hand_equipped für Waffen/Werkzeuge
+  * Format Version auf 1.21.130 aktualisiert
+- ✅ **Referenz-Dokumentation**
+  * item_reference.json erstellt (Beispiele für alle Item-Typen)
+  * Nur Dokumentation - wird NICHT von der App geladen
+  * CLAUDE.md erweitert mit Minecraft 1.21.130+ Änderungen
+- ✅ **Bug-Fixes**
+  * textureUrl statt texturePath (VanillaItem Model)
+  * manifest_resource.json zu pubspec.yaml Assets hinzugefügt
+- ✅ **3 Commits:** a36096c, cd6aa22, a45f886
+- Branch: `claude/fix-addon-creation-5j5S4`
 
-**Status:** ✅ Fertig - Editor funktioniert korrekt + Custom Icons auswählbar! 🎨
+**Status:** ✅ Fertig - Komplette .mcaddon Dateien mit Behavior Pack + Resource Pack! 🎉
 
 ---
 
@@ -205,11 +211,74 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 - Kein App-Icon (nur Default Flutter Icon)
 - Kein Splash-Screen
-- pack_icon.png fehlt (Minecraft nutzt Default-Icon)
-- Resource Pack für eigene Texturen noch nicht implementiert
 - Custom Icons nur für Waffen verfügbar (6 Icons in fabrik-library)
 
 **Alle non-blocking** - App ist voll funktionsfähig! 🎉
+
+---
+
+## 📖 Minecraft Bedrock 1.21.130+ - Wichtige Änderungen
+
+**WICHTIG für Addon-Erstellung:** Minecraft Bedrock hat in Version 1.21.130+ die Item-JSON-Syntax geändert!
+
+### **Was hat sich geändert?**
+
+1. **Icon-Format (NEU):**
+   ```json
+   // ALT (funktioniert NICHT mehr):
+   "minecraft:icon": { "texture": "item_name" }
+
+   // NEU (1.21.130+):
+   "minecraft:icon": { "textures": { "default": "item_name" } }
+   ```
+
+2. **Attribute Modifiers (NEU):**
+   - Neue Komponente für Stats: `minecraft:attribute_modifiers`
+   - Damit werden jetzt alle Item-Attribute gesetzt (Schaden, Rüstung, etc.)
+   - Beispiel:
+     ```json
+     "minecraft:attribute_modifiers": {
+       "modifiers": [
+         {
+           "attribute": "minecraft:player.attack_damage",
+           "amount": 7,
+           "operation": "add_value",
+           "slot": "mainhand"
+         }
+       ]
+     }
+     ```
+
+3. **Rüstungs-Komponente (DEPRECATED):**
+   - `minecraft:armor` funktioniert NICHT mehr!
+   - Stattdessen: `minecraft:wearable` + `attribute_modifiers` mit `minecraft:player.armor`
+
+4. **Menu Category (NEU):**
+   - Definiert wo das Item im Kreativ-Inventar erscheint
+   - Format: `menu_category: { category: "equipment", group: "itemGroup.name.sword" }`
+
+5. **Format Version:**
+   - Alte Version: `1.21.100`
+   - Neue Version: `1.21.130` (kompatibel mit 1.21.131)
+
+### **Verfügbare Attribute:**
+- `minecraft:player.attack_damage` - Waffenschaden
+- `minecraft:player.armor` - Rüstungsschutz
+- `minecraft:player.armor_toughness` - Rüstungs-Härte
+- `minecraft:player.movement_speed` - Bewegungsgeschwindigkeit
+
+### **Rüstungs-Slots:**
+- Helm: `slot.armor.head`
+- Brustpanzer: `slot.armor.chest`
+- Hose: `slot.armor.legs`
+- Stiefel: `slot.armor.feet`
+
+### **Referenz-Datei:**
+- **`app/assets/templates/item_reference.json`** - Vollständige Beispiele für alle Item-Typen
+- Diese Datei wird NICHT von der App geladen - nur Dokumentation!
+- Zeigt korrekte Syntax für: Waffen, Rüstung, Werkzeuge, Nahrung
+
+**Implementierung:** Der `addon_builder_service.dart` nutzt bereits die neue Syntax! 🎉
 
 ---
 
