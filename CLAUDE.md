@@ -179,11 +179,36 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ## 📝 Letzte Session (für Kontext)
 
+**Session #27 - 2026-02-10 - Editor auf Deutsch + minecraft:damage Fix**
+- ✅ **Editor komplett auf Deutsch**
+  * Alle Labels übersetzt: Schaden, Haltbarkeit, Rüstung, Rüstungshärte, etc.
+  * Neue Eigenschaften: Verzauberbarkeit (1-15), Bewegungsgeschwindigkeit (-50% bis +50%)
+  * "Erweitert" Button für zukünftige Features (Attack Speed, Mining Speed, etc.)
+- ✅ **minecraft:damage Syntax korrigiert**
+  * Fehler in Session #26: Object-Syntax `{ "value": X }` wurde verwendet
+  * KORREKT: `"minecraft:damage": 10` (direkt eine Zahl!)
+  * Bedrock nutzt `minecraft:damage` für Waffen, NICHT `attribute_modifiers`!
+  * Quelle: Bedrock Wiki (GitHub) - offizielle Community-Dokumentation
+- ✅ **minecraft:enchantable mit slot-Parameter**
+  * Fehler: Slot-Parameter fehlte
+  * Fix: `{ "slot": "sword", "value": 10 }` für Waffen
+  * Mapping: Waffen→sword, Werkzeuge→pickaxe, Rüstung→armor_head/torso/legs/feet
+- ✅ **Standard-Quelle festgelegt**
+  * Bedrock Wiki (GitHub) als primäre Quelle
+  * Microsoft Learn als Backup
+  * CLAUDE.md aktualisiert mit Quellenhinweisen
+- ✅ **3 Commits:** 41d1b57, 5cfef12, [current]
+- Branch: `claude/review-item-properties-daxcV`
+
+**Status:** ✅ Funktioniert - Waffen machen jetzt korrekten Schaden! 🎉
+
+---
+
 **Session #26 - 2026-02-10 - Minecraft 1.21.131 Bugfixes (Production-Ready!)**
-- ✅ **minecraft:damage Komponente entfernt**
+- ✅ **minecraft:damage Object-Syntax entfernt**
   * Fehler: "Failed to parse field -> components -> minecraft:damage: invalid value"
-  * Root Cause: `minecraft:damage` mit `{ value: X }` Syntax ist DEPRECATED in 1.21.130+
-  * Fix: Komponente komplett entfernt - nur noch `attribute_modifiers` verwenden
+  * Root Cause: `minecraft:damage` mit `{ value: X }` Object-Syntax funktioniert nicht
+  * Fix: Auf `attribute_modifiers` gewechselt (ABER: War falsch! Siehe Session #27)
   * Betrifft: Waffen und Werkzeuge (alle Items mit Schaden)
 - ✅ **menu_category group Namespace-Fix**
   * Fehler: "string must be prefixed with a namespace (eg. namespace:value)"
@@ -245,6 +270,25 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ---
 
+## 📚 STANDARD-QUELLE FÜR BEDROCK KOMPONENTEN
+
+**IMMER diese Quellen nutzen (in dieser Reihenfolge):**
+
+1. **Bedrock Wiki (Web):** https://wiki.bedrock.dev/items/item-components
+   - Community-gepflegt, immer aktuell
+   - Übersichtliche Web-Interface
+   - Zeigt funktionierende Syntax mit Beispielen
+2. **Bedrock Wiki (GitHub):** https://github.com/Bedrock-OSS/bedrock-wiki/blob/wiki/docs/items/item-components.md
+   - Gleiche Quelle wie oben, anderes Format
+   - Gut für Code-Ansicht
+3. **Microsoft Learn:** https://learn.microsoft.com/en-us/minecraft/creator/
+   - Offizielle Dokumentation von Mojang/Microsoft
+   - Manchmal langsamer aktualisiert
+
+**WICHTIG:** Web-Recherchen außerhalb dieser Quellen sind oft irreführend (Java vs. Bedrock verwechselt)!
+
+---
+
 ## 📖 Minecraft Bedrock 1.21.130+ - Wichtige Änderungen
 
 **WICHTIG für Addon-Erstellung:** Minecraft Bedrock hat in Version 1.21.130+ die Item-JSON-Syntax geändert!
@@ -260,18 +304,31 @@ AppColors.background    // #1F2937 (Dark Gray)
    "minecraft:icon": { "textures": { "default": "item_name" } }
    ```
 
-2. **Attribute Modifiers (NEU):**
-   - Neue Komponente für Stats: `minecraft:attribute_modifiers`
-   - Damit werden jetzt alle Item-Attribute gesetzt (Schaden, Rüstung, etc.)
+2. **Waffen-Schaden (WICHTIG!):**
+   - **Bedrock nutzt `minecraft:damage` Component** (NICHT `attribute_modifiers`!)
+   - Syntax: `"minecraft:damage": 10` (direkt eine Zahl, KEIN Objekt!)
+   - Actual Damage = `value + 1` (Faust hat Base Damage 1)
+   - Beispiel für 16 Damage:
+     ```json
+     "minecraft:damage": 15  // Ergibt 16 Damage (15 + 1)
+     ```
+   - ⚠️ **FALSCHE Syntax:** `"minecraft:damage": { "value": 10 }` (Object-Syntax funktioniert NICHT!)
+
+3. **Attribute Modifiers (für Rüstung/Movement Speed):**
+   - Komponente `minecraft:attribute_modifiers` existiert NUR für:
+     * `minecraft:player.armor` (Rüstungsschutz)
+     * `minecraft:player.armor_toughness` (Rüstungshärte)
+     * `minecraft:player.movement_speed` (Bewegungsgeschwindigkeit)
+   - ⚠️ **NICHT für Waffenschaden!** Dafür `minecraft:damage` nutzen (siehe oben)
    - Beispiel:
      ```json
      "minecraft:attribute_modifiers": {
        "modifiers": [
          {
-           "attribute": "minecraft:player.attack_damage",
-           "amount": 7,
+           "attribute": "minecraft:player.armor",
+           "amount": 8,
            "operation": "add_value",
-           "slot": "mainhand"
+           "slot": "slot.armor.chest"
          }
        ]
      }
@@ -290,11 +347,11 @@ AppColors.background    // #1F2937 (Dark Gray)
    - Alte Version: `1.21.100`
    - Neue Version: `1.21.130` (kompatibel mit 1.21.131)
 
-### **Verfügbare Attribute:**
-- `minecraft:player.attack_damage` - Waffenschaden
-- `minecraft:player.armor` - Rüstungsschutz
-- `minecraft:player.armor_toughness` - Rüstungs-Härte
-- `minecraft:player.movement_speed` - Bewegungsgeschwindigkeit
+### **Verfügbare Attribute (für attribute_modifiers):**
+- ⚠️ ~~`minecraft:player.attack_damage`~~ - **NICHT NUTZEN!** Bedrock nutzt `minecraft:damage` Component!
+- `minecraft:player.armor` - Rüstungsschutz ✅
+- `minecraft:player.armor_toughness` - Rüstungs-Härte ✅
+- `minecraft:player.movement_speed` - Bewegungsgeschwindigkeit ✅
 
 ### **Rüstungs-Slots:**
 - Helm: `slot.armor.head`
@@ -304,15 +361,21 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ### **Wichtige Komponenten-Regeln:**
 
-1. **minecraft:damage** - ⛔ **NICHT VERWENDEN!**
-   - Diese Komponente ist DEPRECATED in 1.21.130+
-   - Verursacht Parse-Fehler: `"invalid value"`
-   - ✅ Stattdessen: Nur `minecraft:attribute_modifiers` verwenden
+1. **minecraft:damage** - ✅ **RICHTIG VERWENDEN!**
+   - ✅ **KORREKTE Syntax:** `"minecraft:damage": 10` (direkt eine Zahl!)
+   - ❌ **FALSCHE Syntax:** `"minecraft:damage": { "value": 10 }` (Objekt-Syntax funktioniert NICHT!)
+   - Wird für Waffen und Werkzeuge genutzt
+   - Actual Damage = value + 1 (Base Hand Damage)
 
 2. **menu_category group** - ⚠️ **Namespace erforderlich!**
    - ❌ FALSCH: `"group": "itemGroup.name.sword"`
    - ✅ RICHTIG: `"group": "minecraft:itemGroup.name.sword"`
    - Fehlt der Namespace: Parse-Fehler "must be prefixed with a namespace"
+
+3. **minecraft:enchantable** - ⚠️ **Slot-Parameter erforderlich!**
+   - ❌ FALSCH: `"minecraft:enchantable": { "value": 10 }`
+   - ✅ RICHTIG: `"minecraft:enchantable": { "slot": "sword", "value": 10 }`
+   - Verfügbare Slots: `sword`, `pickaxe`, `bow`, `armor_head`, `armor_torso`, `armor_legs`, `armor_feet`
 
 ### **Referenz-Datei:**
 - **`app/assets/templates/item_reference.json`** - Vollständige Beispiele für alle Item-Typen

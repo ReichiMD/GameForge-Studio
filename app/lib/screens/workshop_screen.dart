@@ -35,13 +35,18 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
   late String _category;
   String? _customIconUrl;
 
-  // Stats
+  // Stats (Hauptbereich)
   late double _damage;
   late double _durability;
-  late double _attackSpeed;
   late double _armor;
   late double _armorToughness;
+  late double _enchantability;
+  late double _movementSpeed;
+
+  // Advanced Stats (Erweitert - noch nicht verfügbar)
+  late double _attackSpeed;
   late double _miningSpeed;
+  bool _showAdvanced = false;
 
   // Effects
   late bool _fireEffect;
@@ -69,12 +74,16 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       _category = item.category;
       _customIconUrl = item.customIconUrl;
 
-      // Load stats
+      // Load stats (Hauptbereich)
       _damage = (item.customStats['damage'] as num?)?.toDouble() ?? 1.0;
       _durability = (item.customStats['durability'] as num?)?.toDouble() ?? 100.0;
-      _attackSpeed = (item.customStats['attack_speed'] as num?)?.toDouble() ?? 1.0;
       _armor = (item.customStats['armor'] as num?)?.toDouble() ?? 0.0;
       _armorToughness = (item.customStats['armor_toughness'] as num?)?.toDouble() ?? 0.0;
+      _enchantability = (item.customStats['enchantability'] as num?)?.toDouble() ?? 10.0;
+      _movementSpeed = (item.customStats['movement_speed'] as num?)?.toDouble() ?? 0.0;
+
+      // Load advanced stats (für später)
+      _attackSpeed = (item.customStats['attack_speed'] as num?)?.toDouble() ?? 1.0;
       _miningSpeed = (item.customStats['mining_speed'] as num?)?.toDouble() ?? 1.0;
 
       // Load effects
@@ -357,8 +366,10 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
+
+        // Schaden
         _buildStatSlider(
-          label: 'Damage',
+          label: 'Schaden',
           emoji: '⚔️',
           value: _damage,
           minValue: 1,
@@ -370,8 +381,10 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           },
         ),
         const SizedBox(height: AppSpacing.lg),
+
+        // Haltbarkeit
         _buildStatSlider(
-          label: 'Durability',
+          label: 'Haltbarkeit',
           emoji: '🛡️',
           value: _durability,
           minValue: 100,
@@ -383,23 +396,10 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           },
         ),
         const SizedBox(height: AppSpacing.lg),
+
+        // Rüstung
         _buildStatSlider(
-          label: 'Attack Speed',
-          emoji: '⚡',
-          value: _attackSpeed,
-          minValue: 0.5,
-          maxValue: 4.0,
-          divisions: 35,
-          decimals: 1,
-          onChanged: (value) {
-            setState(() {
-              _attackSpeed = value;
-            });
-          },
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        _buildStatSlider(
-          label: 'Armor',
+          label: 'Rüstung',
           emoji: '🛡️',
           value: _armor,
           minValue: 0,
@@ -411,8 +411,10 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           },
         ),
         const SizedBox(height: AppSpacing.lg),
+
+        // Rüstungshärte
         _buildStatSlider(
-          label: 'Armor Toughness',
+          label: 'Rüstungshärte',
           emoji: '💪',
           value: _armorToughness,
           minValue: 0,
@@ -424,20 +426,42 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           },
         ),
         const SizedBox(height: AppSpacing.lg),
+
+        // Verzauberbarkeit (NEU)
         _buildStatSlider(
-          label: 'Mining Speed',
-          emoji: '⛏️',
-          value: _miningSpeed,
-          minValue: 0.5,
-          maxValue: 12.0,
-          divisions: 115,
-          decimals: 1,
+          label: 'Verzauberbarkeit',
+          emoji: '✨',
+          value: _enchantability,
+          minValue: 1,
+          maxValue: 15,
           onChanged: (value) {
             setState(() {
-              _miningSpeed = value;
+              _enchantability = value;
             });
           },
         ),
+        const SizedBox(height: AppSpacing.lg),
+
+        // Bewegungsgeschwindigkeit (NEU)
+        _buildStatSlider(
+          label: 'Bewegungsgeschwindigkeit',
+          emoji: '👟',
+          value: _movementSpeed,
+          minValue: -0.5,
+          maxValue: 0.5,
+          divisions: 100,
+          decimals: 2,
+          suffix: '%',
+          onChanged: (value) {
+            setState(() {
+              _movementSpeed = value;
+            });
+          },
+        ),
+
+        // Erweitert-Button
+        const SizedBox(height: AppSpacing.xl),
+        _buildAdvancedSection(),
       ],
     );
   }
@@ -451,6 +475,8 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
     required ValueChanged<double> onChanged,
     int? divisions,
     int decimals = 0,
+    String suffix = '',
+    bool enabled = true,
   }) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -479,15 +505,17 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
                   vertical: AppSpacing.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.2),
+                  color: enabled
+                      ? AppColors.primary.withOpacity(0.2)
+                      : AppColors.surfaceLight,
                   borderRadius: BorderRadius.circular(AppSizing.radiusSmall),
                 ),
                 child: Text(
-                  decimals > 0 ? value.toStringAsFixed(decimals) : value.toInt().toString(),
-                  style: const TextStyle(
+                  '${decimals > 0 ? value.toStringAsFixed(decimals) : value.toInt().toString()}$suffix',
+                  style: TextStyle(
                     fontSize: AppTypography.md,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
+                    color: enabled ? AppColors.primary : AppColors.textSecondary.withOpacity(0.5),
                   ),
                 ),
               ),
@@ -497,10 +525,12 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           // Slider
           SliderTheme(
             data: SliderThemeData(
-              activeTrackColor: AppColors.primary,
+              activeTrackColor: enabled ? AppColors.primary : AppColors.surfaceLight,
               inactiveTrackColor: AppColors.surfaceLight,
-              thumbColor: AppColors.primary,
-              overlayColor: AppColors.primary.withOpacity(0.2),
+              thumbColor: enabled ? AppColors.primary : AppColors.textSecondary.withOpacity(0.3),
+              overlayColor: enabled
+                  ? AppColors.primary.withOpacity(0.2)
+                  : Colors.transparent,
               trackHeight: 6,
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
             ),
@@ -509,7 +539,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
               min: minValue,
               max: maxValue,
               divisions: divisions,
-              onChanged: onChanged,
+              onChanged: enabled ? onChanged : null,
             ),
           ),
           // Min/Max Labels
@@ -534,6 +564,154 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAdvancedSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Erweitert Toggle Button
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _showAdvanced = !_showAdvanced;
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
+              border: Border.all(
+                color: _showAdvanced ? AppColors.primary : AppColors.border,
+                width: _showAdvanced ? 2 : 1,
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      _showAdvanced ? '▼' : '▶',
+                      style: const TextStyle(
+                        fontSize: AppTypography.md,
+                        color: AppColors.text,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    const Text(
+                      '⚙️ Erweitert',
+                      style: TextStyle(
+                        fontSize: AppTypography.md,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.text,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.xs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.info.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(AppSizing.radiusSmall),
+                  ),
+                  child: const Text(
+                    'Bald verfügbar',
+                    style: TextStyle(
+                      fontSize: AppTypography.xs,
+                      color: AppColors.info,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Erweitert Content (wenn ausgeklappt)
+        if (_showAdvanced) ...[
+          const SizedBox(height: AppSpacing.md),
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              color: AppColors.surface.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Info-Text
+                Row(
+                  children: [
+                    const Text('⚠️', style: TextStyle(fontSize: 20)),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        'Diese Eigenschaften sind noch nicht verfügbar',
+                        style: TextStyle(
+                          fontSize: AppTypography.sm,
+                          color: AppColors.textSecondary.withOpacity(0.8),
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.lg),
+
+                // Angriffsgeschwindigkeit (deaktiviert)
+                _buildStatSlider(
+                  label: 'Angriffsgeschwindigkeit',
+                  emoji: '⚡',
+                  value: _attackSpeed,
+                  minValue: 0.5,
+                  maxValue: 4.0,
+                  divisions: 35,
+                  decimals: 1,
+                  enabled: false,
+                  onChanged: (value) {},
+                ),
+                const SizedBox(height: AppSpacing.lg),
+
+                // Abbaugeschwindigkeit (deaktiviert)
+                _buildStatSlider(
+                  label: 'Abbaugeschwindigkeit',
+                  emoji: '⛏️',
+                  value: _miningSpeed,
+                  minValue: 0.5,
+                  maxValue: 12.0,
+                  divisions: 115,
+                  decimals: 1,
+                  enabled: false,
+                  onChanged: (value) {},
+                ),
+                const SizedBox(height: AppSpacing.lg),
+
+                // Rüstungsdurchdringung (deaktiviert)
+                _buildStatSlider(
+                  label: 'Rüstungsdurchdringung',
+                  emoji: '🗡️',
+                  value: 0.0,
+                  minValue: 0.0,
+                  maxValue: 1.0,
+                  divisions: 20,
+                  decimals: 2,
+                  suffix: '%',
+                  enabled: false,
+                  onChanged: (value) {},
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -674,9 +852,12 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       customStats: {
         'damage': _damage,
         'durability': _durability,
-        'attack_speed': _attackSpeed,
         'armor': _armor,
         'armor_toughness': _armorToughness,
+        'enchantability': _enchantability,
+        'movement_speed': _movementSpeed,
+        // Advanced (für später, werden noch nicht exportiert)
+        'attack_speed': _attackSpeed,
         'mining_speed': _miningSpeed,
       },
       effects: {

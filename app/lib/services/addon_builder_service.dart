@@ -285,6 +285,10 @@ class AddonBuilderService {
     final durability = (customStats['durability'] as num?)?.toInt() ?? 100;
     final armor = (customStats['armor'] as num?)?.toDouble() ?? 0.0;
     final armorToughness = (customStats['armor_toughness'] as num?)?.toDouble() ?? 0.0;
+    final enchantability = (customStats['enchantability'] as num?)?.toInt() ?? 10;
+    final movementSpeed = (customStats['movement_speed'] as num?)?.toDouble() ?? 0.0;
+
+    // Advanced stats (noch nicht verwendet)
     final miningSpeed = (customStats['mining_speed'] as num?)?.toDouble() ?? 1.0;
 
     // Build components
@@ -318,16 +322,23 @@ class AddonBuilderService {
       components['minecraft:hand_equipped'] = true;
     }
 
-    // Attribute modifiers - NEW in 1.21.130+
+    // Damage (for weapons and tools) - Bedrock uses minecraft:damage component
+    // Syntax: "minecraft:damage": value (direct number, NOT object!)
+    // Actual damage = value + 1 (base hand damage is 1)
+    if (damage > 0) {
+      components['minecraft:damage'] = damage.toInt();
+    }
+
+    // Attribute modifiers (for armor, movement speed, etc.)
     final attributeModifiers = <Map<String, dynamic>>[];
 
-    // Attack damage (for weapons and tools)
-    if (damage > 0) {
+    // Movement speed modifier
+    if (movementSpeed != 0.0) {
       attributeModifiers.add({
-        'attribute': 'minecraft:player.attack_damage',
-        'amount': damage,
+        'attribute': 'minecraft:player.movement_speed',
+        'amount': movementSpeed,
         'operation': 'add_value',
-        'slot': 'mainhand',
+        'slot': 'any',
       });
     }
 
@@ -380,6 +391,17 @@ class AddonBuilderService {
           }
         ],
       };
+    }
+
+    // Enchantability (mit korrektem slot-Parameter!)
+    if (enchantability > 0) {
+      final enchantableSlot = _getEnchantableSlot(item.category, item.baseItem?.type);
+      if (enchantableSlot != null) {
+        components['minecraft:enchantable'] = {
+          'slot': enchantableSlot,
+          'value': enchantability,
+        };
+      }
     }
 
     // Effects
@@ -472,6 +494,33 @@ class AddonBuilderService {
       return 'slot.armor.feet';
     }
     return null;
+  }
+
+  /// Get enchantable slot based on item category and type
+  static String? _getEnchantableSlot(String category, String? itemType) {
+    switch (category.toLowerCase()) {
+      case 'waffen':
+        return 'sword';
+      case 'werkzeuge':
+        return 'pickaxe';
+      case 'rüstung':
+        // Determine armor slot based on item type
+        if (itemType == null) return 'armor_torso'; // Default to chestplate
+
+        final type = itemType.toLowerCase();
+        if (type.contains('helmet') || type.contains('helm')) {
+          return 'armor_head';
+        } else if (type.contains('chestplate') || type.contains('brustpanzer')) {
+          return 'armor_torso';
+        } else if (type.contains('leggings') || type.contains('hose')) {
+          return 'armor_legs';
+        } else if (type.contains('boots') || type.contains('stiefel')) {
+          return 'armor_feet';
+        }
+        return 'armor_torso'; // Default
+      default:
+        return null; // No enchantability for other categories
+    }
   }
 
   /// Get filename for .mcaddon export
