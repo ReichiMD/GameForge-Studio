@@ -10,7 +10,7 @@
         "identifier": "custom:diamond_sword",
         "menu_category": {
           "category": "equipment",
-          "group": "itemGroup.name.sword"
+          "group": "minecraft:itemGroup.name.sword"
         }
       },
       "components": {
@@ -50,7 +50,7 @@
         "identifier": "custom:diamond_chestplate",
         "menu_category": {
           "category": "equipment",
-          "group": "itemGroup.name.chestplate"
+          "group": "minecraft:itemGroup.name.chestplate"
         }
       },
       "components": {
@@ -97,7 +97,7 @@
         "identifier": "custom:diamond_pickaxe",
         "menu_category": {
           "category": "equipment",
-          "group": "itemGroup.name.pickaxe"
+          "group": "minecraft:itemGroup.name.pickaxe"
         }
       },
       "components": {
@@ -147,7 +147,7 @@
         "identifier": "custom:golden_apple",
         "menu_category": {
           "category": "nature",
-          "group": "itemGroup.name.food"
+          "group": "minecraft:itemGroup.name.food"
         }
       },
       "components": {
