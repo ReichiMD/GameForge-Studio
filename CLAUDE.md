@@ -274,10 +274,14 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 **IMMER diese Quellen nutzen (in dieser Reihenfolge):**
 
-1. **Bedrock Wiki (GitHub):** https://github.com/Bedrock-OSS/bedrock-wiki/blob/wiki/docs/items/item-components.md
-   - Community-gepflegt, meist aktuell
+1. **Bedrock Wiki (Web):** https://wiki.bedrock.dev/items/item-components
+   - Community-gepflegt, immer aktuell
+   - Übersichtliche Web-Interface
    - Zeigt funktionierende Syntax mit Beispielen
-2. **Microsoft Learn:** https://learn.microsoft.com/en-us/minecraft/creator/
+2. **Bedrock Wiki (GitHub):** https://github.com/Bedrock-OSS/bedrock-wiki/blob/wiki/docs/items/item-components.md
+   - Gleiche Quelle wie oben, anderes Format
+   - Gut für Code-Ansicht
+3. **Microsoft Learn:** https://learn.microsoft.com/en-us/minecraft/creator/
    - Offizielle Dokumentation von Mojang/Microsoft
    - Manchmal langsamer aktualisiert
 
