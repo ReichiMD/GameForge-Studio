@@ -1,0 +1,3 @@
+entity.{{PROJECT_NAME}}:defense_core.name=Schutz-Kern
+entity.{{PROJECT_NAME}}:defense_turret.name=Verteidigungsturm
+entity.{{PROJECT_NAME}}:attacker_mob.name=Angreifer
