@@ -1,8 +1,8 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 3.5 (Flutter - Editor Polish + Custom Icon Picker)
-**Letzte Aktualisierung:** 2026-02-09
-**Status:** Phase 7 Komplett (✅ Fertig!) - Editor verbessert + Custom Icon Auswahl!
+**Version:** 3.6 (Flutter - Complete Addon Export + Minecraft 1.21.130+)
+**Letzte Aktualisierung:** 2026-02-10
+**Status:** Phase 7 Komplett (✅ Fertig!) - Vollständige .mcaddon Dateien mit Behavior + Resource Pack!
 
 ---
 

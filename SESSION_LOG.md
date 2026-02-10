@@ -554,6 +554,51 @@ projekt_name.mcaddon (ZIP)
 
 ---
 
+### Session #24 - 2026-02-09 - Editor Polish + Custom Icon Picker
+
+**Branch:** `claude/fix-editor-image-picker-hykbs`
+
+**Durchgeführt:**
+- ✅ **Editor Bug-Fix:** TextEditingController wird jetzt einmal in initState erstellt (nicht bei jedem setState) → Cursor-Position bleibt korrekt
+- ✅ **Custom Icon Picker:** Auf Item-Bild tippen → Galerie mit Custom-Icons aus fabrik-library (GitHub API) → Icon auswählen → Speichern
+- ✅ **Model erweitert:** ProjectItem.customIconUrl (String?, optional) für Custom-Icons
+- ✅ **Export-Button entfernt:** Aus Workshop-Screen entfernt (Export bleibt in ProjectDetailScreen)
+
+**Commits:** `66118dc`
+
+**Status:** ✅ Editor funktioniert perfekt + Custom Icons auswählbar! 🎨
+
+---
+
+### Session #25 - 2026-02-10 - Complete Addon Export + Minecraft 1.21.130+ Update
+
+**Branch:** `claude/fix-addon-creation-5j5S4`
+
+**Durchgeführt:**
+- ✅ **Resource Pack Implementation:**
+  * Vollständiges Resource Pack mit Behavior Pack
+  * Texturen von GitHub herunterladen (Custom oder Vanilla)
+  * item_texture.json + terrain_texture.json generiert
+  * Korrekte ZIP-Struktur: behavior_pack/ + resource_pack/
+- ✅ **Minecraft 1.21.130+ Syntax Update:**
+  * Icon-Format: `textures: { default: ... }` (NEU)
+  * Attribute Modifiers für attack_damage, armor, armor_toughness
+  * minecraft:armor deprecated → minecraft:wearable + attribute_modifiers
+  * menu_category hinzugefügt (Creative Inventory)
+  * minecraft:hand_equipped für Waffen/Werkzeuge
+- ✅ **Referenz-Dokumentation:**
+  * item_reference.json mit Beispielen (Waffen, Rüstung, Werkzeuge, Nahrung)
+  * CLAUDE.md erweitert mit Minecraft 1.21.130+ Abschnitt
+- ✅ **Bug-Fixes:**
+  * textureUrl statt texturePath
+  * manifest_resource.json zu pubspec.yaml Assets
+
+**Commits:** `a36096c`, `cd6aa22`, `a45f886`, `85bdad5`
+
+**Status:** ✅ Komplette .mcaddon Dateien mit BP + RP! Alle Minecraft-Fehler behoben! 🎉
+
+---
+
 ## 🎯 Nächste Session: Minecraft Testing & Optional Resource Pack
 
 **Geplant:**
@@ -593,11 +638,13 @@ projekt_name.mcaddon (ZIP)
 - ✅ Bild-System: Von GitHub laden (Memory-Cache) - Session #22
 - ✅ 71 Items (10 Waffen, 24 Rüstung, 24 Werkzeuge, 13 Nahrung) - Session #22
 - ✅ Gold-Rüstung komplett - Session #22
-- ✅ **.mcaddon Export System** - Session #23 🎮
+- ✅ **.mcaddon Export System** - Session #23-25 🎮
   * AddonBuilderService mit ZIP-Builder + Auto-UUIDs
-  * Manifest-Templates (Bedrock 1.21.130+)
+  * Manifest-Templates (Bedrock 1.21.131)
+  * Resource Pack mit Texturen (von GitHub geladen)
+  * Minecraft 1.21.130+ Syntax (attribute_modifiers, neue Icons)
   * Downloads-Speicherung (kein Share-Dialog)
-  * Direkt in Minecraft importierbar!
+  * Direkt in Minecraft importierbar - KOMPLETT!
 
 **Dokumentation:**
 - ✅ CLAUDE.md (Session-Start) - Version 3.4
@@ -608,4 +655,4 @@ projekt_name.mcaddon (ZIP)
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-09 (Session #23)
+**Letzte Aktualisierung:** 2026-02-10 (Session #25)
