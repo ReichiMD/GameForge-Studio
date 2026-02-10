@@ -56,6 +56,9 @@ dependencies:
   # Path provider for temporary files
   path_provider: ^2.1.5
 
+  # Storage permissions for saving files
+  permission_handler: ^11.3.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -88,6 +91,24 @@ flutter:
     - assets/templates/manifest_behavior.json
     - assets/templates/manifest_resource.json
     - assets/templates/pack_icon.png
+    # Base Defense Template
+    - assets/templates/base_defense/template.json
+    - assets/templates/base_defense/pack_icon.png
+    - assets/templates/base_defense/behavior_pack/manifest.json
+    - assets/templates/base_defense/behavior_pack/entities/defense_core.json
+    - assets/templates/base_defense/behavior_pack/entities/defense_turret.json
+    - assets/templates/base_defense/behavior_pack/entities/attacker_mob.json
+    - assets/templates/base_defense/behavior_pack/items/base_starter.json
+    - assets/templates/base_defense/behavior_pack/items/defense_turret_item.json
+    - assets/templates/base_defense/behavior_pack/loot_tables/attacker_rewards.json
+    - assets/templates/base_defense/behavior_pack/recipes/base_starter_recipe.json
+    - assets/templates/base_defense/behavior_pack/animation_controllers/core_setup.controller.json
+    - assets/templates/base_defense/resource_pack/manifest.json
+    - assets/templates/base_defense/resource_pack/entity/defense_core.entity.json
+    - assets/templates/base_defense/resource_pack/entity/defense_turret.entity.json
+    - assets/templates/base_defense/resource_pack/entity/attacker_mob.entity.json
+    - assets/templates/base_defense/resource_pack/texts/en_US.lang
+    - assets/templates/base_defense/resource_pack/textures/item_texture.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
