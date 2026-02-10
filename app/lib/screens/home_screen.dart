@@ -5,6 +5,7 @@ import '../models/project.dart';
 import '../services/project_service.dart';
 import 'project_detail_screen.dart';
 import 'create_project_screen.dart';
+import 'template_selection_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -49,6 +50,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Reload projects when returning
     _loadProjects();
+  }
+
+  Future<void> _handleCreateTemplateProject() async {
+    // Navigate to template selection screen
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const TemplateSelectionScreen(),
+      ),
+    );
+
+    // No need to reload projects (templates don't create projects)
   }
 
   Future<void> _openProject(Project project) async {
@@ -216,6 +228,11 @@ class _HomeScreenState extends State<HomeScreen> {
           // New Project Button
           _buildNewProjectButton(),
 
+          const SizedBox(height: AppSpacing.md),
+
+          // New Template Project Button
+          _buildNewTemplateButton(),
+
           const SizedBox(height: AppSpacing.xxl),
 
           // Projects Section
@@ -268,6 +285,40 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(width: AppSpacing.md),
             Text(
               'Neues Projekt',
+              style: TextStyle(
+                fontSize: AppTypography.lg,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNewTemplateButton() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
+        border: Border.all(color: AppColors.primary, width: 2),
+      ),
+      child: ElevatedButton(
+        onPressed: _handleCreateTemplateProject,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.background,
+          foregroundColor: AppColors.primary,
+          minimumSize: const Size(double.infinity, 64),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
+          ),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('🎮', style: TextStyle(fontSize: 28)),
+            SizedBox(width: AppSpacing.md),
+            Text(
+              'Template-Projekt erstellen',
               style: TextStyle(
                 fontSize: AppTypography.lg,
                 fontWeight: FontWeight.w600,
