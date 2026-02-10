@@ -1,6 +1,6 @@
 {
-  "name": "Base Defense Factory",
-  "description": "Verteidige deinen Kern gegen Wellen von Angreifern!",
+  "name": "Base Defense Survival",
+  "description": "Ein komplettes Tower Defense Spiel zum Selberbauen!",
   "category": "gameplay",
   "editor_fields": [
     {
@@ -12,20 +12,44 @@
       "max": 1000
     },
     {
-      "placeholder": "{{ENEMY_SPEED}}",
-      "label": "Gegner-Geschwindigkeit",
+      "placeholder": "{{FIRST_WAVE_DELAY}}",
+      "label": "Zeit bis zum Start (Sekunden)",
       "type": "number",
-      "default": 0.3,
-      "min": 0.1,
-      "max": 1.0
+      "default": 30,
+      "min": 5,
+      "max": 120
     },
     {
-      "placeholder": "{{TURRET_RANGE}}",
-      "label": "Turm-Reichweite (Blöcke)",
+      "placeholder": "{{SPAWN_DELAY}}",
+      "label": "Pause zwischen Gegnern (Sekunden)",
       "type": "number",
-      "default": 15,
-      "min": 5,
-      "max": 40
+      "default": 10,
+      "min": 1,
+      "max": 60
+    },
+    {
+      "placeholder": "{{SPAWN_RADIUS}}",
+      "label": "Spawn-Entfernung (Blöcke)",
+      "type": "number",
+      "default": 25,
+      "min": 10,
+      "max": 50
+    },
+    {
+      "placeholder": "{{START_TURRETS}}",
+      "label": "Start-Türme im Inventar",
+      "type": "number",
+      "default": 3,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "placeholder": "{{WAVE_COUNT}}",
+      "label": "Anzahl der Wellen (0 = endlos)",
+      "type": "number",
+      "default": 0,
+      "min": 0,
+      "max": 100
     },
     {
       "placeholder": "{{REWARD_COUNT}}",
