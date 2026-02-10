@@ -1,0 +1,35 @@
+{
+  "format_version": "1.21.10",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "{{PROJECT_NAME}}:defense_core",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+    "components": {
+      "minecraft:health": {
+        "value": {{CORE_HEALTH}},
+        "max": {{CORE_HEALTH}}
+      },
+      "minecraft:damage_sensor": {
+        "triggers": {
+          "on_damage": {
+            "filters": {
+              "test": "is_variant",
+              "value": 0
+            },
+            "cause": "all"
+          }
+        }
+      },
+      "minecraft:physics": {
+        "has_gravity": true,
+        "has_collision": true
+      },
+      "minecraft:push_through": {
+        "value": 0
+      }
+    }
+  }
+}
