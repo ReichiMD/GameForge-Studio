@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:archive/archive.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 import '../models/template_definition.dart';
 import 'template_parser_service.dart';
@@ -142,26 +141,27 @@ class TemplateBuilderService {
   }
 
   /// Speichert ZIP im Downloads-Ordner
+  /// Auf Android 10+ (API 29+) keine Permission nötig!
   Future<String> _saveToDownloads(Uint8List zipBytes, String projectName) async {
-    // Storage Permission prüfen
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      status = await Permission.storage.request();
-      if (!status.isGranted) {
-        throw Exception('Storage Permission benötigt!');
-      }
-    }
-
     // Downloads-Ordner ermitteln
     Directory? downloadsDir;
     if (Platform.isAndroid) {
+      // Direkter Zugriff auf Downloads - funktioniert auf Android 10+ ohne Permission!
       downloadsDir = Directory('/storage/emulated/0/Download');
+
+      // Ordner erstellen falls nicht existent
+      if (!downloadsDir.existsSync()) {
+        try {
+          downloadsDir.createSync(recursive: true);
+        } catch (e) {
+          throw Exception('Downloads-Ordner konnte nicht erstellt werden: $e');
+        }
+      }
     } else {
       downloadsDir = await getDownloadsDirectory();
-    }
-
-    if (downloadsDir == null || !downloadsDir.existsSync()) {
-      throw Exception('Downloads-Ordner nicht gefunden');
+      if (downloadsDir == null) {
+        throw Exception('Downloads-Ordner nicht gefunden');
+      }
     }
 
     // Dateiname generieren
@@ -174,9 +174,13 @@ class TemplateBuilderService {
     final filePath = '${downloadsDir.path}/$fileName';
 
     // Datei schreiben
-    final file = File(filePath);
-    await file.writeAsBytes(zipBytes);
-
-    return filePath;
+    try {
+      final file = File(filePath);
+      await file.writeAsBytes(zipBytes);
+      print('✅ Datei gespeichert: $filePath');
+      return filePath;
+    } catch (e) {
+      throw Exception('Datei konnte nicht gespeichert werden: $e');
+    }
   }
 }
