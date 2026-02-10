@@ -119,36 +119,48 @@ class ProjectItem {
         return {
           'damage': 7.0,
           'durability': 1561.0,
-          'attack_speed': 1.6,
           'armor': 0.0,
           'armor_toughness': 0.0,
+          'enchantability': 10.0,
+          'movement_speed': 0.0,
+          // Advanced (noch nicht verfügbar)
+          'attack_speed': 1.6,
           'mining_speed': 1.0,
         };
       case 'rüstung':
         return {
           'damage': 0.0,
           'durability': 500.0,
-          'attack_speed': 0.0,
           'armor': 8.0,
           'armor_toughness': 3.0,
+          'enchantability': 10.0,
+          'movement_speed': 0.0,
+          // Advanced (noch nicht verfügbar)
+          'attack_speed': 0.0,
           'mining_speed': 1.0,
         };
       case 'werkzeuge':
         return {
           'damage': 2.0,
           'durability': 1561.0,
-          'attack_speed': 1.0,
           'armor': 0.0,
           'armor_toughness': 0.0,
+          'enchantability': 10.0,
+          'movement_speed': 0.0,
+          // Advanced (noch nicht verfügbar)
+          'attack_speed': 1.0,
           'mining_speed': 8.0,
         };
       default:
         return {
           'damage': 1.0,
           'durability': 100.0,
-          'attack_speed': 1.0,
           'armor': 0.0,
           'armor_toughness': 0.0,
+          'enchantability': 5.0,
+          'movement_speed': 0.0,
+          // Advanced (noch nicht verfügbar)
+          'attack_speed': 1.0,
           'mining_speed': 1.0,
         };
     }

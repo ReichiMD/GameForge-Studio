@@ -285,6 +285,10 @@ class AddonBuilderService {
     final durability = (customStats['durability'] as num?)?.toInt() ?? 100;
     final armor = (customStats['armor'] as num?)?.toDouble() ?? 0.0;
     final armorToughness = (customStats['armor_toughness'] as num?)?.toDouble() ?? 0.0;
+    final enchantability = (customStats['enchantability'] as num?)?.toInt() ?? 10;
+    final movementSpeed = (customStats['movement_speed'] as num?)?.toDouble() ?? 0.0;
+
+    // Advanced stats (noch nicht verwendet)
     final miningSpeed = (customStats['mining_speed'] as num?)?.toDouble() ?? 1.0;
 
     // Build components
@@ -328,6 +332,16 @@ class AddonBuilderService {
         'amount': damage,
         'operation': 'add_value',
         'slot': 'mainhand',
+      });
+    }
+
+    // Movement speed modifier
+    if (movementSpeed != 0.0) {
+      attributeModifiers.add({
+        'attribute': 'minecraft:player.movement_speed',
+        'amount': movementSpeed,
+        'operation': 'add_value',
+        'slot': 'any',
       });
     }
 
@@ -379,6 +393,13 @@ class AddonBuilderService {
             'speed': miningSpeed,
           }
         ],
+      };
+    }
+
+    // Enchantability
+    if (enchantability > 0) {
+      components['minecraft:enchantable'] = {
+        'value': enchantability,
       };
     }
 
