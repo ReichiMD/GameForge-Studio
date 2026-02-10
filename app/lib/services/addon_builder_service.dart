@@ -322,18 +322,15 @@ class AddonBuilderService {
       components['minecraft:hand_equipped'] = true;
     }
 
-    // Attribute modifiers - NEW in 1.21.130+
-    final attributeModifiers = <Map<String, dynamic>>[];
-
-    // Attack damage (for weapons and tools)
+    // Damage (for weapons and tools) - Bedrock uses minecraft:damage component
+    // Syntax: "minecraft:damage": value (direct number, NOT object!)
+    // Actual damage = value + 1 (base hand damage is 1)
     if (damage > 0) {
-      attributeModifiers.add({
-        'attribute': 'minecraft:player.attack_damage',
-        'amount': damage,
-        'operation': 'add_value',
-        'slot': 'mainhand',
-      });
+      components['minecraft:damage'] = damage.toInt();
     }
+
+    // Attribute modifiers (for armor, movement speed, etc.)
+    final attributeModifiers = <Map<String, dynamic>>[];
 
     // Movement speed modifier
     if (movementSpeed != 0.0) {
