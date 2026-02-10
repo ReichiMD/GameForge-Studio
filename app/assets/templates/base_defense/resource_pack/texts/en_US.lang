@@ -1,3 +1,6 @@
+item.{{PROJECT_NAME}}:base_starter.name=Basis-Starter (Platzieren zum Starten)
+item.{{PROJECT_NAME}}:defense_turret_item.name=Verteidigungsturm
 entity.{{PROJECT_NAME}}:defense_core.name=Schutz-Kern
 entity.{{PROJECT_NAME}}:defense_turret.name=Verteidigungsturm
 entity.{{PROJECT_NAME}}:attacker_mob.name=Angreifer
+action.hint.exit.{{PROJECT_NAME}}:base_starter=Benutze das Item auf dem Boden, um die Basis zu errichten!
