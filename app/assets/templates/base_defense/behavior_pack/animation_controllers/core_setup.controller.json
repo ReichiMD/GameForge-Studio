@@ -1,0 +1,28 @@
+{
+  "format_version": "1.21.10",
+  "animation_controllers": {
+    "controller.animation.{{PROJECT_NAME}}.core_setup": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "transitions": [
+            { "give_items": "query.is_alive" }
+          ]
+        },
+        "give_items": {
+          "on_entry": [
+            "/give @p {{PROJECT_NAME}}:defense_turret_item {{START_TURRETS}}"
+          ],
+          "transitions": [
+            { "spawning_logic": "1.0" }
+          ]
+        },
+        "spawning_logic": {
+          "on_entry": [
+            "/tellraw @a {\"rawtext\":[{\"text\":\"§aVerteidigung gestartet! Viel Glück!\"}]}"
+          ]
+        }
+      }
+    }
+  }
+}
