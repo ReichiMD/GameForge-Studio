@@ -21,8 +21,9 @@ Die folgenden Werte können in der App eingestellt werden, um das Spielerlebnis 
 | `{{SPAWN_DELAY}}` | Zeit zwischen den einzelnen Spawns (Sekunden) | 10 |
 | `{{SPAWN_RADIUS}}` | Entfernung, in der Gegner erscheinen (Blöcke) | 25 |
 | `{{START_TURRETS}}` | Anzahl der Türme, die man zum Start geschenkt bekommt | 3 |
-| `{{DIFFICULTY_SCALING}}` | Wahrscheinlichkeit für "Elite"-Gegner (0-100) | 20 |
+| `{{WAVE_COUNT}}` | Anzahl der Wellen (0 = endlos) | 0 |
 | `{{REWARD_COUNT}}` | Anzahl der Kristalle pro besiegtem Gegner | 1 |
+| `{{TURRET_RANGE}}` | Reichweite der Verteidigungstürme (Blöcke) | 15 |
 
 ## 🛠️ Technische Struktur
 
