@@ -1,0 +1,32 @@
+{
+  "format_version": "1.21.10",
+  "minecraft:item": {
+    "description": {
+      "identifier": "{{PROJECT_NAME}}:defense_turret_item",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": {
+        "textures": {
+          "default": "defense_turret_icon"
+        }
+      },
+      "minecraft:display_name": {
+        "value": "Verteidigungsturm (Platzierbar)"
+      },
+      "minecraft:entity_placer": {
+        "entity": "{{PROJECT_NAME}}:defense_turret",
+        "dispense_on": [
+          "minecraft:grass_block",
+          "minecraft:dirt",
+          "minecraft:stone",
+          "minecraft:planks",
+          "minecraft:cobblestone"
+        ]
+      },
+      "minecraft:max_stack_size": 64
+    }
+  }
+}
