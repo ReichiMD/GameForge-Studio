@@ -1,0 +1,24 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "{{PROJECT_NAME}}:defense_core",
+      "materials": {
+        "default": "ender_crystal"
+      },
+      "textures": {
+        "default": "textures/entity/endercrystal/endercrystal"
+      },
+      "geometry": {
+        "default": "geometry.endercrystal"
+      },
+      "render_controllers": [
+        "controller.render.endercrystal"
+      ],
+      "spawn_egg": {
+        "base_color": "#330033",
+        "overlay_color": "#FF00FF"
+      }
+    }
+  }
+}
