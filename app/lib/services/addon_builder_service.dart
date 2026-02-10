@@ -318,13 +318,6 @@ class AddonBuilderService {
       components['minecraft:hand_equipped'] = true;
     }
 
-    // Damage component (still used for base damage)
-    if (damage > 0) {
-      components['minecraft:damage'] = {
-        'value': damage,
-      };
-    }
-
     // Attribute modifiers - NEW in 1.21.130+
     final attributeModifiers = <Map<String, dynamic>>[];
 
