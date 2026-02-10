@@ -23,35 +23,51 @@
       "minecraft:jump.static": {},
       "minecraft:behavior.nearest_attackable_target": {
         "priority": 0,
+        "must_see": false,
         "entity_types": [
           {
             "filters": {
-              "test": "is_family",
+              "test": "has_component",
               "subject": "other",
-              "value": "player"
+              "value": "minecraft:health"
             },
-            "max_dist": 32
-          },
-          {
-            "filters": {
-              "test": "is_family",
-              "subject": "other",
-              "value": "defense_core"
-            },
-            "max_dist": 32
+            "max_dist": 64
           }
         ]
       },
       "minecraft:behavior.melee_attack": {
-        "priority": 1
+        "priority": 1,
+        "speed_multiplier": 1.2,
+        "track_target": true
       },
       "minecraft:attack": {
         "damage": 3
       },
-      "minecraft:type_family": {
-        "family": [ "monster", "attacker" ]
-      },
-      "minecraft:physics": {}
+      "minecraft:loot": {
+        "table": "loot_tables/attacker_rewards.json"
+      }
+    },
+    "events": {
+      "minecraft:entity_spawned": {
+        "randomize": [
+          {
+            "weight": 80,
+            "add": { "component_groups": [ "normal" ] }
+          },
+          {
+            "weight": {{DIFFICULTY_SCALING}},
+            "add": { "component_groups": [ "elite" ] }
+          }
+        ]
+      }
+    },
+    "component_groups": {
+      "normal": {},
+      "elite": {
+        "minecraft:health": { "value": 40, "max": 40 },
+        "minecraft:attack": { "damage": 6 },
+        "minecraft:variant": { "value": 1 }
+      }
     }
   }
 }
