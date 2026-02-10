@@ -318,13 +318,6 @@ class AddonBuilderService {
       components['minecraft:hand_equipped'] = true;
     }
 
-    // Damage component (still used for base damage)
-    if (damage > 0) {
-      components['minecraft:damage'] = {
-        'value': damage,
-      };
-    }
-
     // Attribute modifiers - NEW in 1.21.130+
     final attributeModifiers = <Map<String, dynamic>>[];
 
@@ -436,22 +429,22 @@ class AddonBuilderService {
       case 'waffen':
         return {
           'category': 'equipment',
-          'group': 'itemGroup.name.sword',
+          'group': 'minecraft:itemGroup.name.sword',
         };
       case 'rüstung':
         return {
           'category': 'equipment',
-          'group': 'itemGroup.name.chestplate',
+          'group': 'minecraft:itemGroup.name.chestplate',
         };
       case 'werkzeuge':
         return {
           'category': 'equipment',
-          'group': 'itemGroup.name.pickaxe',
+          'group': 'minecraft:itemGroup.name.pickaxe',
         };
       case 'nahrung':
         return {
           'category': 'nature',
-          'group': 'itemGroup.name.food',
+          'group': 'minecraft:itemGroup.name.food',
         };
       case 'blöcke':
         return {

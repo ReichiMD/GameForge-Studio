@@ -10,7 +10,7 @@
         "identifier": "custom:diamond_sword",
         "menu_category": {
           "category": "equipment",
-          "group": "itemGroup.name.sword"
+          "group": "minecraft:itemGroup.name.sword"
         }
       },
       "components": {
@@ -26,9 +26,6 @@
         "minecraft:max_stack_size": 1,
         "minecraft:durability": {
           "max_durability": 1561
-        },
-        "minecraft:damage": {
-          "value": 7
         },
         "minecraft:attribute_modifiers": {
           "modifiers": [
@@ -53,7 +50,7 @@
         "identifier": "custom:diamond_chestplate",
         "menu_category": {
           "category": "equipment",
-          "group": "itemGroup.name.chestplate"
+          "group": "minecraft:itemGroup.name.chestplate"
         }
       },
       "components": {
@@ -100,7 +97,7 @@
         "identifier": "custom:diamond_pickaxe",
         "menu_category": {
           "category": "equipment",
-          "group": "itemGroup.name.pickaxe"
+          "group": "minecraft:itemGroup.name.pickaxe"
         }
       },
       "components": {
@@ -116,9 +113,6 @@
         "minecraft:max_stack_size": 1,
         "minecraft:durability": {
           "max_durability": 1561
-        },
-        "minecraft:damage": {
-          "value": 5
         },
         "minecraft:digger": {
           "use_efficiency": true,
@@ -153,7 +147,7 @@
         "identifier": "custom:golden_apple",
         "menu_category": {
           "category": "nature",
-          "group": "itemGroup.name.food"
+          "group": "minecraft:itemGroup.name.food"
         }
       },
       "components": {
@@ -181,7 +175,7 @@
       "icon_format": "Changed from 'texture' to 'textures: { default: ... }'",
       "attribute_modifiers": "NEW - Used for attack_damage, armor, armor_toughness, etc.",
       "armor_component": "DEPRECATED - Use minecraft:wearable + attribute_modifiers instead",
-      "damage_component": "Still works but attribute_modifiers is recommended for weapons",
+      "damage_component": "DEPRECATED - Use attribute_modifiers for weapon damage instead",
       "menu_category": "NEW - Defines creative inventory tab and group",
       "hand_equipped": "Recommended for weapons and tools"
     },
