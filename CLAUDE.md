@@ -1,8 +1,8 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 3.7 (Flutter - Minecraft 1.21.131 Bugfixes)
+**Version:** 3.8 (Flutter - Template-System Planung)
 **Letzte Aktualisierung:** 2026-02-10
-**Status:** Phase 7 Komplett (✅ Fertig!) - Vollständige .mcaddon Dateien funktionieren in Minecraft 1.21.131!
+**Status:** Phase 7 Komplett (✅ Fertig!) | Phase 8 in Planung (🔮 Template-System)
 
 ---
 
@@ -179,6 +179,29 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ## 📝 Letzte Session (für Kontext)
 
+**Session #28 - 2026-02-10 - Template-System Planung**
+- 💡 **Template-System Idee entwickelt**
+  * User möchte modulares System für beliebige Addon-Typen (nicht nur Items!)
+  * Idee: Templates mit Platzhaltern ({{PLATZHALTER}}) in /templates/ Ordner
+  * template.json beschreibt Editor-Felder (Name, Typ, Min/Max, Default)
+  * App liest Templates automatisch und generiert Editor dynamisch
+- 📋 **Template-Regeln festgelegt**
+  * Platzhalter-Format: `{{PLATZHALTER_NAME}}` (Doppel-Geschweifte-Klammern)
+  * template.json ist PFLICHT
+  * JSON-Syntax muss valide sein
+  * Ordner-Struktur: behavior_pack/ + resource_pack/
+- 🎯 **Nächste Schritte**
+  * User erstellt Test-Template (z.B. Tower Defense)
+  * Claude baut Template-Loader + Parser + Editor-Generator
+  * Geschätzter Aufwand: 2-3 Sessions
+- ✅ **CLAUDE.md aktualisiert**
+  * Neue Section "Template-System (In Planung)"
+  * Alle wichtigen Hinweise dokumentiert
+
+**Status:** 🧪 Planung abgeschlossen - User testet Template-Struktur!
+
+---
+
 **Session #27 - 2026-02-10 - Editor auf Deutsch + minecraft:damage Fix**
 - ✅ **Editor komplett auf Deutsch**
   * Alle Labels übersetzt: Schaden, Haltbarkeit, Rüstung, Rüstungshärte, etc.
@@ -267,6 +290,48 @@ AppColors.background    // #1F2937 (Dark Gray)
 - Custom Icons nur für Waffen verfügbar (6 Icons in fabrik-library)
 
 **Alle non-blocking** - App ist voll funktionsfähig! 🎉
+
+---
+
+## 🔮 Template-System (In Planung - Phase 8)
+
+**Vision:** Modulares Template-System für beliebige Addon-Typen (nicht nur Items!)
+
+### **Wie es funktionieren soll:**
+
+📂 **Template-Struktur:**
+```
+app/assets/templates/
+├── items/              ← Aktuelles System (bleibt wie es ist)
+└── tower_defense/      ← Neues Template-System
+    ├── template.json   ← Beschreibt Editor-Felder
+    ├── behavior_pack/
+    │   ├── entities/
+    │   │   └── tower.json (mit {{PLATZHALTERN}})
+    │   └── scripts/
+    └── resource_pack/
+        └── textures/
+```
+
+### **Wichtige Regeln für Templates:**
+
+1. ✅ **Platzhalter-Format:** `{{PLATZHALTER_NAME}}` (Doppel-Geschweifte-Klammern!)
+2. ✅ **template.json ist PFLICHT** - Ohne die weiß die App nicht was zu tun ist
+3. ✅ **JSON-Syntax muss korrekt sein** - Sonst Parse-Fehler
+4. ✅ **Ordner-Struktur:** behavior_pack/ und resource_pack/ (Minecraft Standard)
+5. ✅ **Klein starten** - Erst testen, dann erweitern
+
+### **Was kommt als nächstes:**
+
+1. **User erstellt Test-Template** (z.B. Tower Defense Struktur)
+2. **Claude baut Template-Loader Service** (liest Templates aus /templates/)
+3. **Claude baut Template-Parser** (ersetzt Platzhalter)
+4. **Claude erweitert Editor** (dynamisch basierend auf template.json)
+5. **Claude passt Builder an** (kopiert Template, ersetzt Platzhalter)
+
+**Status:** 🧪 Experimentell - User testet Template-Struktur, dann Integration in App
+
+**Geschätzter Aufwand:** 2-3 Sessions (aber danach sehr flexibel!)
 
 ---
 
@@ -388,13 +453,19 @@ AppColors.background    // #1F2937 (Dark Gray)
 
 ## 🎯 Nächster Milestone
 
-**Phase 8: Testing & Optional Features**
+**Phase 8: Template-System (Modulares Addon-System)**
+- 🔮 **Template-Loader Service** - Liest alle Templates aus /templates/
+- 🔧 **Template-Parser Service** - Ersetzt {{PLATZHALTER}} mit Werten
+- 🎨 **Dynamischer Editor** - Generiert UI basierend auf template.json
+- 📦 **Builder-Erweiterung** - Kopiert Template-Ordner, ersetzt Platzhalter
+- 🧪 **Test-Template** - User erstellt Tower Defense Template als Proof-of-Concept
+
+**Geschätzter Aufwand:** 2-3 Sessions
+
+**Danach (Phase 9):**
 - End-to-End Testing in Minecraft Bedrock
-- Optional: Resource Pack für eigene 16x16 PNG Texturen
 - Optional: App-Icon und Splash-Screen
 - Erste Beta-Version veröffentlichen
-
-**Geschätzter Aufwand:** 1-2 Sessions
 
 ---
 
