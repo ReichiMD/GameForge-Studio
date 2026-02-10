@@ -1,0 +1,18 @@
+{
+  "format_version": 2,
+  "header": {
+    "description": "{{DESCRIPTION}}",
+    "name": "{{PROJECT_NAME}} Behavior",
+    "uuid": "{{HEADER_UUID}}",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 21, 0]
+  },
+  "modules": [
+    {
+      "description": "{{DESCRIPTION}}",
+      "type": "data",
+      "uuid": "{{MODULE_UUID}}",
+      "version": [1, 0, 0]
+    }
+  ]
+}
