@@ -1,0 +1,12 @@
+{
+  "resource_pack_name": "{{PROJECT_NAME}}",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "base_starter_icon": {
+      "textures": "textures/items/base_starter"
+    },
+    "defense_turret_icon": {
+      "textures": "textures/items/defense_turret"
+    }
+  }
+}
