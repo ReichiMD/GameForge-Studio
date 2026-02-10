@@ -268,74 +268,128 @@ class AddonBuilderService {
   }
 
   /// Export a single ProjectItem as Minecraft Bedrock Edition item JSON
-  /// (Format version 1.21.100 compatible with 1.21.131)
+  /// Updated for format version 1.21.130 (compatible with 1.21.131)
+  ///
+  /// Key changes in 1.21.130+:
+  /// - Icon format: textures: { default: "name" } instead of texture: "name"
+  /// - Attribute modifiers: New way to set attack_damage, armor, armor_toughness
+  /// - minecraft:armor component is deprecated - use attribute_modifiers instead
+  /// - menu_category: Defines creative inventory placement
   static String _exportItemToMinecraftJSON(ProjectItem item) {
     final itemIdentifier = _sanitizeIdentifier(item.name);
-    final category = _mapCategory(item.category);
-
-    // Build components based on item data
-    final components = <String, dynamic>{
-      'minecraft:max_stack_size': 1,
-    };
+    final menuCategory = _getMenuCategory(item.category);
 
     // Get custom stats
     final customStats = item.customStats;
+    final damage = (customStats['damage'] as num?)?.toDouble() ?? 0.0;
+    final durability = (customStats['durability'] as num?)?.toInt() ?? 100;
+    final armor = (customStats['armor'] as num?)?.toDouble() ?? 0.0;
+    final armorToughness = (customStats['armor_toughness'] as num?)?.toDouble() ?? 0.0;
+    final miningSpeed = (customStats['mining_speed'] as num?)?.toDouble() ?? 1.0;
 
-    // Add durability if available
-    final durability = customStats['durability'] as num?;
-    if (durability != null && durability > 0) {
+    // Build components
+    final components = <String, dynamic>{};
+
+    // Display name
+    components['minecraft:display_name'] = {
+      'value': item.name,
+    };
+
+    // Icon - NEW FORMAT in 1.21.130+
+    components['minecraft:icon'] = {
+      'textures': {
+        'default': itemIdentifier,
+      }
+    };
+
+    // Max stack size
+    components['minecraft:max_stack_size'] = 1;
+
+    // Durability
+    if (durability > 0) {
       components['minecraft:durability'] = {
-        'max_durability': durability.toInt(),
+        'max_durability': durability,
       };
     }
 
-    // Add damage if available
-    final damage = customStats['damage'] as num?;
-    if (damage != null && damage > 0) {
+    // Hand equipped (for weapons and tools)
+    if (item.category.toLowerCase() == 'waffen' ||
+        item.category.toLowerCase() == 'werkzeuge') {
+      components['minecraft:hand_equipped'] = true;
+    }
+
+    // Damage component (still used for base damage)
+    if (damage > 0) {
       components['minecraft:damage'] = {
-        'value': damage.toDouble(),
+        'value': damage,
       };
     }
 
-    // Add armor if available
-    final armor = customStats['armor'] as num?;
-    if (armor != null && armor > 0) {
-      components['minecraft:armor'] = {
-        'protection': armor.toInt(),
+    // Attribute modifiers - NEW in 1.21.130+
+    final attributeModifiers = <Map<String, dynamic>>[];
+
+    // Attack damage (for weapons and tools)
+    if (damage > 0) {
+      attributeModifiers.add({
+        'attribute': 'minecraft:player.attack_damage',
+        'amount': damage,
+        'operation': 'add_value',
+        'slot': 'mainhand',
+      });
+    }
+
+    // Armor and toughness (for armor items)
+    if (armor > 0 || armorToughness > 0) {
+      final armorSlot = _getArmorSlot(item.baseItem?.type);
+
+      // Wearable component (required for armor)
+      if (armorSlot != null) {
+        components['minecraft:wearable'] = {
+          'slot': armorSlot,
+        };
+
+        // Armor protection
+        if (armor > 0) {
+          attributeModifiers.add({
+            'attribute': 'minecraft:player.armor',
+            'amount': armor,
+            'operation': 'add_value',
+            'slot': armorSlot,
+          });
+        }
+
+        // Armor toughness
+        if (armorToughness > 0) {
+          attributeModifiers.add({
+            'attribute': 'minecraft:player.armor_toughness',
+            'amount': armorToughness,
+            'operation': 'add_value',
+            'slot': armorSlot,
+          });
+        }
+      }
+    }
+
+    // Add attribute modifiers if any exist
+    if (attributeModifiers.isNotEmpty) {
+      components['minecraft:attribute_modifiers'] = {
+        'modifiers': attributeModifiers,
       };
     }
 
-    // Add armor toughness if available
-    final armorToughness = customStats['armor_toughness'] as num?;
-    if (armorToughness != null && armorToughness > 0) {
-      components['minecraft:armor'] = {
-        ...?components['minecraft:armor'] as Map<String, dynamic>?,
-        'toughness': armorToughness.toDouble(),
-      };
-    }
-
-    // Add attack speed if available
-    final attackSpeed = customStats['attack_speed'] as num?;
-    if (attackSpeed != null) {
-      components['minecraft:attack_speed'] = {
-        'value': attackSpeed.toDouble(),
-      };
-    }
-
-    // Add mining speed if available
-    final miningSpeed = customStats['mining_speed'] as num?;
-    if (miningSpeed != null && miningSpeed > 1.0) {
+    // Mining speed (for tools)
+    if (miningSpeed > 1.0) {
       components['minecraft:digger'] = {
         'use_efficiency': true,
         'destroy_speeds': [
           {
-            'speed': miningSpeed.toDouble(),
+            'speed': miningSpeed,
           }
         ],
       };
     }
 
-    // Add effects
+    // Effects
     final effects = item.effects;
     if (effects['fire'] == true) {
       components['minecraft:ignite_on_use'] = {
@@ -343,26 +397,19 @@ class AddonBuilderService {
       };
     }
     if (effects['glow'] == true) {
-      components['minecraft:foil'] = true; // Enchantment glint effect
+      components['minecraft:foil'] = true;
     }
 
-    // Add icon component (texture reference)
-    components['minecraft:icon'] = {
-      'texture': itemIdentifier,
-    };
+    // Can destroy in creative (prevent accidental deletion)
+    components['minecraft:can_destroy_in_creative'] = false;
 
-    // Add display name
-    components['minecraft:display_name'] = {
-      'value': item.name,
-    };
-
-    // Build the complete item JSON
+    // Build the complete item JSON with menu_category
     final itemJson = {
-      'format_version': '1.21.100',
+      'format_version': '1.21.130',
       'minecraft:item': {
         'description': {
           'identifier': 'custom:$itemIdentifier',
-          'category': category,
+          'menu_category': menuCategory,
         },
         'components': components,
       }
@@ -383,24 +430,55 @@ class AddonBuilderService {
         .replaceAll(RegExp(r'^_|_$'), '');
   }
 
-  /// Map GameForge category to Minecraft category
-  static String _mapCategory(String category) {
+  /// Get menu category for creative inventory (1.21.130+ format)
+  static Map<String, dynamic> _getMenuCategory(String category) {
     switch (category.toLowerCase()) {
       case 'waffen':
-        return 'equipment';
+        return {
+          'category': 'equipment',
+          'group': 'itemGroup.name.sword',
+        };
       case 'rüstung':
-        return 'equipment';
+        return {
+          'category': 'equipment',
+          'group': 'itemGroup.name.chestplate',
+        };
       case 'werkzeuge':
-        return 'equipment';
+        return {
+          'category': 'equipment',
+          'group': 'itemGroup.name.pickaxe',
+        };
       case 'nahrung':
-        return 'nature';
+        return {
+          'category': 'nature',
+          'group': 'itemGroup.name.food',
+        };
       case 'blöcke':
-        return 'construction';
-      case 'mobs':
-        return 'items';
+        return {
+          'category': 'construction',
+        };
       default:
-        return 'items';
+        return {
+          'category': 'items',
+        };
     }
+  }
+
+  /// Get armor slot based on item type
+  static String? _getArmorSlot(String? itemType) {
+    if (itemType == null) return null;
+
+    final type = itemType.toLowerCase();
+    if (type.contains('helmet') || type.contains('helm')) {
+      return 'slot.armor.head';
+    } else if (type.contains('chestplate') || type.contains('brustpanzer')) {
+      return 'slot.armor.chest';
+    } else if (type.contains('leggings') || type.contains('hose')) {
+      return 'slot.armor.legs';
+    } else if (type.contains('boots') || type.contains('stiefel')) {
+      return 'slot.armor.feet';
+    }
+    return null;
   }
 
   /// Get filename for .mcaddon export
