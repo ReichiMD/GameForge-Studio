@@ -12,14 +12,6 @@
       "max": 1000
     },
     {
-      "placeholder": "{{FIRST_WAVE_DELAY}}",
-      "label": "Zeit bis zum Start (Sekunden)",
-      "type": "number",
-      "default": 30,
-      "min": 5,
-      "max": 120
-    },
-    {
       "placeholder": "{{SPAWN_DELAY}}",
       "label": "Pause zwischen Gegnern (Sekunden)",
       "type": "number",
@@ -42,14 +34,6 @@
       "default": 3,
       "min": 0,
       "max": 10
-    },
-    {
-      "placeholder": "{{WAVE_COUNT}}",
-      "label": "Anzahl der Wellen (0 = endlos)",
-      "type": "number",
-      "default": 0,
-      "min": 0,
-      "max": 100
     },
     {
       "placeholder": "{{REWARD_COUNT}}",
