@@ -36,7 +36,7 @@
       "event:spawn_attacker": {
         "queue_command": {
           "command": [
-            "/execute at @s run summon {{PROJECT_NAME}}:attacker_mob ^ ^ ^{{SPAWN_RADIUS}}"
+            "execute at @s run summon {{PROJECT_NAME}}:attacker_mob ^ ^ ^{{SPAWN_RADIUS}}"
           ]
         }
       }

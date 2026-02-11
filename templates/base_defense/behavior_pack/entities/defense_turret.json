@@ -23,7 +23,7 @@
         "burst_shots": 1,
         "burst_interval": 0.0
       },
-      "minecraft:nearest_attackable_target": {
+      "minecraft:behavior.nearest_attackable_target": {
         "priority": 0,
         "must_see": true,
         "re_evaluate_description": true,

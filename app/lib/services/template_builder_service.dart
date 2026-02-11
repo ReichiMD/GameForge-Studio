@@ -169,6 +169,8 @@ class TemplateBuilderService {
           'behavior_pack/loot_tables/attacker_rewards.json',
           'behavior_pack/recipes/base_starter_recipe.json',
           'behavior_pack/animation_controllers/core_setup.controller.json',
+          'behavior_pack/functions/starter_kit.mcfunction',
+          'behavior_pack/functions/tick.json',
           // Resource Pack
           'resource_pack/manifest.json',
           'resource_pack/entity/defense_core.entity.json',

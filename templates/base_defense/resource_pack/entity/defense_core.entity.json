@@ -4,16 +4,16 @@
     "description": {
       "identifier": "{{PROJECT_NAME}}:defense_core",
       "materials": {
-        "default": "ender_crystal"
+        "default": "entity_alphatest"
       },
       "textures": {
-        "default": "textures/entity/endercrystal/endercrystal"
+        "default": "textures/blocks/diamond_block"
       },
       "geometry": {
-        "default": "geometry.endercrystal"
+        "default": "geometry.humanoid.custom"
       },
       "render_controllers": [
-        "controller.render.endercrystal"
+        "controller.render.default"
       ],
       "spawn_egg": {
         "base_color": "#330033",
