@@ -16,7 +16,7 @@ class TemplateLoaderService {
   // GitHub Repository URL (raw content)
   // TEMPORÄR: Feature-Branch für Testing - später auf 'main' ändern!
   static const String _baseUrl =
-      'https://raw.githubusercontent.com/ReichiMD/GameForge-Studio/claude/review-template-loading-luU4E/templates';
+      'https://raw.githubusercontent.com/ReichiMD/GameForge-Studio/main/templates';
 
   // Cache für geladene Templates
   Map<String, TemplateDefinition>? _templates;
