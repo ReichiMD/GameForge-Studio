@@ -95,8 +95,9 @@ class _DebugScreenState extends State<DebugScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
           // Action Buttons
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -226,63 +227,59 @@ class _DebugScreenState extends State<DebugScreen> {
           const SizedBox(height: 16),
 
           // Logs Section
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16.0),
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '📝 Recent Logs (${logs.length})',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '📝 Recent Logs (${logs.length})',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (_autoRefresh)
+                      const Text(
+                        'Auto-Refresh: ON',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: AppColors.success,
                         ),
                       ),
-                      if (_autoRefresh)
-                        const Text(
-                          'Auto-Refresh: ON',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: AppColors.success,
+                  ],
+                ),
+                const SizedBox(height: 12),
+                logs.isEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: Center(
+                          child: Text(
+                            'Keine Logs vorhanden.\nVerwende die App, um Logs zu generieren.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: AppColors.textSecondary),
                           ),
                         ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Expanded(
-                    child: logs.isEmpty
-                        ? const Center(
-                            child: Text(
-                              'Keine Logs vorhanden.\nVerwende die App, um Logs zu generieren.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: AppColors.textSecondary),
-                            ),
-                          )
-                        : ListView.builder(
-                            itemCount: logs.length,
-                            itemBuilder: (context, index) {
-                              final log = logs[index];
-                              return _buildLogEntry(log);
-                            },
-                          ),
-                  ),
-                ],
-              ),
+                      )
+                    : Column(
+                        children: logs.map((log) => _buildLogEntry(log)).toList(),
+                      ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
         ],
       ),
+        ),
     );
   }
 

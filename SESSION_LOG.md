@@ -655,4 +655,26 @@ projekt_name.mcaddon (ZIP)
 
 ---
 
-**Letzte Aktualisierung:** 2026-02-10 (Session #25)
+### Session #30 - 2026-02-11 - Templates von GitHub + UX-Verbesserungen
+
+**Branch:** `claude/fix-template-and-startup-V0hf8`
+
+**Durchgeführt:**
+- ✅ Templates von GitHub laden (statt lokal aus Assets)
+- ✅ Debug-Screen scrollbar gemacht (Statistik-Bereich war zu groß)
+- ✅ Login beim Start entfernt (direkt zur App, Login über Settings)
+- ✅ GitHub Token-Verwaltung in Settings-Button integriert
+- ✅ Template-Cache Reset über Settings möglich
+
+**Wichtige Änderungen:**
+- Templates werden von GitHub geladen: `https://raw.githubusercontent.com/ReichiMD/GameForge-Studio/main/templates`
+- AuthWrapper zeigt direkt MainNavigation (kein Login-Check mehr)
+- Login-Screen nur über Settings → "GitHub Token bearbeiten" erreichbar
+- Debug-Screen jetzt vollständig scrollbar
+
+**Dateien geändert:** `debug_screen.dart`, `main.dart`, `settings_screen.dart`, `CLAUDE.md`
+**Status:** ✅ UX deutlich verbessert - App startet sofort! 🚀
+
+---
+
+**Letzte Aktualisierung:** 2026-02-11 (Session #30)

@@ -1,6 +1,6 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 3.9 (Flutter - Template-System Fertig!)
+**Version:** 4.0 (Flutter - Templates von GitHub + UX-Verbesserungen!)
 **Letzte Aktualisierung:** 2026-02-11
 **Status:** Phase 8 Komplett (✅ Fertig!) | Production-Ready 🎉
 
@@ -72,6 +72,9 @@
 ✅ **Template-Editor** - Dynamische UI-Generierung basierend auf template.json 🎨
 ✅ **UUID-System** - Unique UUIDs pro Addon (korrekte Dependencies zwischen Packs) 🔑
 ✅ **Template Creation Guide** - Vollständige Anleitung für KI-Assistenten zur Template-Erstellung 📚
+✅ **Templates von GitHub** - Templates werden von GitHub geladen (nicht mehr lokal in Assets) 🌐
+✅ **Kein Login-Zwang** - App startet direkt, Login nur über Settings erreichbar 🚀
+✅ **Debug-Screen scrollbar** - Vollständige Statistiken auch bei viel Inhalt sichtbar 📜
 
 ---
 
@@ -197,6 +200,41 @@ AppColors.background    // #1F2937 (Dark Gray)
 ---
 
 ## 📝 Letzte Session (für Kontext)
+
+**Session #30 - 2026-02-11 - Templates von GitHub + UX-Verbesserungen 🚀**
+- ✅ **Templates von GitHub laden**
+  * Templates aus root-Verzeichnis `/templates/` verschoben
+  * TemplateLoaderService lädt von GitHub (main branch)
+  * Template-Cache kann über Settings aktualisiert werden
+  * Reset-Funktion löscht alten Cache und lädt neu
+- ✅ **Debug-Screen scrollbar gemacht**
+  * Problem: Statistik-Bereich war zu groß, nicht scrollbar
+  * Fix: Gesamte Column in SingleChildScrollView gepackt
+  * Logs-Bereich als normale Column (nicht mehr Expanded ListView)
+  * Alle Statistiken jetzt sichtbar
+- ✅ **Login beim Start entfernt**
+  * Problem: Login-Fenster wurde beim App-Start gezeigt
+  * Fix: AuthWrapper zeigt direkt MainNavigation (kein Login-Check)
+  * Login-Screen jetzt über Settings → "GitHub Token bearbeiten" erreichbar
+  * Token-Verwaltung in Settings-Button integriert
+  * Kein Logout-Button mehr (Token wird einfach überschrieben)
+- ✅ **3 Dateien geändert:**
+  * `debug_screen.dart` - Scrollbar hinzugefügt
+  * `main.dart` - Login-Check entfernt, direkte Navigation
+  * `settings_screen.dart` - Login-Button in GitHub-Section, Logout entfernt
+- ✅ **CLAUDE.md aktualisiert**
+  * Version auf 4.0 erhöht
+  * Neue Features dokumentiert
+  * Session #30 hinzugefügt
+
+**Status:** ✅ UX deutlich verbessert - App startet sofort, keine Login-Hürde mehr! 🎉
+
+**Wichtige Änderungen:**
+- Templates werden jetzt von GitHub geladen (URL: `https://raw.githubusercontent.com/ReichiMD/GameForge-Studio/main/templates`)
+- Bei erstem Start oder nach Update: In Settings → "Templates aktualisieren" drücken
+- Login ist optional und nur nötig, wenn man GitHub-Features nutzen möchte
+
+---
 
 **Session #29 - 2026-02-11 - Template-System Komplett! 🎉**
 - ✅ **Leveling Wolf Template integriert**
