@@ -1,5 +1,5 @@
 {
-  "format_version": "1.21.10",
+  "format_version": "1.21.130",
   "minecraft:recipe_shaped": {
     "description": {
       "identifier": "{{PROJECT_NAME}}:base_starter_recipe"

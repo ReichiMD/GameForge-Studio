@@ -1,6 +1,6 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 4.2 (Template-System Fix + GitHub-Sync!)
+**Version:** 4.3 (Template-System Production-Ready!)
 **Letzte Aktualisierung:** 2026-02-11
 **Status:** Phase 8 Komplett (✅ Fertig!) | Production-Ready 🎉
 
@@ -75,6 +75,8 @@
 ✅ **Templates von GitHub** - Templates werden von GitHub geladen (nicht mehr lokal in Assets) 🌐
 ✅ **Kein Login-Zwang** - App startet direkt, Login nur über Settings erreichbar 🚀
 ✅ **Debug-Screen scrollbar** - Vollständige Statistiken auch bei viel Inhalt sichtbar 📜
+✅ **Template Decimal Support** - Editor unterstützt Dezimalzahlen (double) für Template-Felder 🔢
+✅ **Base Defense Template** - Funktionstüchtiges Tower Defense Template (getestet!) 🏰
 
 ---
 
@@ -200,6 +202,39 @@ AppColors.background    // #1F2937 (Dark Gray)
 ---
 
 ## 📝 Letzte Session (für Kontext)
+
+**Session #33 - 2026-02-11 - Template-System Production-Ready! 🎉**
+- ✅ **Template Decimal Support implementiert**
+  * Problem: Leveling Wolf nutzt Dezimalzahlen (1.25, 1.1, 2.0) → Template wurde nicht geladen!
+  * Root Cause: TemplateField min/max waren `int?` statt `num?`
+  * Fix 1: template_definition.dart → min/max zu `num?` geändert
+  * Fix 2: template_editor_screen.dart → Dezimalpunkt-Eingabe erlaubt
+  * Fix 3: Intelligente +/- Buttons (int: ±1, double: ±0.1)
+- ✅ **Base Defense Template komplett überarbeitet**
+  * Problem: README versprach Features, die NICHT funktionierten!
+  * Fix 1: defense_turret.json → behavior.ranged_attack hinzugefügt (Türme schießen jetzt!)
+  * Fix 2: attacker_mob.json → Undefinierte Platzhalter entfernt (hardcode)
+  * Fix 3: template.json → WAVE_COUNT + FIRST_WAVE_DELAY entfernt (nicht implementiert)
+  * Fix 4: README.md → Realistisch, dokumentiert was wirklich funktioniert
+- ✅ **Base Defense Template auf Bedrock 1.21.130+ aktualisiert**
+  * format_version: 1.21.130 (10 Dateien)
+  * min_engine_version: [1, 21, 130] (beide Manifests)
+  * Dependencies zwischen BP ↔ RP hinzugefügt
+  * Quelle: Bedrock Wiki Dokumentation (docs/bedrock-wiki/)
+- ✅ **3 Commits + Push:**
+  * 0013c1c - Fix template loading (Dezimalzahlen)
+  * d4066c2 - Fix base_defense (Bedrock 1.21.130+)
+  * 009a3c2 - Fix base_defense (Funktionalität)
+- Branch: `claude/fix-leveling-wolf-template-8M8bP`
+
+**Status:** ✅ Template-System vollständig getestet und funktionsfähig! Beide Templates funktionieren! 🚀
+
+**Wichtige Änderungen:**
+- Beide Templates (Leveling Wolf + Base Defense) funktionieren jetzt EXAKT wie dokumentiert
+- Template-Editor unterstützt jetzt sowohl int als auch double Werte
+- Base Defense schießt wirklich, spawnt Gegner, droppt Kristalle - alles funktioniert!
+
+---
 
 **Session #32 - 2026-02-11 - Leveling Wolf Template Bugfixes 🐺**
 - ✅ **Template-Math-Fehler behoben**

@@ -4,8 +4,8 @@ class TemplateField {
   final String label; // z.B. "Kern-Lebenspunkte"
   final String type; // "number" oder "text"
   final dynamic defaultValue; // Standard-Wert
-  final int? min; // Minimum (nur für number)
-  final int? max; // Maximum (nur für number)
+  final num? min; // Minimum (nur für number) - num unterstützt int und double
+  final num? max; // Maximum (nur für number) - num unterstützt int und double
 
   TemplateField({
     required this.placeholder,
@@ -22,8 +22,8 @@ class TemplateField {
       label: json['label'] as String,
       type: json['type'] as String,
       defaultValue: json['default'],
-      min: json['min'] as int?,
-      max: json['max'] as int?,
+      min: json['min'] as num?, // num unterstützt sowohl int als auch double
+      max: json['max'] as num?, // num unterstützt sowohl int als auch double
     );
   }
 

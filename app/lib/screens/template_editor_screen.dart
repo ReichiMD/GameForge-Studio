@@ -281,6 +281,14 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
       text: _fieldValues[field.placeholder].toString(),
     );
 
+    // Prüfe ob Dezimalzahlen unterstützt werden (min/max sind double oder defaultValue ist double)
+    final isDecimal = (field.min is double) ||
+                      (field.max is double) ||
+                      (field.defaultValue is double);
+
+    // Inkrement/Dekrement Schritt (int: 1, double: 0.1)
+    final step = isDecimal ? 0.1 : 1;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -312,10 +320,13 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
             // Minus Button
             IconButton(
               onPressed: () {
-                final current = _fieldValues[field.placeholder] as int;
-                if (field.min == null || current > field.min!) {
+                final current = _fieldValues[field.placeholder] as num;
+                final newValue = current - step;
+                if (field.min == null || newValue >= field.min!) {
                   setState(() {
-                    _fieldValues[field.placeholder] = current - 1;
+                    _fieldValues[field.placeholder] = isDecimal
+                        ? double.parse(newValue.toStringAsFixed(2))
+                        : newValue.toInt();
                   });
                 }
               },
@@ -329,14 +340,17 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
             Expanded(
               child: TextFormField(
                 controller: controller,
-                keyboardType: TextInputType.number,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                inputFormatters: [
+                  // Erlaube Zahlen und Dezimalpunkt
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                ],
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: const Color(0xFF374151),
@@ -346,22 +360,22 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
                   ),
                 ),
                 onChanged: (value) {
-                  final intValue = int.tryParse(value);
-                  if (intValue != null) {
+                  final numValue = num.tryParse(value);
+                  if (numValue != null) {
                     setState(() {
-                      _fieldValues[field.placeholder] = intValue;
+                      _fieldValues[field.placeholder] = numValue;
                     });
                   }
                 },
                 validator: (value) {
-                  final intValue = int.tryParse(value ?? '');
-                  if (intValue == null) {
+                  final numValue = num.tryParse(value ?? '');
+                  if (numValue == null) {
                     return 'Bitte eine Zahl eingeben';
                   }
-                  if (field.min != null && intValue < field.min!) {
+                  if (field.min != null && numValue < field.min!) {
                     return 'Minimum: ${field.min}';
                   }
-                  if (field.max != null && intValue > field.max!) {
+                  if (field.max != null && numValue > field.max!) {
                     return 'Maximum: ${field.max}';
                   }
                   return null;
@@ -373,10 +387,13 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
             // Plus Button
             IconButton(
               onPressed: () {
-                final current = _fieldValues[field.placeholder] as int;
-                if (field.max == null || current < field.max!) {
+                final current = _fieldValues[field.placeholder] as num;
+                final newValue = current + step;
+                if (field.max == null || newValue <= field.max!) {
                   setState(() {
-                    _fieldValues[field.placeholder] = current + 1;
+                    _fieldValues[field.placeholder] = isDecimal
+                        ? double.parse(newValue.toStringAsFixed(2))
+                        : newValue.toInt();
                   });
                 }
               },

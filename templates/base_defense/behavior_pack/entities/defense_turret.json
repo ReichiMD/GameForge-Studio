@@ -1,5 +1,5 @@
 {
-  "format_version": "1.21.10",
+  "format_version": "1.21.130",
   "minecraft:entity": {
     "description": {
       "identifier": "{{PROJECT_NAME}}:defense_turret",
@@ -14,6 +14,14 @@
       },
       "minecraft:shooter": {
         "def": "minecraft:arrow"
+      },
+      "minecraft:behavior.ranged_attack": {
+        "priority": 0,
+        "attack_interval_min": 1.0,
+        "attack_interval_max": 2.0,
+        "attack_radius": {{TURRET_RANGE}},
+        "burst_shots": 1,
+        "burst_interval": 0.0
       },
       "minecraft:nearest_attackable_target": {
         "priority": 0,
