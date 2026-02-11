@@ -109,6 +109,12 @@ flutter:
     - assets/templates/base_defense/resource_pack/entity/attacker_mob.entity.json
     - assets/templates/base_defense/resource_pack/texts/en_US.lang
     - assets/templates/base_defense/resource_pack/textures/item_texture.json
+    # Leveling Wolf Template
+    - assets/templates/leveling_wolf/template.json
+    - assets/templates/leveling_wolf/behavior_pack/manifest.json
+    - assets/templates/leveling_wolf/behavior_pack/entities/wolf.json
+    - assets/templates/leveling_wolf/resource_pack/manifest.json
+    - assets/templates/leveling_wolf/resource_pack/entity/wolf.entity.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

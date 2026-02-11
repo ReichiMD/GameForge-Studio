@@ -1,9 +1,9 @@
 {
   "format_version": 2,
   "header": {
-    "description": "Behavior Pack fuer {{PROJECT_NAME}} - Leveling Wolf",
+    "description": "{{DESCRIPTION}}",
     "name": "{{PROJECT_NAME}} Behavior",
-    "uuid": "4f3b2a1d-7e6f-4c5b-8a9d-0e1f2a3b4c5d",
+    "uuid": "{{HEADER_UUID}}",
     "version": [1, 0, 0],
     "min_engine_version": [1, 21, 131]
   },
@@ -11,13 +11,13 @@
     {
       "description": "Behavior Module",
       "type": "data",
-      "uuid": "5e4d3c2b-1a0f-9e8d-7c6b-5a4f3e2d1c0b",
+      "uuid": "{{MODULE_UUID}}",
       "version": [1, 0, 0]
     }
   ],
   "dependencies": [
     {
-      "uuid": "6f5e4d3c-2b1a-0f9e-8d7c-6b5a4f3e2d1c",
+      "uuid": "{{RESOURCE_PACK_UUID}}",
       "version": [1, 0, 0]
     }
   ]

@@ -1,9 +1,9 @@
 {
   "format_version": 2,
   "header": {
-    "description": "Resource Pack fuer {{PROJECT_NAME}} - Leveling Wolf",
+    "description": "{{DESCRIPTION}}",
     "name": "{{PROJECT_NAME}} Resources",
-    "uuid": "6f5e4d3c-2b1a-0f9e-8d7c-6b5a4f3e2d1c",
+    "uuid": "{{RESOURCE_PACK_UUID}}",
     "version": [1, 0, 0],
     "min_engine_version": [1, 21, 131]
   },
@@ -11,7 +11,7 @@
     {
       "description": "Resource Module",
       "type": "resources",
-      "uuid": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
+      "uuid": "{{RESOURCE_MODULE_UUID}}",
       "version": [1, 0, 0]
     }
   ]

@@ -14,9 +14,10 @@ class TemplateParserService {
   /// Ersetzt sowohl User-Werte (aus fieldValues) als auch System-Werte:
   /// - {{PROJECT_NAME}} - Projekt-Name (klein, ohne Leerzeichen)
   /// - {{DESCRIPTION}} - Projekt-Beschreibung
-  /// - {{HEADER_UUID}} - Zufällige UUID für Manifest Header
-  /// - {{MODULE_UUID}} - Zufällige UUID für Manifest Module
-  /// - Alle anderen Platzhalter aus fieldValues
+  /// - Alle anderen Platzhalter aus fieldValues (inkl. UUIDs)
+  ///
+  /// WICHTIG: UUIDs werden vom TemplateBuilderService generiert und
+  /// über fieldValues übergeben, damit alle Dateien die gleichen UUIDs verwenden!
   String replacePlaceholders(
     String content,
     String projectName,
@@ -25,19 +26,17 @@ class TemplateParserService {
   ) {
     String result = content;
 
-    // System-Platzhalter ersetzen (werden automatisch generiert)
+    // System-Platzhalter ersetzen (PROJECT_NAME und DESCRIPTION)
     final systemPlaceholders = {
       '{{PROJECT_NAME}}': _sanitizeProjectName(projectName),
       '{{DESCRIPTION}}': projectDescription,
-      '{{HEADER_UUID}}': _uuid.v4(),
-      '{{MODULE_UUID}}': _uuid.v4(),
     };
 
     systemPlaceholders.forEach((placeholder, value) {
       result = result.replaceAll(placeholder, value.toString());
     });
 
-    // User-Platzhalter ersetzen (aus Editor-Feldern)
+    // User-Platzhalter + UUIDs ersetzen (aus fieldValues)
     fieldValues.forEach((placeholder, value) {
       result = result.replaceAll(placeholder, value.toString());
     });
