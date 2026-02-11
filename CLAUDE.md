@@ -1,6 +1,6 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 4.0 (Flutter - Templates von GitHub + UX-Verbesserungen!)
+**Version:** 4.1 (Lokale Bedrock-Doku + Token-Optimierung!)
 **Letzte Aktualisierung:** 2026-02-11
 **Status:** Phase 8 Komplett (✅ Fertig!) | Production-Ready 🎉
 
@@ -200,6 +200,35 @@ AppColors.background    // #1F2937 (Dark Gray)
 ---
 
 ## 📝 Letzte Session (für Kontext)
+
+**Session #31 - 2026-02-11 - Lokale Bedrock-Dokumentation + Strategie Update 📚**
+- ✅ **Bedrock Wiki Dokumentation lokal gespeichert**
+  * `docs/bedrock-wiki/master_index.txt` (22 KB) - TAG-Index
+  * `docs/bedrock-wiki/docs_complete.txt` (5.1 MB) - Vollständige Doku
+  * Quelle: https://github.com/ReichiMD/fabrik-library/tree/main/Doku
+- ✅ **CLAUDE.md komplett überarbeitet**
+  * Neue Section: "BEDROCK-DOKUMENTATION STRATEGIE"
+  * Kritischer Hinweis: Claudes Minecraft-Wissen ist veraltet (< 1.21.130)
+  * Workflow dokumentiert: Master Index → Grep → TAG-Abschnitt
+  * Token-Ersparnis: ~85-90% (3000-5000 → 300-500 Tokens)
+- ✅ **Strategie festgelegt**
+  * PRIMÄR: Lokale Dateien mit Grep (blitzschnell!)
+  * BACKUP: Web-Quellen (wiki.bedrock.dev, Microsoft Learn)
+  * NIEMALS auf veraltetes internes Wissen verlassen
+- ✅ **Getestet und funktioniert**
+  * Test-Suche nach "minecraft:damage" erfolgreich
+  * Korrekte Syntax gefunden: `"minecraft:damage": 10` (keine Object-Syntax!)
+- ✅ **1 Commit + Push:** 8e810c7
+- Branch: `claude/review-documentation-strategy-dMrVT`
+
+**Status:** ✅ Dokumentations-Strategie etabliert! Token-Effizienz maximiert! 🚀
+
+**Wichtige Änderungen:**
+- Alle zukünftigen Minecraft-Fragen werden mit lokaler Doku beantwortet
+- Viel schneller und präziser als WebFetch
+- Keine Internet-Aktivierung mehr nötig
+
+---
 
 **Session #30 - 2026-02-11 - Templates von GitHub + UX-Verbesserungen 🚀**
 - ✅ **Templates von GitHub laden**
@@ -439,9 +468,63 @@ Siehe: `app/assets/templates/TEMPLATE_CREATION_GUIDE.md`
 
 ---
 
-## 📚 STANDARD-QUELLE FÜR BEDROCK KOMPONENTEN
+## 📚 BEDROCK-DOKUMENTATION STRATEGIE
 
-**IMMER diese Quellen nutzen (in dieser Reihenfolge):**
+### **⚠️ WICHTIG: Claudes Minecraft-Wissen ist VERALTET!**
+
+**KRITISCH:** Mein (Claudes) internes Wissen über Minecraft Bedrock ist **veraltet** und stammt aus der Zeit **VOR Version 1.21.130**!
+
+**Regeln:**
+1. ✅ **IMMER die Dokumentation nutzen** (siehe unten)
+2. ❌ **NIEMALS auf mein internes Wissen verlassen**
+3. ⚠️ **Wenn du unsicher bist:** Dokumentation checken!
+
+**Warum?** Minecraft Bedrock 1.21.130+ hat **massive Syntax-Änderungen**:
+- Icon-Format geändert (`texture` → `textures.default`)
+- `minecraft:armor` deprecated
+- Neue Komponenten (menu_category, etc.)
+- Andere Attribute-Modifier Syntax
+
+**→ Ohne Doku = Bugs garantiert!** 🐛
+
+---
+
+### **📖 Lokale Dokumentation (PRIMÄR-QUELLE!)**
+
+**Ab jetzt ZUERST hier suchen:**
+
+**Dateien:**
+- `docs/bedrock-wiki/master_index.txt` (22 KB) - Index mit TAG-Nummern
+- `docs/bedrock-wiki/docs_complete.txt` (5.1 MB) - Komplette Bedrock Wiki Doku
+
+**Workflow:**
+1. **Index durchsuchen:** Grep nach Thema (z.B. "item-components") → TAG-Nummer finden
+2. **TAG suchen:** Grep nach `TAG:XXX` in docs_complete.txt → Vollständigen Abschnitt lesen
+3. **Fertig!** - Schnell, präzise, token-effizient ⚡
+
+**Beispiel:**
+```bash
+# 1. Finde TAG-Nummer
+grep "item-components" docs/bedrock-wiki/master_index.txt
+# → [TAG:250] item-components.md
+
+# 2. Lese Abschnitt
+grep -A 100 "TAG:250" docs/bedrock-wiki/docs_complete.txt
+# → Vollständige Item-Components Dokumentation
+```
+
+**Token-Ersparnis:**
+- WebFetch: ~3000-5000 Tokens pro Suche 🐌
+- Lokale Dateien: ~300-500 Tokens pro Suche ⚡
+- **Ersparnis: ~85-90%!** 🎉
+
+**Quelle:** https://github.com/ReichiMD/fabrik-library/tree/main/Doku (Bedrock Wiki Snapshot)
+
+---
+
+### **🌐 Web-Quellen (BACKUP)**
+
+**Nur nutzen wenn lokal nichts gefunden:**
 
 1. **Bedrock Wiki (Web):** https://wiki.bedrock.dev/items/item-components
    - Community-gepflegt, immer aktuell
@@ -460,7 +543,12 @@ Siehe: `app/assets/templates/TEMPLATE_CREATION_GUIDE.md`
 
 ## 📖 Minecraft Bedrock 1.21.130+ - Wichtige Änderungen
 
-**WICHTIG für Addon-Erstellung:** Minecraft Bedrock hat in Version 1.21.130+ die Item-JSON-Syntax geändert!
+**⚠️ WICHTIG für Addon-Erstellung:** Minecraft Bedrock hat in Version 1.21.130+ die Item-JSON-Syntax **massiv geändert**!
+
+**🚨 KRITISCHER HINWEIS:**
+- Claudes internes Wissen ist **veraltet** (< 1.21.130)
+- **IMMER die Dokumentation nutzen** (siehe "BEDROCK-DOKUMENTATION STRATEGIE" oben)
+- **NIEMALS** auf veraltetes Wissen verlassen - führt zu Parse-Fehlern in Minecraft!
 
 ### **Was hat sich geändert?**
 
