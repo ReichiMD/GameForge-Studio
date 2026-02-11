@@ -1,0 +1,92 @@
+{
+  "format_version": "1.21.130",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "{{PROJECT_NAME}}:wolf",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+    "component_groups": {
+      "{{PROJECT_NAME}}:wolf_level_1": {
+        "minecraft:scale": {
+          "value": {{WOLF_SCALE_START}}
+        },
+        "minecraft:attack": {
+          "damage": {{WOLF_BASE_DAMAGE}}
+        }
+      },
+      "{{PROJECT_NAME}}:wolf_level_2": {
+        "minecraft:scale": {
+          "value": "( {{WOLF_SCALE_START}} * 1.25 )"
+        },
+        "minecraft:attack": {
+          "damage": "( {{WOLF_BASE_DAMAGE}} * {{WOLF_LEVEL_UP_BONUS}} )"
+        }
+      }
+    },
+    "components": {
+      "minecraft:is_tameable": {
+        "tame_items": [
+          "bone"
+        ]
+      },
+      "minecraft:tamable": {
+        "probability": 1.0,
+        "tame_event": {
+          "event": "{{PROJECT_NAME}}:on_tame",
+          "target": "self"
+        }
+      },
+      "minecraft:interact": {
+        "interactions": [
+          {
+            "on_interact": {
+              "filters": {
+                "all_of": [
+                  { "test": "is_tame", "subject": "self", "value": true },
+                  { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "bone" }
+                ]
+              },
+              "event": "{{PROJECT_NAME}}:level_up_event",
+              "target": "self"
+            },
+            "use_item": true,
+            "play_sounds": "mob.wolf.eat",
+            "interact_text": "Level Up!"
+          }
+        ]
+      },
+      "minecraft:behavior.owner_attack_targets": {
+        "priority": 1
+      },
+      "minecraft:behavior.owner_attack_property_target": {
+        "priority": 2
+      },
+      "minecraft:behavior.melee_attack": {
+        "priority": 3
+      }
+    },
+    "events": {
+      "{{PROJECT_NAME}}:on_tame": {
+        "add": {
+          "component_groups": [
+            "{{PROJECT_NAME}}:wolf_level_1"
+          ]
+        }
+      },
+      "{{PROJECT_NAME}}:level_up_event": {
+        "remove": {
+          "component_groups": [
+            "{{PROJECT_NAME}}:wolf_level_1"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "{{PROJECT_NAME}}:wolf_level_2"
+          ]
+        }
+      }
+    }
+  }
+}
