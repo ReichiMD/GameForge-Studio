@@ -1,0 +1,36 @@
+{
+  "format_version": "1.21.130",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "{{PROJECT_NAME}}:wolf",
+      "materials": {
+        "default": "wolf"
+      },
+      "textures": {
+        "default": "textures/entity/wolf/wolf",
+        "tame": "textures/entity/wolf/wolf_tame",
+        "angry": "textures/entity/wolf/wolf_angry"
+      },
+      "geometry": {
+        "default": "geometry.wolf"
+      },
+      "animations": {
+        "look_at_target": "animation.common.look_at_target",
+        "walk": "animation.wolf.walk",
+        "shaking": "animation.wolf.shaking",
+        "sitting": "animation.wolf.sitting",
+        "baby_transform": "animation.wolf.baby_transform"
+      },
+      "scripts": {
+        "animate": [
+          "look_at_target",
+          "walk",
+          "shaking",
+          "sitting",
+          "baby_transform"
+        ]
+      },
+      "render_controllers": [ "controller.render.wolf" ]
+    }
+  }
+}
