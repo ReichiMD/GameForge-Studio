@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:archive/archive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
 import 'dart:io';
 import '../models/template_definition.dart';
 import 'template_parser_service.dart';
@@ -70,29 +70,33 @@ class TemplateBuilderService {
 
     // 4. Pack Icon hinzufügen (PNG ist binär, keine Platzhalter-Ersetzung)
     try {
-      final iconBytes = await rootBundle.load(
-        '${template.templatePath}/pack_icon.png',
-      );
-      final iconData = iconBytes.buffer.asUint8List();
+      final iconUrl = '${template.templatePath}/pack_icon.png';
+      final response = await http.get(Uri.parse(iconUrl));
 
-      // Icon für beide Packs
-      archive.addFile(
-        ArchiveFile(
-          'behavior_pack/pack_icon.png',
-          iconData.length,
-          iconData,
-        ),
-      );
-      archive.addFile(
-        ArchiveFile(
-          'resource_pack/pack_icon.png',
-          iconData.length,
-          iconData,
-        ),
-      );
-      print('  ✓ pack_icon.png (beide Packs)');
+      if (response.statusCode == 200) {
+        final iconData = response.bodyBytes;
+
+        // Icon für beide Packs
+        archive.addFile(
+          ArchiveFile(
+            'behavior_pack/pack_icon.png',
+            iconData.length,
+            iconData,
+          ),
+        );
+        archive.addFile(
+          ArchiveFile(
+            'resource_pack/pack_icon.png',
+            iconData.length,
+            iconData,
+          ),
+        );
+        print('  ✓ pack_icon.png (beide Packs)');
+      } else {
+        print('  ⚠️  Kein pack_icon.png gefunden (HTTP ${response.statusCode})');
+      }
     } catch (e) {
-      print('  ⚠️  Kein pack_icon.png gefunden (optional)');
+      print('  ⚠️  Kein pack_icon.png gefunden (optional): $e');
     }
 
     // 5. ZIP komprimieren
@@ -111,7 +115,7 @@ class TemplateBuilderService {
     return fileName;
   }
 
-  /// Lädt alle Template-Dateien aus Assets
+  /// Lädt alle Template-Dateien von GitHub
   /// Returns: Map<filePath, content>
   Future<Map<String, String>> _loadTemplateFiles(
       TemplateDefinition template) async {
@@ -122,9 +126,15 @@ class TemplateBuilderService {
 
     for (final filePath in filePaths) {
       try {
-        final fullPath = '${template.templatePath}/$filePath';
-        final content = await rootBundle.loadString(fullPath);
-        files[filePath] = content;
+        // GitHub URL: template.templatePath ist bereits die vollständige URL
+        final url = '${template.templatePath}/$filePath';
+        final response = await http.get(Uri.parse(url));
+
+        if (response.statusCode == 200) {
+          files[filePath] = utf8.decode(response.bodyBytes);
+        } else {
+          print('⚠️  Fehler beim Laden von $filePath: HTTP ${response.statusCode}');
+        }
       } catch (e) {
         print('⚠️  Fehler beim Laden von $filePath: $e');
         // Datei überspringen

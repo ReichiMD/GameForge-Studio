@@ -87,34 +87,13 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    # Item-System Assets
     - assets/library/vanilla_stats.json
+    # Manifest-Templates für Item-System (nicht Template-System!)
     - assets/templates/manifest_behavior.json
     - assets/templates/manifest_resource.json
     - assets/templates/pack_icon.png
-    # Base Defense Template
-    - assets/templates/base_defense/template.json
-    - assets/templates/base_defense/pack_icon.png
-    - assets/templates/base_defense/behavior_pack/manifest.json
-    - assets/templates/base_defense/behavior_pack/entities/defense_core.json
-    - assets/templates/base_defense/behavior_pack/entities/defense_turret.json
-    - assets/templates/base_defense/behavior_pack/entities/attacker_mob.json
-    - assets/templates/base_defense/behavior_pack/items/base_starter.json
-    - assets/templates/base_defense/behavior_pack/items/defense_turret_item.json
-    - assets/templates/base_defense/behavior_pack/loot_tables/attacker_rewards.json
-    - assets/templates/base_defense/behavior_pack/recipes/base_starter_recipe.json
-    - assets/templates/base_defense/behavior_pack/animation_controllers/core_setup.controller.json
-    - assets/templates/base_defense/resource_pack/manifest.json
-    - assets/templates/base_defense/resource_pack/entity/defense_core.entity.json
-    - assets/templates/base_defense/resource_pack/entity/defense_turret.entity.json
-    - assets/templates/base_defense/resource_pack/entity/attacker_mob.entity.json
-    - assets/templates/base_defense/resource_pack/texts/en_US.lang
-    - assets/templates/base_defense/resource_pack/textures/item_texture.json
-    # Leveling Wolf Template
-    - assets/templates/leveling_wolf/template.json
-    - assets/templates/leveling_wolf/behavior_pack/manifest.json
-    - assets/templates/leveling_wolf/behavior_pack/entities/wolf.json
-    - assets/templates/leveling_wolf/resource_pack/manifest.json
-    - assets/templates/leveling_wolf/resource_pack/entity/wolf.entity.json
+    # Templates werden jetzt von GitHub geladen (templates/ im Repository-Root)
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

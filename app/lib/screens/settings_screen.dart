@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../services/project_service.dart';
+import '../services/template_loader_service.dart';
 import 'debug_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -99,6 +100,72 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _reloadTemplates() async {
+    // Zeige Loading-Dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      ),
+    );
+
+    try {
+      // Lade Templates neu von GitHub
+      final templateLoader = TemplateLoaderService();
+      await templateLoader.reloadTemplates();
+
+      // Schließe Loading-Dialog
+      if (mounted) Navigator.pop(context);
+
+      // Zeige Erfolgs-Snackbar
+      if (mounted) {
+        final templates = await templateLoader.getAllTemplates();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ ${templates.length} Templates aktualisiert'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    } catch (e) {
+      // Schließe Loading-Dialog
+      if (mounted) Navigator.pop(context);
+
+      // Zeige Fehler-Dialog
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: AppColors.surface,
+            title: const Text(
+              '❌ Fehler',
+              style: TextStyle(
+                color: AppColors.text,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            content: Text(
+              'Templates konnten nicht geladen werden.\n\n'
+              'Fehler: $e\n\n'
+              'Bitte überprüfe deine Internetverbindung.',
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  'OK',
+                  style: TextStyle(color: AppColors.primary),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -253,6 +320,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               );
             },
+          ),
+          const SizedBox(height: AppSpacing.xxl),
+
+          // Templates
+          _buildSectionTitle('🎮 TEMPLATES'),
+          const SizedBox(height: AppSpacing.lg),
+          _buildClickableCard(
+            title: 'Templates aktualisieren',
+            subtitle: 'Neue Templates von GitHub laden',
+            icon: '🔄',
+            onTap: _reloadTemplates,
           ),
           const SizedBox(height: AppSpacing.xxl),
 

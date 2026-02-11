@@ -40,6 +40,14 @@ class DebugLogService {
   final Set<String> _attemptedUrls = {};
   final Map<String, int> _errorCounts = {};
 
+  // Template Statistics
+  int _templateLoadAttempts = 0;
+  int _templateLoadSuccesses = 0;
+  int _templateLoadErrors = 0;
+  int _templateCacheHits = 0;
+  final Set<String> _loadedTemplateIds = {};
+  String? _lastTemplateError;
+
   /// Add a log entry
   void addLog({
     required String level,
@@ -132,6 +140,71 @@ class DebugLogService {
     );
   }
 
+  /// Log template loading attempt
+  void logTemplateLoadAttempt(String templateId) {
+    _templateLoadAttempts++;
+    addLog(
+      level: 'INFO',
+      category: 'TEMPLATE',
+      message: 'Template load attempt',
+      data: {'templateId': templateId, 'attemptNumber': _templateLoadAttempts},
+    );
+  }
+
+  /// Log template loading success
+  void logTemplateLoadSuccess(String templateId, String name) {
+    _templateLoadSuccesses++;
+    _loadedTemplateIds.add(templateId);
+    addLog(
+      level: 'INFO',
+      category: 'TEMPLATE',
+      message: 'Template loaded successfully',
+      data: {'templateId': templateId, 'name': name},
+    );
+  }
+
+  /// Log template loading error
+  void logTemplateLoadError(String templateId, Object error, {StackTrace? stackTrace}) {
+    _templateLoadErrors++;
+    _lastTemplateError = error.toString();
+
+    final errorType = error.runtimeType.toString();
+    _errorCounts[errorType] = (_errorCounts[errorType] ?? 0) + 1;
+
+    addLog(
+      level: 'ERROR',
+      category: 'TEMPLATE',
+      message: 'Template load failed',
+      data: {
+        'templateId': templateId,
+        'error': error.toString(),
+        'errorType': errorType,
+        'stackTrace': stackTrace?.toString(),
+      },
+    );
+  }
+
+  /// Log template cache hit
+  void logTemplateCacheHit(int count) {
+    _templateCacheHits++;
+    addLog(
+      level: 'INFO',
+      category: 'CACHE',
+      message: 'Templates loaded from cache',
+      data: {'count': count, 'totalCacheHits': _templateCacheHits},
+    );
+  }
+
+  /// Log template index loading
+  void logTemplateIndexLoad(int count, String source) {
+    addLog(
+      level: 'INFO',
+      category: 'TEMPLATE',
+      message: 'Template index loaded',
+      data: {'count': count, 'source': source},
+    );
+  }
+
   /// Get all logs
   List<DebugLogEntry> get logs => List.unmodifiable(_logs);
 
@@ -139,13 +212,26 @@ class DebugLogService {
   Map<String, dynamic> getStatistics() {
     return {
       'totalLogs': _logs.length,
+      // Image Statistics
       'imageLoadAttempts': _imageLoadAttempts,
       'imageLoadSuccesses': _imageLoadSuccesses,
       'imageLoadErrors': _imageLoadErrors,
-      'successRate': _imageLoadAttempts > 0
+      'imageSuccessRate': _imageLoadAttempts > 0
           ? ((_imageLoadSuccesses / _imageLoadAttempts) * 100).toStringAsFixed(1)
           : '0.0',
       'uniqueUrlsAttempted': _attemptedUrls.length,
+      // Template Statistics
+      'templateLoadAttempts': _templateLoadAttempts,
+      'templateLoadSuccesses': _templateLoadSuccesses,
+      'templateLoadErrors': _templateLoadErrors,
+      'templateSuccessRate': _templateLoadAttempts > 0
+          ? ((_templateLoadSuccesses / _templateLoadAttempts) * 100).toStringAsFixed(1)
+          : '0.0',
+      'templateCacheHits': _templateCacheHits,
+      'loadedTemplates': _loadedTemplateIds.length,
+      'loadedTemplateIds': _loadedTemplateIds.toList(),
+      'lastTemplateError': _lastTemplateError,
+      // Error Types
       'errorTypes': _errorCounts,
     };
   }
@@ -160,6 +246,12 @@ class DebugLogService {
     _imageLoadSuccesses = 0;
     _imageLoadErrors = 0;
     _attemptedUrls.clear();
+    _templateLoadAttempts = 0;
+    _templateLoadSuccesses = 0;
+    _templateLoadErrors = 0;
+    _templateCacheHits = 0;
+    _loadedTemplateIds.clear();
+    _lastTemplateError = null;
     _errorCounts.clear();
     addLog(
       level: 'INFO',
