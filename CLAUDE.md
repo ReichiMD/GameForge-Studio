@@ -1,6 +1,6 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 4.1 (Lokale Bedrock-Doku + Token-Optimierung!)
+**Version:** 4.2 (Template-System Fix + GitHub-Sync!)
 **Letzte Aktualisierung:** 2026-02-11
 **Status:** Phase 8 Komplett (✅ Fertig!) | Production-Ready 🎉
 
@@ -200,6 +200,31 @@ AppColors.background    // #1F2937 (Dark Gray)
 ---
 
 ## 📝 Letzte Session (für Kontext)
+
+**Session #32 - 2026-02-11 - Leveling Wolf Template Bugfixes 🐺**
+- ✅ **Template-Math-Fehler behoben**
+  * Problem: Scale-Berechnung `{{WOLF_SCALE_START}} / 10` → Wolf war 10% Größe (Mini-Wolf!)
+  * Problem: Damage-Berechnung `... / 100` → Wolf machte 0.05 Schaden (nutzlos!)
+  * Fix: Division entfernt - jetzt korrekte Berechnungen
+  * Level 1 Scale: Direkt `{{WOLF_SCALE_START}}` (z.B. 1.0)
+  * Level 2 Scale: `{{WOLF_SCALE_START}} * 1.25` (25% größer)
+  * Level 2 Damage: `{{WOLF_BASE_DAMAGE}} * {{WOLF_LEVEL_UP_BONUS}}` (korrekte Multiplikation)
+- ✅ **CLAUDE.md erweitert**
+  * Neue Section: "Template-Verwaltung" - erklärt GitHub-Loading
+  * Workflow für neue Templates dokumentiert (lokal → push → PR → merge)
+  * Template-Cache Mechanismus erklärt
+  * Version auf 4.2 erhöht
+- ✅ **1 Commit + Pull Request:** 6e1c258
+- Branch: `claude/fix-leveling-wolf-template-Pfk6o`
+
+**Status:** ✅ Template funktioniert jetzt korrekt! Wolf hat richtige Größe und Schaden! 🎉
+
+**Wichtige Erkenntnisse:**
+- Templates werden vom **main Branch** geladen (nicht vom Feature-Branch!)
+- Neue Templates brauchen PR + Merge auf main
+- Template-Cache in Settings aktualisierbar
+
+---
 
 **Session #31 - 2026-02-11 - Lokale Bedrock-Dokumentation + Strategie Update 📚**
 - ✅ **Bedrock Wiki Dokumentation lokal gespeichert**
@@ -465,6 +490,45 @@ Siehe: `app/assets/templates/TEMPLATE_CREATION_GUIDE.md`
 5. ✅ Dateien in pubspec.yaml + Services registrieren
 
 **Status:** ✅ Komplett implementiert und funktionsfähig!
+
+---
+
+## 🌐 Template-Verwaltung (WICHTIG!)
+
+**Templates werden von GitHub geladen, nicht lokal!**
+
+### **Warum GitHub?**
+- ✅ Neue Templates können jederzeit hinzugefügt werden (ohne APK neu bauen!)
+- ✅ Updates an Templates werden automatisch verteilt
+- ✅ Nutzer können eigene Templates beitragen (via PR)
+
+### **Lade-Mechanismus:**
+```dart
+// TemplateLoaderService lädt von GitHub (main Branch!)
+static const String _baseUrl =
+  'https://raw.githubusercontent.com/ReichiMD/GameForge-Studio/main/templates';
+```
+
+**WICHTIG:** Templates werden vom **main Branch** geladen!
+
+### **Workflow für neue Templates:**
+1. **Template lokal erstellen** - Ordner in `/templates/` anlegen
+2. **template.json + Dateien** - Alle benötigten Dateien erstellen
+3. **index.json aktualisieren** - Template-ID zur Liste hinzufügen
+4. **Committen + Pushen** - Auf Feature-Branch pushen
+5. **Pull Request erstellen** - PR auf `main` erstellen
+6. **Nach Merge:** Template ist in der App verfügbar! 🎉
+
+### **Template-Cache:**
+- Templates werden beim ersten Laden gecacht (SharedPreferences)
+- Cache-Update über Settings → "Templates aktualisieren"
+- Reset löscht Cache und lädt alles neu von GitHub
+
+### **Verfügbare Templates:**
+- `leveling_wolf` - Wolf der beim Training stärker wird 🐺
+- `base_defense` - Tower Defense Minigame 🏰
+
+**Tipp:** Nach Template-Änderungen auf GitHub: In der App Settings öffnen → "Templates aktualisieren" drücken!
 
 ---
 
