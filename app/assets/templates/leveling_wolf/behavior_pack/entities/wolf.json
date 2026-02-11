@@ -10,7 +10,7 @@
     "component_groups": {
       "{{PROJECT_NAME}}:wolf_level_1": {
         "minecraft:scale": {
-          "value": {{WOLF_SCALE_START}}
+          "value": "( {{WOLF_SCALE_START}} / 10 )"
         },
         "minecraft:attack": {
           "damage": {{WOLF_BASE_DAMAGE}}
@@ -18,10 +18,10 @@
       },
       "{{PROJECT_NAME}}:wolf_level_2": {
         "minecraft:scale": {
-          "value": "( {{WOLF_SCALE_START}} * 1.25 )"
+          "value": "( {{WOLF_SCALE_START}} / 10 * 1.25 )"
         },
         "minecraft:attack": {
-          "damage": "( {{WOLF_BASE_DAMAGE}} * {{WOLF_LEVEL_UP_BONUS}} )"
+          "damage": "( {{WOLF_BASE_DAMAGE}} * {{WOLF_LEVEL_UP_BONUS}} / 100 )"
         }
       }
     },
