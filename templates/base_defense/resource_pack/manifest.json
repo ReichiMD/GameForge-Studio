@@ -3,15 +3,21 @@
   "header": {
     "description": "{{DESCRIPTION}}",
     "name": "{{PROJECT_NAME}} Resource",
-    "uuid": "{{HEADER_UUID}}",
+    "uuid": "{{RESOURCE_PACK_UUID}}",
     "version": [1, 0, 0],
-    "min_engine_version": [1, 21, 0]
+    "min_engine_version": [1, 21, 130]
   },
   "modules": [
     {
       "description": "{{DESCRIPTION}}",
       "type": "resources",
-      "uuid": "{{MODULE_UUID}}",
+      "uuid": "{{RESOURCE_MODULE_UUID}}",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "{{HEADER_UUID}}",
       "version": [1, 0, 0]
     }
   ]

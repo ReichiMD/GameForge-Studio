@@ -5,13 +5,19 @@
     "name": "{{PROJECT_NAME}} Behavior",
     "uuid": "{{HEADER_UUID}}",
     "version": [1, 0, 0],
-    "min_engine_version": [1, 21, 0]
+    "min_engine_version": [1, 21, 130]
   },
   "modules": [
     {
       "description": "{{DESCRIPTION}}",
       "type": "data",
       "uuid": "{{MODULE_UUID}}",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "{{RESOURCE_PACK_UUID}}",
       "version": [1, 0, 0]
     }
   ]
