@@ -1,16 +1,15 @@
 {
-  "format_version": "1.21.130",
+  "format_version": "1.21.30",
   "minecraft:entity": {
     "description": {
       "identifier": "{{PROJECT_NAME}}:wolf",
       "is_spawnable": true,
-      "is_summonable": true,
-      "is_experimental": false
+      "is_summonable": true
     },
     "component_groups": {
       "{{PROJECT_NAME}}:wolf_level_1": {
         "minecraft:scale": {
-          "value": "( {{WOLF_SCALE_START}} / 10 )"
+          "value": {{WOLF_SCALE_START}}
         },
         "minecraft:attack": {
           "damage": {{WOLF_BASE_DAMAGE}}
@@ -18,18 +17,20 @@
       },
       "{{PROJECT_NAME}}:wolf_level_2": {
         "minecraft:scale": {
-          "value": "( {{WOLF_SCALE_START}} / 10 * 1.25 )"
+          "value": "( {{WOLF_SCALE_START}} * 1.25 )"
         },
         "minecraft:attack": {
-          "damage": "( {{WOLF_BASE_DAMAGE}} * {{WOLF_LEVEL_UP_BONUS}} / 100 )"
+          "damage": "( {{WOLF_BASE_DAMAGE}} * {{WOLF_LEVEL_UP_BONUS}} )"
         }
       }
     },
     "components": {
-      "minecraft:is_tameable": {
-        "tame_items": [
-          "bone"
-        ]
+      "minecraft:type_family": {
+        "family": [ "wolf", "mob" ]
+      },
+      "minecraft:health": {
+        "value": 20,
+        "max": 20
       },
       "minecraft:tamable": {
         "probability": 1.0,
@@ -37,6 +38,9 @@
           "event": "{{PROJECT_NAME}}:on_tame",
           "target": "self"
         }
+      },
+      "minecraft:is_tameable": {
+        "tame_items": [ "bone" ]
       },
       "minecraft:interact": {
         "interactions": [
@@ -57,35 +61,17 @@
           }
         ]
       },
-      "minecraft:behavior.owner_attack_targets": {
-        "priority": 1
-      },
-      "minecraft:behavior.owner_attack_property_target": {
-        "priority": 2
-      },
-      "minecraft:behavior.melee_attack": {
-        "priority": 3
-      }
+      "minecraft:behavior.owner_attack_targets": { "priority": 1 },
+      "minecraft:behavior.melee_attack": { "priority": 2 },
+      "minecraft:behavior.follow_owner": { "priority": 3, "speed_multiplier": 1.0 }
     },
     "events": {
       "{{PROJECT_NAME}}:on_tame": {
-        "add": {
-          "component_groups": [
-            "{{PROJECT_NAME}}:wolf_level_1"
-          ]
-        }
+        "add": { "component_groups": [ "{{PROJECT_NAME}}:wolf_level_1" ] }
       },
       "{{PROJECT_NAME}}:level_up_event": {
-        "remove": {
-          "component_groups": [
-            "{{PROJECT_NAME}}:wolf_level_1"
-          ]
-        },
-        "add": {
-          "component_groups": [
-            "{{PROJECT_NAME}}:wolf_level_2"
-          ]
-        }
+        "remove": { "component_groups": [ "{{PROJECT_NAME}}:wolf_level_1" ] },
+        "add": { "component_groups": [ "{{PROJECT_NAME}}:wolf_level_2" ] }
       }
     }
   }
