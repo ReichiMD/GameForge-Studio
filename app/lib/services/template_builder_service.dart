@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:archive/archive.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 import 'dart:io';
 import '../models/template_definition.dart';
 import 'template_parser_service.dart';
@@ -23,14 +24,26 @@ class TemplateBuilderService {
     print('Template: ${template.name}');
     print('Projekt: $projectName');
 
-    // 1. Alle Dateien im Template laden
+    // 1. UUIDs einmalig generieren (damit alle Dateien die gleichen UUIDs verwenden)
+    final uuidGenerator = const Uuid();
+    final generatedUUIDs = {
+      '{{HEADER_UUID}}': uuidGenerator.v4(),
+      '{{MODULE_UUID}}': uuidGenerator.v4(),
+      '{{RESOURCE_PACK_UUID}}': uuidGenerator.v4(),
+      '{{RESOURCE_MODULE_UUID}}': uuidGenerator.v4(),
+    };
+
+    // 2. Alle UUIDs zu fieldValues hinzufügen
+    final allFieldValues = {...fieldValues, ...generatedUUIDs};
+
+    // 3. Alle Dateien im Template laden
     final templateFiles = await _loadTemplateFiles(template);
     print('✅ ${templateFiles.length} Template-Dateien geladen');
 
-    // 2. ZIP-Archive erstellen
+    // 4. ZIP-Archive erstellen
     final archive = Archive();
 
-    // 3. Alle Dateien verarbeiten und zum Archive hinzufügen
+    // 5. Alle Dateien verarbeiten und zum Archive hinzufügen
     for (final entry in templateFiles.entries) {
       final filePath = entry.key;
       final content = entry.value;
@@ -40,7 +53,7 @@ class TemplateBuilderService {
         content,
         projectName,
         projectDescription,
-        fieldValues,
+        allFieldValues,
       );
 
       // Datei zum Archive hinzufügen
@@ -104,27 +117,8 @@ class TemplateBuilderService {
       TemplateDefinition template) async {
     final files = <String, String>{};
 
-    // Hardcoded file list für base_defense Template
-    // TODO: Später dynamisch aus AssetManifest.json laden
-    final filePaths = [
-      // Behavior Pack
-      'behavior_pack/manifest.json',
-      'behavior_pack/entities/defense_core.json',
-      'behavior_pack/entities/defense_turret.json',
-      'behavior_pack/entities/attacker_mob.json',
-      'behavior_pack/items/base_starter.json',
-      'behavior_pack/items/defense_turret_item.json',
-      'behavior_pack/loot_tables/attacker_rewards.json',
-      'behavior_pack/recipes/base_starter_recipe.json',
-      'behavior_pack/animation_controllers/core_setup.controller.json',
-      // Resource Pack
-      'resource_pack/manifest.json',
-      'resource_pack/entity/defense_core.entity.json',
-      'resource_pack/entity/defense_turret.entity.json',
-      'resource_pack/entity/attacker_mob.entity.json',
-      'resource_pack/texts/en_US.lang',
-      'resource_pack/textures/item_texture.json',
-    ];
+    // File lists für jedes Template
+    final filePaths = _getTemplateFilePaths(template.id);
 
     for (final filePath in filePaths) {
       try {
@@ -138,6 +132,46 @@ class TemplateBuilderService {
     }
 
     return files;
+  }
+
+  /// Gibt die Dateiliste für ein bestimmtes Template zurück
+  List<String> _getTemplateFilePaths(String templateId) {
+    switch (templateId) {
+      case 'leveling_wolf':
+        return [
+          // Behavior Pack
+          'behavior_pack/manifest.json',
+          'behavior_pack/entities/wolf.json',
+          // Resource Pack
+          'resource_pack/manifest.json',
+          'resource_pack/entity/wolf.entity.json',
+        ];
+
+      case 'base_defense':
+        return [
+          // Behavior Pack
+          'behavior_pack/manifest.json',
+          'behavior_pack/entities/defense_core.json',
+          'behavior_pack/entities/defense_turret.json',
+          'behavior_pack/entities/attacker_mob.json',
+          'behavior_pack/items/base_starter.json',
+          'behavior_pack/items/defense_turret_item.json',
+          'behavior_pack/loot_tables/attacker_rewards.json',
+          'behavior_pack/recipes/base_starter_recipe.json',
+          'behavior_pack/animation_controllers/core_setup.controller.json',
+          // Resource Pack
+          'resource_pack/manifest.json',
+          'resource_pack/entity/defense_core.entity.json',
+          'resource_pack/entity/defense_turret.entity.json',
+          'resource_pack/entity/attacker_mob.entity.json',
+          'resource_pack/texts/en_US.lang',
+          'resource_pack/textures/item_texture.json',
+        ];
+
+      default:
+        print('⚠️  Unbekanntes Template: $templateId - verwende leere Liste');
+        return [];
+    }
   }
 
   /// Speichert ZIP im Downloads-Ordner

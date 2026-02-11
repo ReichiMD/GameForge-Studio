@@ -16,7 +16,7 @@ class TemplateLoaderService {
   // Liste aller verfügbaren Template-IDs (Ordnernamen in assets/templates/)
   // TODO: Später aus einer Konfigurationsdatei laden
   static const List<String> _availableTemplates = [
-    'base_defense',
+    'leveling_wolf',
   ];
 
   /// Lädt alle Templates aus assets/templates/
