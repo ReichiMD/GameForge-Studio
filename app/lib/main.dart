@@ -35,81 +35,15 @@ class AuthWrapper extends StatefulWidget {
 }
 
 class _AuthWrapperState extends State<AuthWrapper> {
-  bool _isLoading = true;
-  bool _isAuthenticated = false;
-  String? _username;
-  String? _githubToken;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkAuthStatus();
-  }
-
-  Future<void> _checkAuthStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final username = prefs.getString('username');
-    final githubToken = prefs.getString('githubToken');
-
-    setState(() {
-      _isAuthenticated = username != null && githubToken != null;
-      _username = username;
-      _githubToken = githubToken;
-      _isLoading = false;
-    });
-  }
-
-  Future<void> _handleLogin(String username, String githubToken) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', username);
-    await prefs.setString('githubToken', githubToken);
-
-    setState(() {
-      _isAuthenticated = true;
-      _username = username;
-      _githubToken = githubToken;
-    });
-  }
-
-  Future<void> _handleLogout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('username');
-    await prefs.remove('githubToken');
-
-    setState(() {
-      _isAuthenticated = false;
-      _username = null;
-      _githubToken = null;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
-    if (!_isAuthenticated) {
-      return LoginScreen(onLogin: _handleLogin);
-    }
-
-    return MainNavigation(
-      onLogout: _handleLogout,
-    );
+    // Gehe direkt zur MainNavigation (kein Login-Check mehr beim Start)
+    return const MainNavigation();
   }
 }
 
 class MainNavigation extends StatefulWidget {
-  final VoidCallback onLogout;
-
-  const MainNavigation({
-    super.key,
-    required this.onLogout,
-  });
+  const MainNavigation({super.key});
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -126,7 +60,7 @@ class _MainNavigationState extends State<MainNavigation> {
     _screens = [
       const HomeScreen(),
       const LibraryScreen(),
-      SettingsScreen(onLogout: widget.onLogout),
+      const SettingsScreen(),
     ];
   }
 

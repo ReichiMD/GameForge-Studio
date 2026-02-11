@@ -5,14 +5,10 @@ import '../theme/app_spacing.dart';
 import '../services/project_service.dart';
 import '../services/template_loader_service.dart';
 import 'debug_screen.dart';
+import 'login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
-  final VoidCallback? onLogout;
-
-  const SettingsScreen({
-    super.key,
-    this.onLogout,
-  });
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -113,9 +109,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
 
     try {
-      // Lade Templates neu von GitHub
+      // Cache zurücksetzen und Templates neu laden von GitHub
       final templateLoader = TemplateLoaderService();
-      await templateLoader.reloadTemplates();
+      await templateLoader.reset(); // Cache löschen
+      await templateLoader.loadTemplates(forceReload: true); // Neu laden
 
       // Schließe Loading-Dialog
       if (mounted) Navigator.pop(context);
@@ -125,7 +122,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final templates = await templateLoader.getAllTemplates();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('✅ ${templates.length} Templates aktualisiert'),
+            content: Text('✅ ${templates.length} Templates von GitHub geladen'),
             backgroundColor: AppColors.success,
           ),
         );
@@ -150,7 +147,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             content: Text(
               'Templates konnten nicht geladen werden.\n\n'
               'Fehler: $e\n\n'
-              'Bitte überprüfe deine Internetverbindung.',
+              'Bitte überprüfe deine Internetverbindung und ob die Templates auf GitHub verfügbar sind.',
               style: const TextStyle(color: AppColors.textSecondary),
             ),
             actions: [
@@ -230,12 +227,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // GitHub Verbindung
           _buildSectionTitle('🔗 GITHUB VERBINDUNG'),
           const SizedBox(height: AppSpacing.lg),
-          _buildSettingsCard(
-            title: 'GitHub Token',
+          _buildClickableCard(
+            title: 'GitHub Token bearbeiten',
             subtitle: _githubToken != null
-                ? '●●●●●●●●●●●●●●●●●●●●●●●●'
-                : 'Nicht verbunden',
+                ? 'Token ist gesetzt: ●●●●●●●●●●●●'
+                : 'Kein Token gesetzt',
             icon: '🔑',
+            onTap: () async {
+              // Navigiere zum Login-Screen
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginScreen(
+                    onLogin: (username, token) async {
+                      // Speichere Token
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('username', username);
+                      await prefs.setString('githubToken', token);
+
+                      // Gehe zurück zu Settings
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        // Aktualisiere Settings-Screen
+                        _loadSettings();
+
+                        // Zeige Erfolgsmeldung
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('✅ GitHub Token gespeichert!'),
+                            backgroundColor: AppColors.success,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              );
+            },
           ),
           const SizedBox(height: AppSpacing.md),
           _buildSettingsCard(
@@ -331,34 +359,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: 'Neue Templates von GitHub laden',
             icon: '🔄',
             onTap: _reloadTemplates,
-          ),
-          const SizedBox(height: AppSpacing.xxl),
-
-          // Logout
-          ElevatedButton(
-            onPressed: widget.onLogout,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.text,
-              minimumSize: const Size(double.infinity, 60),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('🚪', style: TextStyle(fontSize: 24)),
-                SizedBox(width: AppSpacing.md),
-                Text(
-                  'Logout',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
           ),
           const SizedBox(height: AppSpacing.xxl),
 
