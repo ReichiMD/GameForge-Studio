@@ -1,0 +1,2 @@
+entity.{{PROJECT_NAME}}:wolf.name=Leveling Wolf
+item.spawn_egg.entity.{{PROJECT_NAME}}:wolf.name=Spawn-Ei für {{PROJECT_NAME}}-Wolf
