@@ -1,6 +1,6 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 4.3 (Template-System Production-Ready!)
+**Version:** 4.4 (Base Defense Fixed + Slider-UI!)
 **Letzte Aktualisierung:** 2026-02-11
 **Status:** Phase 8 Komplett (✅ Fertig!) | Production-Ready 🎉
 
@@ -39,7 +39,7 @@
 
 ---
 
-## 📱 Was funktioniert bereits? (Phase 1-7)
+## 📱 Was funktioniert bereits? (Phase 1-8)
 
 ✅ **Login/Logout** - Username + GitHub Token (SharedPreferences)
 ✅ **Bottom Navigation** - 3 Tabs (Home, Bibliothek, Settings)
@@ -76,7 +76,9 @@
 ✅ **Kein Login-Zwang** - App startet direkt, Login nur über Settings erreichbar 🚀
 ✅ **Debug-Screen scrollbar** - Vollständige Statistiken auch bei viel Inhalt sichtbar 📜
 ✅ **Template Decimal Support** - Editor unterstützt Dezimalzahlen (double) für Template-Felder 🔢
-✅ **Base Defense Template** - Funktionstüchtiges Tower Defense Template (getestet!) 🏰
+✅ **Base Defense Template** - Funktionstüchtiges Tower Defense Template (vollständig getestet!) 🏰
+✅ **Slider-UI für Templates** - Kinderfreundliche Schieberegler statt +/- Buttons im Editor 🎚️
+✅ **Starter-Kit System** - Basis-Items werden automatisch beim Spawn gegeben 📦
 
 ---
 
@@ -202,6 +204,49 @@ AppColors.background    // #1F2937 (Dark Gray)
 ---
 
 ## 📝 Letzte Session (für Kontext)
+
+**Session #34 - 2026-02-11 - Base Defense Template Fixed + Slider-UI 🎮**
+- ✅ **Alle 5 Minecraft-Fehler im Base Defense Template behoben**
+  * Fix 1: `minecraft:on_use` entfernt (deprecated in 1.21.130)
+  * Fix 2: `nearest_attackable_target` → `behavior.nearest_attackable_target` (Behavior, nicht Component!)
+  * Fix 3: Slash aus `queue_command` entfernt (Commands ohne `/`)
+  * Fix 4: Recipe unlock data hinzugefügt (`"unlock": [{"item": "minecraft:planks"}]`)
+  * Fix 5: Geometrien auf Standard-Würfel geändert (geometry.humanoid.custom + entity_alphatest)
+  * Quelle: Lokale Bedrock-Dokumentation (docs/bedrock-wiki/)
+- ✅ **Starter-Kit System implementiert**
+  * Neue Funktion: `starter_kit.mcfunction` (gibt Basis-Starter beim ersten Spawn)
+  * Tick-System: `tick.json` (führt Funktion automatisch aus)
+  * Spieler bekommt Basis-Starter direkt beim Betreten der Welt
+  * Tag-System verhindert mehrfaches Geben: `starter_kit_given`
+- ✅ **Editor auf Schieberegler umgebaut**
+  * Alte UI: +/- Buttons mit Textfeld
+  * Neue UI: Slider (Schieberegler) von links nach rechts
+  * Kinderfreundlicher und intuitiver!
+  * Aktueller Wert wird prominent angezeigt (großer Badge)
+  * Min/Max Werte links und rechts vom Slider
+- ✅ **Template-Dateien aktualisiert**
+  * 8 Dateien geändert (base_starter.json, defense_turret.json, defense_core.json, etc.)
+  * 2 neue Dateien (starter_kit.mcfunction, tick.json)
+  * template_builder_service.dart um neue Dateien erweitert
+  * template_editor_screen.dart komplett umgebaut (Slider statt Buttons)
+- ✅ **CLAUDE.md aktualisiert**
+  * Version auf 4.4 erhöht
+  * Session #34 dokumentiert
+
+**Status:** ✅ Base Defense Template funktioniert jetzt perfekt in Minecraft 1.21.130+! 🎉
+
+**Wichtige Änderungen:**
+- Template wurde vollständig getestet mit lokaler Bedrock-Dokumentation
+- Alle Fehler basierend auf echten Minecraft-Fehlermeldungen behoben
+- Editor ist jetzt noch kinderfreundlicher (Slider statt Buttons)
+- Spieler bekommt sofort beim Start den Basis-Starter ins Inventar
+
+**Visuelle Änderungen:**
+- Türme: Aussehen wie Eisenblöcke (grau/silber)
+- Kern: Aussehen wie Diamantblöcke (türkis/blau)
+- Beide schießen/funktionieren trotz einfachem Würfel-Design!
+
+---
 
 **Session #33 - 2026-02-11 - Template-System Production-Ready! 🎉**
 - ✅ **Template Decimal Support implementiert**

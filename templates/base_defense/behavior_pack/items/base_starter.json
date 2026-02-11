@@ -21,12 +21,6 @@
         "use_duration": 0.5,
         "movement_modifier": 0.5
       },
-      "minecraft:on_use": {
-        "on_use": {
-          "event": "spawn_core",
-          "target": "self"
-        }
-      },
       "minecraft:entity_placer": {
         "entity": "{{PROJECT_NAME}}:defense_core",
         "dispense_on": [ "minecraft:grass_block", "minecraft:dirt", "minecraft:stone" ]

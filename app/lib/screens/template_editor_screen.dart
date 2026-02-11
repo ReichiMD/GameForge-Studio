@@ -277,17 +277,15 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
   }
 
   Widget _buildNumberField(TemplateField field) {
-    final controller = TextEditingController(
-      text: _fieldValues[field.placeholder].toString(),
-    );
-
-    // Prüfe ob Dezimalzahlen unterstützt werden (min/max sind double oder defaultValue ist double)
+    // Prüfe ob Dezimalzahlen unterstützt werden
     final isDecimal = (field.min is double) ||
                       (field.max is double) ||
                       (field.defaultValue is double);
 
-    // Inkrement/Dekrement Schritt (int: 1, double: 0.1)
-    final step = isDecimal ? 0.1 : 1;
+    // Min/Max Werte als double
+    final minValue = (field.min ?? 0).toDouble();
+    final maxValue = (field.max ?? 100).toDouble();
+    final currentValue = (_fieldValues[field.placeholder] as num).toDouble();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,102 +302,68 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
                 ),
               ),
             ),
-            if (field.min != null && field.max != null)
-              Text(
-                '(${field.min}-${field.max})',
-                style: const TextStyle(
-                  color: Colors.white60,
-                  fontSize: 14,
-                ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(12),
               ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        Row(
-          children: [
-            // Minus Button
-            IconButton(
-              onPressed: () {
-                final current = _fieldValues[field.placeholder] as num;
-                final newValue = current - step;
-                if (field.min == null || newValue >= field.min!) {
-                  setState(() {
-                    _fieldValues[field.placeholder] = isDecimal
-                        ? double.parse(newValue.toStringAsFixed(2))
-                        : newValue.toInt();
-                  });
-                }
-              },
-              icon: const Icon(Icons.remove_circle_outline),
-              color: AppColors.primary,
-              iconSize: 32,
-            ),
-            const SizedBox(width: AppSpacing.sm),
-
-            // Eingabefeld
-            Expanded(
-              child: TextFormField(
-                controller: controller,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                textAlign: TextAlign.center,
+              child: Text(
+                isDecimal
+                    ? currentValue.toStringAsFixed(1)
+                    : currentValue.toInt().toString(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
-                inputFormatters: [
-                  // Erlaube Zahlen und Dezimalpunkt
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                ],
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color(0xFF374151),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                onChanged: (value) {
-                  final numValue = num.tryParse(value);
-                  if (numValue != null) {
-                    setState(() {
-                      _fieldValues[field.placeholder] = numValue;
-                    });
-                  }
-                },
-                validator: (value) {
-                  final numValue = num.tryParse(value ?? '');
-                  if (numValue == null) {
-                    return 'Bitte eine Zahl eingeben';
-                  }
-                  if (field.min != null && numValue < field.min!) {
-                    return 'Minimum: ${field.min}';
-                  }
-                  if (field.max != null && numValue > field.max!) {
-                    return 'Maximum: ${field.max}';
-                  }
-                  return null;
-                },
               ),
             ),
-            const SizedBox(width: AppSpacing.sm),
-
-            // Plus Button
-            IconButton(
-              onPressed: () {
-                final current = _fieldValues[field.placeholder] as num;
-                final newValue = current + step;
-                if (field.max == null || newValue <= field.max!) {
-                  setState(() {
-                    _fieldValues[field.placeholder] = isDecimal
-                        ? double.parse(newValue.toStringAsFixed(2))
-                        : newValue.toInt();
-                  });
-                }
-              },
-              icon: const Icon(Icons.add_circle_outline),
-              color: AppColors.primary,
-              iconSize: 32,
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Row(
+          children: [
+            Text(
+              isDecimal ? minValue.toStringAsFixed(0) : minValue.toInt().toString(),
+              style: const TextStyle(
+                color: Colors.white60,
+                fontSize: 14,
+              ),
+            ),
+            Expanded(
+              child: SliderTheme(
+                data: SliderThemeData(
+                  activeTrackColor: AppColors.primary,
+                  inactiveTrackColor: AppColors.primary.withOpacity(0.3),
+                  thumbColor: AppColors.primary,
+                  overlayColor: AppColors.primary.withOpacity(0.2),
+                  trackHeight: 6,
+                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
+                ),
+                child: Slider(
+                  value: currentValue.clamp(minValue, maxValue),
+                  min: minValue,
+                  max: maxValue,
+                  divisions: isDecimal
+                      ? ((maxValue - minValue) * 10).toInt()
+                      : (maxValue - minValue).toInt(),
+                  onChanged: (value) {
+                    setState(() {
+                      _fieldValues[field.placeholder] = isDecimal
+                          ? double.parse(value.toStringAsFixed(1))
+                          : value.toInt();
+                    });
+                  },
+                ),
+              ),
+            ),
+            Text(
+              isDecimal ? maxValue.toStringAsFixed(0) : maxValue.toInt().toString(),
+              style: const TextStyle(
+                color: Colors.white60,
+                fontSize: 14,
+              ),
             ),
           ],
         ),

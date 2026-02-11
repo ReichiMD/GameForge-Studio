@@ -4,16 +4,16 @@
     "description": {
       "identifier": "{{PROJECT_NAME}}:defense_turret",
       "materials": {
-        "default": "iron_golem"
+        "default": "entity_alphatest"
       },
       "textures": {
-        "default": "textures/entity/iron_golem/iron_golem"
+        "default": "textures/blocks/iron_block"
       },
       "geometry": {
-        "default": "geometry.iron_golem"
+        "default": "geometry.humanoid.custom"
       },
       "render_controllers": [
-        "controller.render.iron_golem"
+        "controller.render.default"
       ],
       "spawn_egg": {
         "base_color": "#7F7F7F",

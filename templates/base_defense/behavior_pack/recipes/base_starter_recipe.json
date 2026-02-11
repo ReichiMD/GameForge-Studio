@@ -18,6 +18,11 @@
     "result": {
       "item": "{{PROJECT_NAME}}:base_starter",
       "count": 1
-    }
+    },
+    "unlock": [
+      {
+        "item": "minecraft:planks"
+      }
+    ]
   }
 }
