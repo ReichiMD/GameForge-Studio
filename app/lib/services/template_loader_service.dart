@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/template_definition.dart';
+import 'debug_log_service.dart';
 
 /// Service zum Laden von Templates von GitHub
 class TemplateLoaderService {
@@ -10,9 +11,12 @@ class TemplateLoaderService {
   factory TemplateLoaderService() => _instance;
   TemplateLoaderService._internal();
 
+  final _debugLog = DebugLogService();
+
   // GitHub Repository URL (raw content)
+  // TEMPORÄR: Feature-Branch für Testing - später auf 'main' ändern!
   static const String _baseUrl =
-      'https://raw.githubusercontent.com/ReichiMD/GameForge-Studio/main/templates';
+      'https://raw.githubusercontent.com/ReichiMD/GameForge-Studio/claude/review-template-loading-luU4E/templates';
 
   // Cache für geladene Templates
   Map<String, TemplateDefinition>? _templates;
@@ -90,32 +94,52 @@ class TemplateLoaderService {
   /// Lädt die Template-Liste von index.json
   Future<List<String>> _loadTemplateIndex() async {
     final url = '$_baseUrl/index.json';
+    _debugLog.addLog(
+      level: 'INFO',
+      category: 'TEMPLATE',
+      message: 'Loading template index',
+      data: {'url': url},
+    );
+
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body) as Map<String, dynamic>;
       final templates = (json['templates'] as List).cast<String>();
       print('✅ Template-Index geladen: ${templates.length} Templates gefunden');
+      _debugLog.logTemplateIndexLoad(templates.length, 'GitHub');
       return templates;
     } else {
-      throw Exception(
-          'Fehler beim Laden von index.json: ${response.statusCode}');
+      final error = 'HTTP ${response.statusCode}';
+      _debugLog.addLog(
+        level: 'ERROR',
+        category: 'TEMPLATE',
+        message: 'Failed to load template index',
+        data: {'url': url, 'statusCode': response.statusCode},
+      );
+      throw Exception('Fehler beim Laden von index.json: $error');
     }
   }
 
   /// Lädt ein einzelnes Template von GitHub
   Future<TemplateDefinition> _loadTemplateFromGitHub(String templateId) async {
+    _debugLog.logTemplateLoadAttempt(templateId);
+
     final url = '$_baseUrl/$templateId/template.json';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body) as Map<String, dynamic>;
-      return TemplateDefinition.fromJson(
+      final template = TemplateDefinition.fromJson(
         templateId,
         '$_baseUrl/$templateId',
         json,
       );
+      _debugLog.logTemplateLoadSuccess(templateId, template.name);
+      return template;
     } else {
+      final error = Exception('HTTP ${response.statusCode}');
+      _debugLog.logTemplateLoadError(templateId, error);
       throw Exception(
           'Fehler beim Laden von template.json für $templateId: ${response.statusCode}');
     }
@@ -145,9 +169,18 @@ class TemplateLoaderService {
         }
       }
 
-      return templates.isEmpty ? null : templates;
+      if (templates.isEmpty) return null;
+
+      _debugLog.logTemplateCacheHit(templates.length);
+      return templates;
     } catch (e) {
       print('❌ Fehler beim Laden aus Cache: $e');
+      _debugLog.addLog(
+        level: 'ERROR',
+        category: 'CACHE',
+        message: 'Failed to load templates from cache',
+        data: {'error': e.toString()},
+      );
       return null;
     }
   }

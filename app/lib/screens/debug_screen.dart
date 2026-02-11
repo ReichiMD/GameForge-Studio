@@ -150,11 +150,59 @@ class _DebugScreenState extends State<DebugScreen> {
                 ),
                 const SizedBox(height: 12),
                 _buildStatRow('Total Logs', stats['totalLogs'].toString()),
-                _buildStatRow('Image Load Attempts', stats['imageLoadAttempts'].toString()),
-                _buildStatRow('Image Load Successes', stats['imageLoadSuccesses'].toString(), color: AppColors.success),
-                _buildStatRow('Image Load Errors', stats['imageLoadErrors'].toString(), color: AppColors.error),
-                _buildStatRow('Success Rate', '${stats['successRate']}%'),
-                _buildStatRow('Unique URLs Attempted', stats['uniqueUrlsAttempted'].toString()),
+                const Divider(height: 24),
+                const Text(
+                  '🖼️ Image Statistics',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                _buildStatRow('Load Attempts', stats['imageLoadAttempts'].toString()),
+                _buildStatRow('Successes', stats['imageLoadSuccesses'].toString(), color: AppColors.success),
+                _buildStatRow('Errors', stats['imageLoadErrors'].toString(), color: AppColors.error),
+                _buildStatRow('Success Rate', '${stats['imageSuccessRate']}%'),
+                _buildStatRow('Unique URLs', stats['uniqueUrlsAttempted'].toString()),
+                const Divider(height: 24),
+                const Text(
+                  '🎮 Template Statistics',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                _buildStatRow('Load Attempts', stats['templateLoadAttempts'].toString()),
+                _buildStatRow('Successes', stats['templateLoadSuccesses'].toString(), color: AppColors.success),
+                _buildStatRow('Errors', stats['templateLoadErrors'].toString(), color: AppColors.error),
+                _buildStatRow('Success Rate', '${stats['templateSuccessRate']}%'),
+                _buildStatRow('Cache Hits', stats['templateCacheHits'].toString()),
+                _buildStatRow('Loaded Templates', stats['loadedTemplates'].toString()),
+                if (stats['loadedTemplateIds'] is List && (stats['loadedTemplateIds'] as List).isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Loaded Templates:',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                  ...(stats['loadedTemplateIds'] as List).map((id) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 16.0, top: 4.0),
+                      child: Text(
+                        '✓ $id',
+                        style: const TextStyle(fontSize: 11, color: AppColors.success),
+                      ),
+                    );
+                  }),
+                ],
+                if (stats['lastTemplateError'] != null) ...[
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Last Template Error:',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.error),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0, top: 4.0),
+                    child: Text(
+                      stats['lastTemplateError'].toString(),
+                      style: const TextStyle(fontSize: 11, color: AppColors.error),
+                    ),
+                  ),
+                ],
                 if (stats['errorTypes'] is Map && (stats['errorTypes'] as Map).isNotEmpty) ...[
                   const SizedBox(height: 8),
                   const Text(
