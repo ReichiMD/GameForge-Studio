@@ -167,16 +167,15 @@ class TemplateLoaderService {
         final templateJson = jsonEncode({
           'name': entry.value.name,
           'description': entry.value.description,
-          'icon': entry.value.icon,
-          'fields': entry.value.fields
+          'category': entry.value.category,
+          'editor_fields': entry.value.editorFields
               .map((f) => {
-                    'name': f.name,
+                    'placeholder': f.placeholder,
                     'label': f.label,
                     'type': f.type,
-                    'defaultValue': f.defaultValue,
-                    'placeholder': f.placeholder,
-                    'minValue': f.minValue,
-                    'maxValue': f.maxValue,
+                    'default': f.defaultValue,
+                    if (f.min != null) 'min': f.min,
+                    if (f.max != null) 'max': f.max,
                   })
               .toList(),
         });
