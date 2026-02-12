@@ -287,6 +287,7 @@ class AddonBuilderService {
     final armorToughness = (customStats['armor_toughness'] as num?)?.toDouble() ?? 0.0;
     final enchantability = (customStats['enchantability'] as num?)?.toInt() ?? 10;
     final movementSpeed = (customStats['movement_speed'] as num?)?.toDouble() ?? 0.0;
+    final nameColor = customStats['name_color'] as String? ?? 'white';
 
     // Advanced stats (noch nicht verwendet)
     final miningSpeed = (customStats['mining_speed'] as num?)?.toDouble() ?? 1.0;
@@ -294,9 +295,10 @@ class AddonBuilderService {
     // Build components
     final components = <String, dynamic>{};
 
-    // Display name
+    // Display name mit Farbe (Minecraft Format Codes)
+    final colorCode = _getMinecraftColorCode(nameColor);
     components['minecraft:display_name'] = {
-      'value': item.name,
+      'value': '$colorCode${item.name}',
     };
 
     // Icon - NEW FORMAT in 1.21.130+
@@ -404,13 +406,55 @@ class AddonBuilderService {
       }
     }
 
-    // Effects
+    // Spezial-Fähigkeiten (NEU!)
     final effects = item.effects;
-    if (effects['fire'] == true) {
+
+    // Feueraspekt - Setzt Gegner in Brand
+    if (effects['fire_aspect'] == true) {
+      // TODO: Wird über Enchantment in separater Funktion hinzugefügt
+      // Für jetzt nutzen wir ignite_on_use als Workaround
       components['minecraft:ignite_on_use'] = {
         'duration': 5.0,
       };
     }
+
+    // Rückstoß - Wird durch erhöhten Knockback Modifier simuliert
+    if (effects['knockback'] == true) {
+      // Füge knockback_resistance hinzu (negativ für mehr Knockback beim Gegner)
+      attributeModifiers.add({
+        'attribute': 'minecraft:player.knockback_resistance',
+        'amount': -0.5, // Mehr Knockback
+        'operation': 'add_value',
+        'slot': 'mainhand',
+      });
+    }
+
+    // Feuerbälle schießen beim Rechtsklick
+    // HINWEIS: minecraft:shooter ist für Bögen/Armbrüste gedacht!
+    // Für Nahkampfwaffen die Feuerbälle schießen braucht man:
+    // 1. Custom Entity für Feuerball
+    // 2. Animation Controller für on_use Event
+    // 3. spawn_entity beim Rechtsklick
+    // → Sehr komplex! Für jetzt deaktiviert.
+    if (effects['shoot_fireballs'] == true) {
+      // TODO: Implementierung für Nahkampf-Waffen die Feuerbälle schießen
+      // Für jetzt wird das Item zu einem "Schießer" (wie Bogen)
+      components['minecraft:shooter'] = {
+        'ammunition_item': 'minecraft:air', // Keine Munition nötig
+        'max_draw_duration': 0.5,
+        'charge_on_draw': true,
+      };
+
+      // Spawnt Feuerball-Entity
+      components['minecraft:projectile'] = {
+        'projectile_entity': 'minecraft:small_fireball',
+      };
+
+      // WARNUNG: Das Item verhält sich jetzt wie ein Bogen!
+      // Bessere Lösung: Custom Entity + Animation Controller
+    }
+
+    // Legacy effects
     if (effects['glow'] == true) {
       components['minecraft:foil'] = true;
     }
@@ -520,6 +564,32 @@ class AddonBuilderService {
         return 'armor_torso'; // Default
       default:
         return null; // No enchantability for other categories
+    }
+  }
+
+  /// Get Minecraft color code from color name
+  static String _getMinecraftColorCode(String colorName) {
+    switch (colorName.toLowerCase()) {
+      case 'white':
+        return '§f';
+      case 'red':
+        return '§c';
+      case 'gold':
+        return '§6';
+      case 'yellow':
+        return '§e';
+      case 'green':
+        return '§a';
+      case 'aqua':
+        return '§b';
+      case 'blue':
+        return '§9';
+      case 'light_purple':
+        return '§d';
+      case 'dark_purple':
+        return '§5';
+      default:
+        return '§f'; // Default: white
     }
   }
 
