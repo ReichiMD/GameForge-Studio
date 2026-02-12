@@ -565,7 +565,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
                         Text(
                           markLabels[i],
                           style: TextStyle(
-                            fontSize: AppTypography.xxs,
+                            fontSize: AppTypography.xs,
                             color: AppColors.info.withOpacity(0.8),
                             fontWeight: FontWeight.w600,
                           ),
