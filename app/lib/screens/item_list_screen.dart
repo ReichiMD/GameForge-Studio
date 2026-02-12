@@ -257,74 +257,20 @@ class _ItemListScreenState extends State<ItemListScreen> {
     return GestureDetector(
       onTap: () => _handleItemSelect(item),
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
           border: Border.all(color: AppColors.border, width: 2),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Item Icon with texture or emoji fallback
-            ItemTextureWidget(
-              item: item,
-              size: 64,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            // Item Name
-            Text(
-              item.name,
-              style: const TextStyle(
-                fontSize: AppTypography.md,
-                fontWeight: FontWeight.w600,
-                color: AppColors.text,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            // Rarity Badge
-            if (item.rarity != null)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: 2,
-                ),
-                decoration: BoxDecoration(
-                  color: _getRarityColor(item.rarity!).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(AppSizing.radiusSmall),
-                ),
-                child: Text(
-                  item.rarity!,
-                  style: TextStyle(
-                    fontSize: AppTypography.xs,
-                    color: _getRarityColor(item.rarity!),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-          ],
+        child: Center(
+          child: ItemTextureWidget(
+            item: item,
+            size: 96, // Größer für bessere Sichtbarkeit
+          ),
         ),
       ),
     );
   }
 
-  Color _getRarityColor(String rarity) {
-    switch (rarity.toLowerCase()) {
-      case 'common':
-        return Colors.grey;
-      case 'uncommon':
-        return Colors.green;
-      case 'rare':
-        return Colors.blue;
-      case 'epic':
-        return Colors.purple;
-      case 'legendary':
-        return Colors.orange;
-      default:
-        return AppColors.textSecondary;
-    }
-  }
 }

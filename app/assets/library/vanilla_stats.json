@@ -110,42 +110,6 @@
       },
       "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/netherite_sword.png"
     },
-    "bow": {
-      "id": "minecraft:bow",
-      "name": "Bogen",
-      "name_en": "Bow",
-      "category": "weapons",
-      "type": "ranged",
-      "emoji": "🏹",
-      "rarity": "uncommon",
-      "stats": {
-        "damage": 9,
-        "attack_speed": 1.0,
-        "durability": 384,
-        "enchantable": true,
-        "stackable": false,
-        "projectile": "arrow"
-      },
-      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/bow.png"
-    },
-    "crossbow": {
-      "id": "minecraft:crossbow",
-      "name": "Armbrust",
-      "name_en": "Crossbow",
-      "category": "weapons",
-      "type": "ranged",
-      "emoji": "🏹",
-      "rarity": "uncommon",
-      "stats": {
-        "damage": 9,
-        "attack_speed": 1.25,
-        "durability": 326,
-        "enchantable": true,
-        "stackable": false,
-        "projectile": "arrow"
-      },
-      "texture": "https://raw.githubusercontent.com/ReichiMD/fabrik-library/main/assets/vanilla/textures/items/crossbow.png"
-    },
     "trident": {
       "id": "minecraft:trident",
       "name": "Dreizack",
