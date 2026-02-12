@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
@@ -27,6 +30,7 @@ class _ItemListScreenState extends State<ItemListScreen> {
   final VanillaDataService _vanillaService = VanillaDataService();
   final ProjectService _projectService = ProjectService();
   List<VanillaItem> _items = [];
+  List<String> _customIconUrls = []; // Custom Icons
   bool _isLoading = true;
 
   @override
@@ -45,6 +49,12 @@ class _ItemListScreenState extends State<ItemListScreen> {
 
     if (categoryId != null) {
       final items = await _vanillaService.getItemsByCategory(categoryId);
+
+      // Custom Icons laden (nur für Waffen)
+      if (categoryId == 'weapons') {
+        await _loadCustomIcons();
+      }
+
       setState(() {
         _items = items;
         _isLoading = false;
@@ -52,6 +62,29 @@ class _ItemListScreenState extends State<ItemListScreen> {
     } else {
       // No vanilla items for this category - create custom item directly
       await _handleCreateCustomItem();
+    }
+  }
+
+  Future<void> _loadCustomIcons() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://api.github.com/repos/ReichiMD/fabrik-library/contents/assets/custom/icons/Schwert'),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> files = json.decode(response.body);
+        final urls = <String>[];
+        for (final file in files) {
+          final name = file['name'] as String;
+          if (name.toLowerCase().endsWith('.png')) {
+            urls.add(file['download_url'] as String);
+          }
+        }
+        _customIconUrls = urls;
+      }
+    } catch (e) {
+      // Fehler beim Laden - ignorieren
+      _customIconUrls = [];
     }
   }
 
@@ -202,18 +235,25 @@ class _ItemListScreenState extends State<ItemListScreen> {
       return _buildEmptyState();
     }
 
+    final totalItems = _items.length + _customIconUrls.length;
+
     return GridView.builder(
       padding: const EdgeInsets.all(AppSpacing.xl),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: 3, // 3 Spalten statt 2 für kleinere Karten
         crossAxisSpacing: AppSpacing.md,
         mainAxisSpacing: AppSpacing.md,
-        childAspectRatio: 0.85,
+        childAspectRatio: 1.0, // Quadratisch
       ),
-      itemCount: _items.length,
+      itemCount: totalItems,
       itemBuilder: (context, index) {
-        final item = _items[index];
-        return _buildItemCard(item);
+        // Erst Vanilla Items, dann Custom Icons
+        if (index < _items.length) {
+          return _buildItemCard(_items[index], null);
+        } else {
+          final customIconUrl = _customIconUrls[index - _items.length];
+          return _buildCustomIconCard(customIconUrl);
+        }
       },
     );
   }
@@ -253,78 +293,84 @@ class _ItemListScreenState extends State<ItemListScreen> {
     );
   }
 
-  Widget _buildItemCard(VanillaItem item) {
+  Widget _buildItemCard(VanillaItem item, String? customIconUrl) {
     return GestureDetector(
       onTap: () => _handleItemSelect(item),
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(AppSizing.radiusLarge),
+          borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
           border: Border.all(color: AppColors.border, width: 2),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Item Icon with texture or emoji fallback
-            ItemTextureWidget(
-              item: item,
-              size: 64,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            // Item Name
-            Text(
-              item.name,
-              style: const TextStyle(
-                fontSize: AppTypography.md,
-                fontWeight: FontWeight.w600,
-                color: AppColors.text,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            // Rarity Badge
-            if (item.rarity != null)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: 2,
-                ),
-                decoration: BoxDecoration(
-                  color: _getRarityColor(item.rarity!).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(AppSizing.radiusSmall),
-                ),
-                child: Text(
-                  item.rarity!,
-                  style: TextStyle(
-                    fontSize: AppTypography.xs,
-                    color: _getRarityColor(item.rarity!),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-          ],
+        child: Center(
+          child: ItemTextureWidget(
+            item: item,
+            size: 64, // 20% kleiner für kompaktere Ansicht
+          ),
         ),
       ),
     );
   }
 
-  Color _getRarityColor(String rarity) {
-    switch (rarity.toLowerCase()) {
-      case 'common':
-        return Colors.grey;
-      case 'uncommon':
-        return Colors.green;
-      case 'rare':
-        return Colors.blue;
-      case 'epic':
-        return Colors.purple;
-      case 'legendary':
-        return Colors.orange;
-      default:
-        return AppColors.textSecondary;
+  Widget _buildCustomIconCard(String customIconUrl) {
+    return GestureDetector(
+      onTap: () => _handleCustomIconSelect(customIconUrl),
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
+          border: Border.all(color: AppColors.border, width: 2),
+        ),
+        child: Center(
+          child: CachedNetworkImage(
+            imageUrl: customIconUrl,
+            width: 64,
+            height: 64,
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.none,
+            placeholder: (context, url) => const SizedBox(
+              width: 32,
+              height: 32,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            errorWidget: (context, url, error) => const Icon(
+              Icons.broken_image,
+              color: AppColors.error,
+              size: 32,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleCustomIconSelect(String iconUrl) async {
+    // Erstelle Item mit Custom Icon
+    final fileName = iconUrl.split('/').last.replaceAll('.png', '');
+    final newItem = ProjectItem.create(
+      name: 'Custom $fileName',
+      category: widget.category['name']!,
+      emoji: '⚔️',
+      customIconUrl: iconUrl,
+    );
+
+    // Navigate to editor
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => WorkshopScreen(
+          project: widget.project,
+          item: newItem,
+          isNewItem: true,
+        ),
+      ),
+    );
+
+    // If item was saved, pop back to ProjectDetailScreen
+    if (result == true && mounted) {
+      Navigator.of(context).pop(true);
     }
   }
+
 }

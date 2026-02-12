@@ -1,7 +1,7 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 4.4 (Base Defense Fixed + Slider-UI!)
-**Letzte Aktualisierung:** 2026-02-11
+**Version:** 4.5 (Waffen-Editor Redesign!)
+**Letzte Aktualisierung:** 2026-02-12
 **Status:** Phase 8 Komplett (✅ Fertig!) | Production-Ready 🎉
 
 ---
@@ -204,6 +204,61 @@ AppColors.background    // #1F2937 (Dark Gray)
 ---
 
 ## 📝 Letzte Session (für Kontext)
+
+**Session #35 - 2026-02-12 - Waffen-Editor Redesign 🗡️**
+- ✅ **Waffen-Kategorie nur noch Nahkampfwaffen**
+  * Bogen und Armbrust aus vanilla_stats.json entfernt
+  * Nur noch 8 Nahkampfwaffen: wooden_sword bis netherite_sword, trident, mace
+- ✅ **Item-Liste zeigt nur noch Bilder**
+  * Keine Namen/Raritäten mehr angezeigt
+  * 3 Spalten Grid mit 64px Icons (kompakt, quadratisch)
+  * Custom Icons aus fabrik-library Schwert-Ordner
+- ✅ **Workshop-Screen komplett neu gestaltet**
+  * Nur für Nahkampfwaffen optimiert
+  * Name-Farb-Picker mit 9 Farben (nur Kreise, kein Text)
+  * 4 Stats mit Slidern: Schaden (1-50), Haltbarkeit (100-3000), Verzauberbarkeit (1-15), Bewegungsgeschwindigkeit (-100% bis +200%)
+  * Default-Werte auf Diamant-Tier (Schaden: 7, Haltbarkeit: 1561)
+  * 3 Spezial-Fähigkeiten: Feueraspekt, Rückstoß, Feuerbälle schießen
+- ✅ **Minecraft Bedrock Abilities korrigiert**
+  * Problem 1: Feueraspekt nutzte falsche `minecraft:ignite_on_use` Component (verbrennt Item, nicht Gegner)
+  * Problem 2: Knockback nutzte falsches `knockback_resistance` Attribut (beeinflusst nur Spieler, nicht Gegner)
+  * Problem 3: Feuerball-Shooter fehlte `minecraft:use_modifiers` Component
+  * Problem 4: Feuerball-Shooter hatte falsche `ammunition_item` Syntax (muss `ammunition` Array sein)
+  * Fix: Feueraspekt + Knockback funktionieren NICHT in Bedrock (nur via Script API oder Enchantments)
+  * Fix: Feuerball-Shooter jetzt mit korrekter Syntax (leeres ammunition Array, use_modifiers mit use_duration)
+- ✅ **UI-Hinweise für nicht-funktionierende Fähigkeiten**
+  * Feueraspekt: "⚠️ Funktioniert nicht (benötigt Script API)"
+  * Rückstoß: "⚠️ Funktioniert nicht (benötigt Script API)"
+  * Feuerbälle: "Halten + Loslassen zum Schießen" (verhält sich wie Bogen)
+- ✅ **Alle Änderungen getestet**
+  * Lokale Bedrock-Dokumentation (docs/bedrock-wiki/) genutzt
+  * Korrekte Syntax aus TAG:250 (Item Components) extrahiert
+  * Feuerball-Shooter funktioniert jetzt ohne Minecraft-Fehler
+- ✅ **2 Dateien geändert:**
+  * workshop_screen.dart - Komplettes Redesign für Nahkampfwaffen
+  * addon_builder_service.dart - Abilities korrigiert mit Bedrock-konformer Syntax
+  * vanilla_stats.json - Bogen + Armbrust entfernt
+  * item_list_screen.dart - Nur Bilder anzeigen, Custom Icons Support
+- ✅ **3 Commits:** 72f70ac, a576f5f, b1c90de
+- Branch: `claude/redesign-weapons-editor-OHPeP`
+
+**Status:** ✅ Waffen-Editor jetzt kinderfreundlich und nur für Nahkampf! Feuerball-Ability funktioniert! 🎉
+
+**Wichtige Änderungen:**
+- Editor zeigt nur noch Bilder (keine Text-Clutter mehr)
+- Nahkampf-fokussiert (keine Bögen/Armbrüste)
+- Bewegungsgeschwindigkeit bis +200% möglich
+- Feueraspekt + Knockback werden NICHT exportiert (funktionieren in Bedrock nicht nativ)
+- Feuerball-Shooter funktioniert jetzt korrekt (muss gezogen werden wie Bogen)
+
+**Technische Details:**
+- Bedrock Edition hat KEINE native "on_hit_entity" Component für Items
+- Fire Aspect funktioniert nur als Enchantment oder mit Script API Custom Components
+- Knockback funktioniert nur als Enchantment (Knockback I/II) oder mit Script API
+- minecraft:shooter braucht IMMER minecraft:use_modifiers Component
+- ammunition Syntax: Array von Objekten, NICHT ammunition_item Property
+
+---
 
 **Session #34 - 2026-02-11 - Base Defense Template Fixed + Slider-UI 🎮**
 - ✅ **Alle 5 Minecraft-Fehler im Base Defense Template behoben**

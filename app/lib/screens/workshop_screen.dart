@@ -34,23 +34,18 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
   late String _itemEmoji;
   late String _category;
   String? _customIconUrl;
+  String _nameColor = 'white'; // NEU: Namensfarbe
 
-  // Stats (Hauptbereich)
+  // Stats (nur für Nahkampfwaffen!)
   late double _damage;
   late double _durability;
-  late double _armor;
-  late double _armorToughness;
   late double _enchantability;
   late double _movementSpeed;
 
-  // Advanced Stats (Erweitert - noch nicht verfügbar)
-  late double _attackSpeed;
-  late double _miningSpeed;
-  bool _showAdvanced = false;
-
-  // Effects
-  late bool _fireEffect;
-  late bool _glowEffect;
+  // Spezial-Fähigkeiten (NEU!)
+  late bool _fireAspect; // Feueraspekt
+  late bool _knockback; // Rückstoß
+  late bool _shootFireballs; // Feuerbälle schießen
 
   @override
   void initState() {
@@ -73,22 +68,18 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       _itemEmoji = item.emoji;
       _category = item.category;
       _customIconUrl = item.customIconUrl;
+      _nameColor = item.customStats['name_color'] as String? ?? 'white';
 
-      // Load stats (Hauptbereich)
-      _damage = (item.customStats['damage'] as num?)?.toDouble() ?? 1.0;
-      _durability = (item.customStats['durability'] as num?)?.toDouble() ?? 100.0;
-      _armor = (item.customStats['armor'] as num?)?.toDouble() ?? 0.0;
-      _armorToughness = (item.customStats['armor_toughness'] as num?)?.toDouble() ?? 0.0;
+      // Load stats (Default: Diamant-Werte)
+      _damage = (item.customStats['damage'] as num?)?.toDouble() ?? 7.0; // Diamant
+      _durability = (item.customStats['durability'] as num?)?.toDouble() ?? 1561.0; // Diamant
       _enchantability = (item.customStats['enchantability'] as num?)?.toDouble() ?? 10.0;
       _movementSpeed = (item.customStats['movement_speed'] as num?)?.toDouble() ?? 0.0;
 
-      // Load advanced stats (für später)
-      _attackSpeed = (item.customStats['attack_speed'] as num?)?.toDouble() ?? 1.0;
-      _miningSpeed = (item.customStats['mining_speed'] as num?)?.toDouble() ?? 1.0;
-
-      // Load effects
-      _fireEffect = item.effects['fire'] as bool? ?? false;
-      _glowEffect = item.effects['glow'] as bool? ?? false;
+      // Load abilities
+      _fireAspect = item.effects['fire_aspect'] as bool? ?? false;
+      _knockback = item.effects['knockback'] as bool? ?? false;
+      _shootFireballs = item.effects['shoot_fireballs'] as bool? ?? false;
     });
   }
 
@@ -133,10 +124,10 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
-          const Text('🔧', style: TextStyle(fontSize: 28)),
+          const Text('⚔️', style: TextStyle(fontSize: 28)),
           const SizedBox(width: AppSpacing.md),
           Text(
-            widget.isNewItem ? 'Neues Item' : 'Item bearbeiten',
+            widget.isNewItem ? 'Neue Waffe' : 'Waffe bearbeiten',
             style: const TextStyle(
               fontSize: AppTypography.xl,
               fontWeight: FontWeight.w700,
@@ -154,13 +145,18 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Item Preview
+          // Item Preview - NUR BILD!
           _buildItemPreview(),
 
           const SizedBox(height: AppSpacing.xxl),
 
           // Item Name Input
           _buildItemNameInput(),
+
+          const SizedBox(height: AppSpacing.md),
+
+          // Namensfarbe Picker
+          _buildNameColorPicker(),
 
           const SizedBox(height: AppSpacing.xxl),
 
@@ -169,8 +165,8 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
 
           const SizedBox(height: AppSpacing.xxl),
 
-          // Effects Section
-          _buildEffectsSection(),
+          // Abilities Section
+          _buildAbilitiesSection(),
 
           const SizedBox(height: AppSpacing.xxl),
 
@@ -193,7 +189,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       ),
       child: Column(
         children: [
-          // Item Icon - tappable to change
+          // Nur das Bild - tappable zum Ändern
           GestureDetector(
             onTap: _showIconPicker,
             child: Stack(
@@ -264,36 +260,6 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
               color: AppColors.textSecondary.withOpacity(0.6),
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            _itemName,
-            style: const TextStyle(
-              fontSize: AppTypography.xl,
-              fontWeight: FontWeight.w700,
-              color: AppColors.text,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          if (widget.item.baseItem != null) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Basiert auf: ${widget.item.baseItem!.name}',
-              style: TextStyle(
-                fontSize: AppTypography.sm,
-                color: AppColors.info.withOpacity(0.8),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ] else ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              _category,
-              style: TextStyle(
-                fontSize: AppTypography.sm,
-                color: AppColors.textSecondary.withOpacity(0.7),
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -304,7 +270,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '📝 Item-Name',
+          '📝 Waffen-Name',
           style: TextStyle(
             fontSize: AppTypography.md,
             fontWeight: FontWeight.w600,
@@ -353,12 +319,86 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
     );
   }
 
+  Widget _buildNameColorPicker() {
+    final colors = {
+      'white': {'name': 'Weiß', 'color': Colors.white},
+      'red': {'name': 'Rot', 'color': Colors.red},
+      'gold': {'name': 'Gold', 'color': Colors.amber},
+      'yellow': {'name': 'Gelb', 'color': Colors.yellow},
+      'green': {'name': 'Grün', 'color': Colors.green},
+      'aqua': {'name': 'Türkis', 'color': Colors.cyan},
+      'blue': {'name': 'Blau', 'color': Colors.blue},
+      'light_purple': {'name': 'Lila', 'color': Colors.purple},
+      'dark_purple': {'name': 'Dunkellila', 'color': Colors.deepPurple},
+    };
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '🎨 Namensfarbe',
+          style: TextStyle(
+            fontSize: AppTypography.md,
+            fontWeight: FontWeight.w600,
+            color: AppColors.text,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: colors.entries.map((entry) {
+              final isSelected = _nameColor == entry.key;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _nameColor = entry.key;
+                    });
+                  },
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: entry.value['color'] as Color,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected ? AppColors.primary : Colors.white24,
+                        width: isSelected ? 3 : 1,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: AppColors.primary.withOpacity(0.4),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildStatsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '⚡ Item-Stats',
+          '⚡ Waffen-Stats',
           style: TextStyle(
             fontSize: AppTypography.md,
             fontWeight: FontWeight.w600,
@@ -367,13 +407,13 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         ),
         const SizedBox(height: AppSpacing.lg),
 
-        // Schaden
+        // Schaden (1-50) - Standard: Diamant (7)
         _buildStatSlider(
           label: 'Schaden',
           emoji: '⚔️',
           value: _damage,
           minValue: 1,
-          maxValue: 20,
+          maxValue: 50,
           onChanged: (value) {
             setState(() {
               _damage = value;
@@ -382,7 +422,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         ),
         const SizedBox(height: AppSpacing.lg),
 
-        // Haltbarkeit
+        // Haltbarkeit - Standard: Diamant (1561)
         _buildStatSlider(
           label: 'Haltbarkeit',
           emoji: '🛡️',
@@ -397,37 +437,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         ),
         const SizedBox(height: AppSpacing.lg),
 
-        // Rüstung
-        _buildStatSlider(
-          label: 'Rüstung',
-          emoji: '🛡️',
-          value: _armor,
-          minValue: 0,
-          maxValue: 20,
-          onChanged: (value) {
-            setState(() {
-              _armor = value;
-            });
-          },
-        ),
-        const SizedBox(height: AppSpacing.lg),
-
-        // Rüstungshärte
-        _buildStatSlider(
-          label: 'Rüstungshärte',
-          emoji: '💪',
-          value: _armorToughness,
-          minValue: 0,
-          maxValue: 12,
-          onChanged: (value) {
-            setState(() {
-              _armorToughness = value;
-            });
-          },
-        ),
-        const SizedBox(height: AppSpacing.lg),
-
-        // Verzauberbarkeit (NEU)
+        // Verzauberbarkeit
         _buildStatSlider(
           label: 'Verzauberbarkeit',
           emoji: '✨',
@@ -442,14 +452,14 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         ),
         const SizedBox(height: AppSpacing.lg),
 
-        // Bewegungsgeschwindigkeit (NEU)
+        // Bewegungsgeschwindigkeit (-100% bis +200%)
         _buildStatSlider(
           label: 'Bewegungsgeschwindigkeit',
           emoji: '👟',
           value: _movementSpeed,
-          minValue: -0.5,
-          maxValue: 0.5,
-          divisions: 100,
+          minValue: -1.0,
+          maxValue: 2.0,
+          divisions: 300,
           decimals: 2,
           suffix: '%',
           onChanged: (value) {
@@ -458,10 +468,6 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
             });
           },
         ),
-
-        // Erweitert-Button
-        const SizedBox(height: AppSpacing.xl),
-        _buildAdvancedSection(),
       ],
     );
   }
@@ -476,7 +482,6 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
     int? divisions,
     int decimals = 0,
     String suffix = '',
-    bool enabled = true,
   }) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -505,17 +510,15 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
                   vertical: AppSpacing.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: enabled
-                      ? AppColors.primary.withOpacity(0.2)
-                      : AppColors.surfaceLight,
+                  color: AppColors.primary.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(AppSizing.radiusSmall),
                 ),
                 child: Text(
                   '${decimals > 0 ? value.toStringAsFixed(decimals) : value.toInt().toString()}$suffix',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: AppTypography.md,
                     fontWeight: FontWeight.w700,
-                    color: enabled ? AppColors.primary : AppColors.textSecondary.withOpacity(0.5),
+                    color: AppColors.primary,
                   ),
                 ),
               ),
@@ -525,12 +528,10 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           // Slider
           SliderTheme(
             data: SliderThemeData(
-              activeTrackColor: enabled ? AppColors.primary : AppColors.surfaceLight,
+              activeTrackColor: AppColors.primary,
               inactiveTrackColor: AppColors.surfaceLight,
-              thumbColor: enabled ? AppColors.primary : AppColors.textSecondary.withOpacity(0.3),
-              overlayColor: enabled
-                  ? AppColors.primary.withOpacity(0.2)
-                  : Colors.transparent,
+              thumbColor: AppColors.primary,
+              overlayColor: AppColors.primary.withOpacity(0.2),
               trackHeight: 6,
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
             ),
@@ -539,9 +540,10 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
               min: minValue,
               max: maxValue,
               divisions: divisions,
-              onChanged: enabled ? onChanged : null,
+              onChanged: onChanged,
             ),
           ),
+          const SizedBox(height: AppSpacing.xs),
           // Min/Max Labels
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -567,160 +569,12 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
     );
   }
 
-  Widget _buildAdvancedSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Erweitert Toggle Button
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _showAdvanced = !_showAdvanced;
-            });
-          },
-          child: Container(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
-              border: Border.all(
-                color: _showAdvanced ? AppColors.primary : AppColors.border,
-                width: _showAdvanced ? 2 : 1,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      _showAdvanced ? '▼' : '▶',
-                      style: const TextStyle(
-                        fontSize: AppTypography.md,
-                        color: AppColors.text,
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    const Text(
-                      '⚙️ Erweitert',
-                      style: TextStyle(
-                        fontSize: AppTypography.md,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.text,
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm,
-                    vertical: AppSpacing.xs,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.info.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(AppSizing.radiusSmall),
-                  ),
-                  child: const Text(
-                    'Bald verfügbar',
-                    style: TextStyle(
-                      fontSize: AppTypography.xs,
-                      color: AppColors.info,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        // Erweitert Content (wenn ausgeklappt)
-        if (_showAdvanced) ...[
-          const SizedBox(height: AppSpacing.md),
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            decoration: BoxDecoration(
-              color: AppColors.surface.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Info-Text
-                Row(
-                  children: [
-                    const Text('⚠️', style: TextStyle(fontSize: 20)),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: Text(
-                        'Diese Eigenschaften sind noch nicht verfügbar',
-                        style: TextStyle(
-                          fontSize: AppTypography.sm,
-                          color: AppColors.textSecondary.withOpacity(0.8),
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.lg),
-
-                // Angriffsgeschwindigkeit (deaktiviert)
-                _buildStatSlider(
-                  label: 'Angriffsgeschwindigkeit',
-                  emoji: '⚡',
-                  value: _attackSpeed,
-                  minValue: 0.5,
-                  maxValue: 4.0,
-                  divisions: 35,
-                  decimals: 1,
-                  enabled: false,
-                  onChanged: (value) {},
-                ),
-                const SizedBox(height: AppSpacing.lg),
-
-                // Abbaugeschwindigkeit (deaktiviert)
-                _buildStatSlider(
-                  label: 'Abbaugeschwindigkeit',
-                  emoji: '⛏️',
-                  value: _miningSpeed,
-                  minValue: 0.5,
-                  maxValue: 12.0,
-                  divisions: 115,
-                  decimals: 1,
-                  enabled: false,
-                  onChanged: (value) {},
-                ),
-                const SizedBox(height: AppSpacing.lg),
-
-                // Rüstungsdurchdringung (deaktiviert)
-                _buildStatSlider(
-                  label: 'Rüstungsdurchdringung',
-                  emoji: '🗡️',
-                  value: 0.0,
-                  minValue: 0.0,
-                  maxValue: 1.0,
-                  divisions: 20,
-                  decimals: 2,
-                  suffix: '%',
-                  enabled: false,
-                  onChanged: (value) {},
-                ),
-              ],
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildEffectsSection() {
+  Widget _buildAbilitiesSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '✨ Effekte',
+          '✨ Spezial-Fähigkeiten',
           style: TextStyle(
             fontSize: AppTypography.md,
             fontWeight: FontWeight.w600,
@@ -728,24 +582,38 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        _buildToggle(
-          label: 'Feuer-Effekt',
+        _buildAbilityToggle(
+          label: 'Feueraspekt',
           emoji: '🔥',
-          value: _fireEffect,
+          description: '⚠️ Funktioniert nicht (benötigt Script API)',
+          value: _fireAspect,
           onChanged: (value) {
             setState(() {
-              _fireEffect = value;
+              _fireAspect = value;
             });
           },
         ),
         const SizedBox(height: AppSpacing.md),
-        _buildToggle(
-          label: 'Leuchten',
-          emoji: '✨',
-          value: _glowEffect,
+        _buildAbilityToggle(
+          label: 'Rückstoß',
+          emoji: '💥',
+          description: '⚠️ Funktioniert nicht (benötigt Script API)',
+          value: _knockback,
           onChanged: (value) {
             setState(() {
-              _glowEffect = value;
+              _knockback = value;
+            });
+          },
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildAbilityToggle(
+          label: 'Feuerbälle schießen',
+          emoji: '🎯',
+          description: 'Halten + Loslassen zum Schießen',
+          value: _shootFireballs,
+          onChanged: (value) {
+            setState(() {
+              _shootFireballs = value;
             });
           },
         ),
@@ -753,9 +621,10 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
     );
   }
 
-  Widget _buildToggle({
+  Widget _buildAbilityToggle({
     required String label,
     required String emoji,
+    required String description,
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
@@ -766,16 +635,36 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
+          border: Border.all(
+            color: value ? AppColors.primary : AppColors.border,
+            width: value ? 2 : 1,
+          ),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              '$emoji $label',
-              style: const TextStyle(
-                fontSize: AppTypography.md,
-                fontWeight: FontWeight.w600,
-                color: AppColors.text,
+            Text(emoji, style: const TextStyle(fontSize: 32)),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: AppTypography.md,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.text,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: AppTypography.xs,
+                      color: AppColors.textSecondary.withOpacity(0.7),
+                    ),
+                  ),
+                ],
               ),
             ),
             Container(
@@ -830,7 +719,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
             Text('💾', style: TextStyle(fontSize: 28)),
             SizedBox(width: AppSpacing.md),
             Text(
-              'Item speichern',
+              'Waffe speichern',
               style: TextStyle(
                 fontSize: AppTypography.lg,
                 fontWeight: FontWeight.w700,
@@ -852,17 +741,14 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       customStats: {
         'damage': _damage,
         'durability': _durability,
-        'armor': _armor,
-        'armor_toughness': _armorToughness,
         'enchantability': _enchantability,
         'movement_speed': _movementSpeed,
-        // Advanced (für später, werden noch nicht exportiert)
-        'attack_speed': _attackSpeed,
-        'mining_speed': _miningSpeed,
+        'name_color': _nameColor, // Namensfarbe speichern
       },
       effects: {
-        'fire': _fireEffect,
-        'glow': _glowEffect,
+        'fire_aspect': _fireAspect,
+        'knockback': _knockback,
+        'shoot_fireballs': _shootFireballs,
       },
     );
 
@@ -950,8 +836,9 @@ class _IconPickerDialogState extends State<_IconPickerDialog> {
 
   Future<void> _loadIcons() async {
     try {
+      // Nur Icons aus Schwert-Unterordner laden!
       final response = await http.get(
-        Uri.parse('https://api.github.com/repos/ReichiMD/fabrik-library/contents/assets/custom/icons'),
+        Uri.parse('https://api.github.com/repos/ReichiMD/fabrik-library/contents/assets/custom/icons/Schwert'),
       );
 
       if (response.statusCode == 200) {
@@ -1000,7 +887,7 @@ class _IconPickerDialogState extends State<_IconPickerDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              'Icon auswählen',
+              'Waffen-Icon auswählen',
               style: TextStyle(
                 fontSize: AppTypography.xl,
                 fontWeight: FontWeight.w700,
@@ -1009,7 +896,7 @@ class _IconPickerDialogState extends State<_IconPickerDialog> {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Wähle ein Custom-Icon für dein Item',
+              'Wähle ein Custom-Icon für deine Waffe',
               style: TextStyle(
                 fontSize: AppTypography.sm,
                 color: AppColors.textSecondary.withOpacity(0.7),

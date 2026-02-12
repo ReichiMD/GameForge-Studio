@@ -287,6 +287,7 @@ class AddonBuilderService {
     final armorToughness = (customStats['armor_toughness'] as num?)?.toDouble() ?? 0.0;
     final enchantability = (customStats['enchantability'] as num?)?.toInt() ?? 10;
     final movementSpeed = (customStats['movement_speed'] as num?)?.toDouble() ?? 0.0;
+    final nameColor = customStats['name_color'] as String? ?? 'white';
 
     // Advanced stats (noch nicht verwendet)
     final miningSpeed = (customStats['mining_speed'] as num?)?.toDouble() ?? 1.0;
@@ -294,9 +295,10 @@ class AddonBuilderService {
     // Build components
     final components = <String, dynamic>{};
 
-    // Display name
+    // Display name mit Farbe (Minecraft Format Codes)
+    final colorCode = _getMinecraftColorCode(nameColor);
     components['minecraft:display_name'] = {
-      'value': item.name,
+      'value': '$colorCode${item.name}',
     };
 
     // Icon - NEW FORMAT in 1.21.130+
@@ -404,13 +406,64 @@ class AddonBuilderService {
       }
     }
 
-    // Effects
+    // Spezial-Fähigkeiten (NEU!)
     final effects = item.effects;
-    if (effects['fire'] == true) {
-      components['minecraft:ignite_on_use'] = {
-        'duration': 5.0,
-      };
+
+    // Feueraspekt - Setzt Gegner in Brand
+    // WICHTIG: Bedrock Edition hat KEINE native Component um Gegner beim Treffen zu verbrennen!
+    // minecraft:ignite_on_use verbrennt nur das Item selbst, NICHT Gegner.
+    // Fire Aspect funktioniert in Vanilla nur als Enchantment.
+    // Für Custom Fire Aspect braucht man Script API Custom Components (sehr komplex).
+    // Daher wird diese Fähigkeit NICHT exportiert.
+    if (effects['fire_aspect'] == true) {
+      // Fire Aspect wird nicht exportiert - siehe Kommentar oben
+      // HINWEIS: In einer späteren Version könnte man ein Enchantment-System
+      // über Script API implementieren, aber das ist sehr komplex.
     }
+
+    // Rückstoß - Mehr Knockback beim Treffen
+    // WICHTIG: minecraft:player.knockback_resistance beeinflusst nur den SPIELER,
+    // der die Rüstung trägt (verhindert dass ER zurückgestoßen wird).
+    // Es gibt KEIN Attribut um mehr Knockback beim TREFFEN von Gegnern zu verursachen!
+    // Das funktioniert in Vanilla nur als Enchantment (Knockback I/II).
+    // Für Custom Knockback braucht man Script API Custom Components.
+    // Daher wird diese Fähigkeit NICHT exportiert.
+    if (effects['knockback'] == true) {
+      // Knockback wird nicht exportiert - siehe Kommentar oben
+    }
+
+    // Feuerbälle schießen beim Rechtsklick
+    // minecraft:shooter macht das Item zu einem Bogen/Armbrust (muss gezogen werden)
+    // Funktioniert für Nahkampfwaffen, aber verhält sich anders als erwartet.
+    if (effects['shoot_fireballs'] == true) {
+      // minecraft:use_modifiers ist PFLICHT für minecraft:shooter!
+      // use_duration muss >= max_draw_duration sein (wenn charge_on_draw true)
+      components['minecraft:use_modifiers'] = {
+        'use_duration': 0.5, // 0.5 Sekunden Ziehdauer (muss >= max_draw_duration)
+        'movement_modifier': 0.5, // Spieler läuft langsamer beim Ziehen
+      };
+
+      // minecraft:shooter Component (korrekte Syntax aus Bedrock Wiki)
+      components['minecraft:shooter'] = {
+        // ammunition als Array von Objekten (NICHT ammunition_item!)
+        // Leeres Array = keine Munition nötig (funktioniert in Creative)
+        'ammunition': [],
+        'max_draw_duration': 0.5, // Wie lange kann gezogen werden (in Sekunden)
+        'charge_on_draw': false, // Sofort schießen beim Loslassen
+        'scale_power_by_draw_duration': false,
+      };
+
+      // Spawnt Feuerball-Entity
+      components['minecraft:projectile'] = {
+        'projectile_entity': 'minecraft:small_fireball',
+      };
+
+      // WARNUNG: Das Item verhält sich jetzt wie ein Bogen/Armbrust!
+      // Es muss gezogen werden (Rechtsklick halten + loslassen) um zu schießen.
+      // Für sofortiges Schießen beim Rechtsklick braucht man Script API Custom Components.
+    }
+
+    // Legacy effects
     if (effects['glow'] == true) {
       components['minecraft:foil'] = true;
     }
@@ -520,6 +573,32 @@ class AddonBuilderService {
         return 'armor_torso'; // Default
       default:
         return null; // No enchantability for other categories
+    }
+  }
+
+  /// Get Minecraft color code from color name
+  static String _getMinecraftColorCode(String colorName) {
+    switch (colorName.toLowerCase()) {
+      case 'white':
+        return '§f';
+      case 'red':
+        return '§c';
+      case 'gold':
+        return '§6';
+      case 'yellow':
+        return '§e';
+      case 'green':
+        return '§a';
+      case 'aqua':
+        return '§b';
+      case 'blue':
+        return '§9';
+      case 'light_purple':
+        return '§d';
+      case 'dark_purple':
+        return '§5';
+      default:
+        return '§f'; // Default: white
     }
   }
 
