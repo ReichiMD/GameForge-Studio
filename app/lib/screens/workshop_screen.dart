@@ -70,9 +70,9 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
       _customIconUrl = item.customIconUrl;
       _nameColor = item.customStats['name_color'] as String? ?? 'white';
 
-      // Load stats
-      _damage = (item.customStats['damage'] as num?)?.toDouble() ?? 5.0;
-      _durability = (item.customStats['durability'] as num?)?.toDouble() ?? 100.0;
+      // Load stats (Default: Diamant-Werte)
+      _damage = (item.customStats['damage'] as num?)?.toDouble() ?? 7.0; // Diamant
+      _durability = (item.customStats['durability'] as num?)?.toDouble() ?? 1561.0; // Diamant
       _enchantability = (item.customStats['enchantability'] as num?)?.toDouble() ?? 10.0;
       _movementSpeed = (item.customStats['movement_speed'] as num?)?.toDouble() ?? 0.0;
 
@@ -351,9 +351,8 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
             borderRadius: BorderRadius.circular(AppSizing.radiusMedium),
             border: Border.all(color: AppColors.border),
           ),
-          child: Wrap(
-            spacing: AppSpacing.md,
-            runSpacing: AppSpacing.md,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: colors.entries.map((entry) {
               final isSelected = _nameColor == entry.key;
               return GestureDetector(
@@ -363,44 +362,24 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
                   });
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.sm,
-                  ),
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? (entry.value['color'] as Color).withOpacity(0.2)
-                        : AppColors.surfaceLight,
-                    borderRadius: BorderRadius.circular(AppSizing.radiusSmall),
+                    color: entry.value['color'] as Color,
+                    shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected
-                          ? (entry.value['color'] as Color)
-                          : AppColors.border,
-                      width: isSelected ? 2 : 1,
+                      color: isSelected ? AppColors.primary : Colors.white24,
+                      width: isSelected ? 3 : 1,
                     ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 16,
-                        height: 16,
-                        decoration: BoxDecoration(
-                          color: entry.value['color'] as Color,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white24),
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        entry.value['name'] as String,
-                        style: TextStyle(
-                          fontSize: AppTypography.sm,
-                          color: isSelected ? AppColors.text : AppColors.textSecondary,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: AppColors.primary.withOpacity(0.4),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : null,
                   ),
                 ),
               );
@@ -432,6 +411,8 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           value: _damage,
           minValue: 1,
           maxValue: 50,
+          marks: [6.0, 7.0, 8.0], // Eisen, Diamant, Netherit
+          markLabels: ['Eisen', 'Diamant', 'Netherit'],
           onChanged: (value) {
             setState(() {
               _damage = value;
@@ -447,6 +428,8 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
           value: _durability,
           minValue: 100,
           maxValue: 3000,
+          marks: [250.0, 1561.0, 2031.0], // Eisen, Diamant, Netherit
+          markLabels: ['Eisen', 'Diamant', 'Netherit'],
           onChanged: (value) {
             setState(() {
               _durability = value;
@@ -500,6 +483,8 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
     int? divisions,
     int decimals = 0,
     String suffix = '',
+    List<double>? marks, // Standard-Markierungen
+    List<String>? markLabels, // Labels für Markierungen
   }) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -561,6 +546,36 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
               onChanged: onChanged,
             ),
           ),
+          // Markierungen (falls vorhanden)
+          if (marks != null && markLabels != null) ...[
+            const SizedBox(height: 4),
+            Stack(
+              children: [
+                for (int i = 0; i < marks.length; i++)
+                  Positioned(
+                    left: ((marks[i] - minValue) / (maxValue - minValue)) * (MediaQuery.of(context).size.width - 100),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 2,
+                          height: 8,
+                          color: AppColors.info,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          markLabels[i],
+                          style: TextStyle(
+                            fontSize: AppTypography.xxs,
+                            color: AppColors.info.withOpacity(0.8),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ],
           // Min/Max Labels
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
