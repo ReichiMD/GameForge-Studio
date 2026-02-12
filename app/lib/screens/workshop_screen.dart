@@ -355,31 +355,34 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: colors.entries.map((entry) {
               final isSelected = _nameColor == entry.key;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _nameColor = entry.key;
-                  });
-                },
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: entry.value['color'] as Color,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isSelected ? AppColors.primary : Colors.white24,
-                      width: isSelected ? 3 : 1,
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _nameColor = entry.key;
+                    });
+                  },
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: entry.value['color'] as Color,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected ? AppColors.primary : Colors.white24,
+                        width: isSelected ? 3 : 1,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: AppColors.primary.withOpacity(0.4),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: AppColors.primary.withOpacity(0.4),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ]
-                        : null,
                   ),
                 ),
               );
@@ -404,15 +407,13 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         ),
         const SizedBox(height: AppSpacing.lg),
 
-        // Schaden (1-50)
+        // Schaden (1-50) - Standard: Diamant (7)
         _buildStatSlider(
           label: 'Schaden',
           emoji: '⚔️',
           value: _damage,
           minValue: 1,
           maxValue: 50,
-          marks: [6.0, 7.0, 8.0], // Eisen, Diamant, Netherit
-          markLabels: ['Eisen', 'Diamant', 'Netherit'],
           onChanged: (value) {
             setState(() {
               _damage = value;
@@ -421,15 +422,13 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         ),
         const SizedBox(height: AppSpacing.lg),
 
-        // Haltbarkeit
+        // Haltbarkeit - Standard: Diamant (1561)
         _buildStatSlider(
           label: 'Haltbarkeit',
           emoji: '🛡️',
           value: _durability,
           minValue: 100,
           maxValue: 3000,
-          marks: [250.0, 1561.0, 2031.0], // Eisen, Diamant, Netherit
-          markLabels: ['Eisen', 'Diamant', 'Netherit'],
           onChanged: (value) {
             setState(() {
               _durability = value;
@@ -483,8 +482,6 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
     int? divisions,
     int decimals = 0,
     String suffix = '',
-    List<double>? marks, // Standard-Markierungen
-    List<String>? markLabels, // Labels für Markierungen
   }) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -546,36 +543,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
               onChanged: onChanged,
             ),
           ),
-          // Markierungen (falls vorhanden)
-          if (marks != null && markLabels != null) ...[
-            const SizedBox(height: 4),
-            Stack(
-              children: [
-                for (int i = 0; i < marks.length; i++)
-                  Positioned(
-                    left: ((marks[i] - minValue) / (maxValue - minValue)) * (MediaQuery.of(context).size.width - 100),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 2,
-                          height: 8,
-                          color: AppColors.info,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          markLabels[i],
-                          style: TextStyle(
-                            fontSize: AppTypography.xs,
-                            color: AppColors.info.withOpacity(0.8),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ],
+          const SizedBox(height: AppSpacing.xs),
           // Min/Max Labels
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
