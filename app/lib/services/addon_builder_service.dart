@@ -410,39 +410,47 @@ class AddonBuilderService {
     final effects = item.effects;
 
     // Feueraspekt - Setzt Gegner in Brand
+    // WICHTIG: Bedrock Edition hat KEINE native Component um Gegner beim Treffen zu verbrennen!
+    // minecraft:ignite_on_use verbrennt nur das Item selbst, NICHT Gegner.
+    // Fire Aspect funktioniert in Vanilla nur als Enchantment.
+    // Für Custom Fire Aspect braucht man Script API Custom Components (sehr komplex).
+    // Daher wird diese Fähigkeit NICHT exportiert.
     if (effects['fire_aspect'] == true) {
-      // TODO: Wird über Enchantment in separater Funktion hinzugefügt
-      // Für jetzt nutzen wir ignite_on_use als Workaround
-      components['minecraft:ignite_on_use'] = {
-        'duration': 5.0,
-      };
+      // Fire Aspect wird nicht exportiert - siehe Kommentar oben
+      // HINWEIS: In einer späteren Version könnte man ein Enchantment-System
+      // über Script API implementieren, aber das ist sehr komplex.
     }
 
-    // Rückstoß - Wird durch erhöhten Knockback Modifier simuliert
+    // Rückstoß - Mehr Knockback beim Treffen
+    // WICHTIG: minecraft:player.knockback_resistance beeinflusst nur den SPIELER,
+    // der die Rüstung trägt (verhindert dass ER zurückgestoßen wird).
+    // Es gibt KEIN Attribut um mehr Knockback beim TREFFEN von Gegnern zu verursachen!
+    // Das funktioniert in Vanilla nur als Enchantment (Knockback I/II).
+    // Für Custom Knockback braucht man Script API Custom Components.
+    // Daher wird diese Fähigkeit NICHT exportiert.
     if (effects['knockback'] == true) {
-      // Füge knockback_resistance hinzu (negativ für mehr Knockback beim Gegner)
-      attributeModifiers.add({
-        'attribute': 'minecraft:player.knockback_resistance',
-        'amount': -0.5, // Mehr Knockback
-        'operation': 'add_value',
-        'slot': 'mainhand',
-      });
+      // Knockback wird nicht exportiert - siehe Kommentar oben
     }
 
     // Feuerbälle schießen beim Rechtsklick
-    // HINWEIS: minecraft:shooter ist für Bögen/Armbrüste gedacht!
-    // Für Nahkampfwaffen die Feuerbälle schießen braucht man:
-    // 1. Custom Entity für Feuerball
-    // 2. Animation Controller für on_use Event
-    // 3. spawn_entity beim Rechtsklick
-    // → Sehr komplex! Für jetzt deaktiviert.
+    // minecraft:shooter macht das Item zu einem Bogen/Armbrust (muss gezogen werden)
+    // Funktioniert für Nahkampfwaffen, aber verhält sich anders als erwartet.
     if (effects['shoot_fireballs'] == true) {
-      // TODO: Implementierung für Nahkampf-Waffen die Feuerbälle schießen
-      // Für jetzt wird das Item zu einem "Schießer" (wie Bogen)
+      // minecraft:use_modifiers ist PFLICHT für minecraft:shooter!
+      // use_duration muss >= max_draw_duration sein (wenn charge_on_draw true)
+      components['minecraft:use_modifiers'] = {
+        'use_duration': 0.5, // 0.5 Sekunden Ziehdauer (muss >= max_draw_duration)
+        'movement_modifier': 0.5, // Spieler läuft langsamer beim Ziehen
+      };
+
+      // minecraft:shooter Component (korrekte Syntax aus Bedrock Wiki)
       components['minecraft:shooter'] = {
-        'ammunition_item': 'minecraft:air', // Keine Munition nötig
-        'max_draw_duration': 0.5,
-        'charge_on_draw': true,
+        // ammunition als Array von Objekten (NICHT ammunition_item!)
+        // Leeres Array = keine Munition nötig (funktioniert in Creative)
+        'ammunition': [],
+        'max_draw_duration': 0.5, // Wie lange kann gezogen werden (in Sekunden)
+        'charge_on_draw': false, // Sofort schießen beim Loslassen
+        'scale_power_by_draw_duration': false,
       };
 
       // Spawnt Feuerball-Entity
@@ -450,8 +458,9 @@ class AddonBuilderService {
         'projectile_entity': 'minecraft:small_fireball',
       };
 
-      // WARNUNG: Das Item verhält sich jetzt wie ein Bogen!
-      // Bessere Lösung: Custom Entity + Animation Controller
+      // WARNUNG: Das Item verhält sich jetzt wie ein Bogen/Armbrust!
+      // Es muss gezogen werden (Rechtsklick halten + loslassen) um zu schießen.
+      // Für sofortiges Schießen beim Rechtsklick braucht man Script API Custom Components.
     }
 
     // Legacy effects

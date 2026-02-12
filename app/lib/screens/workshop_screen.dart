@@ -452,14 +452,14 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         ),
         const SizedBox(height: AppSpacing.lg),
 
-        // Bewegungsgeschwindigkeit
+        // Bewegungsgeschwindigkeit (-100% bis +200%)
         _buildStatSlider(
           label: 'Bewegungsgeschwindigkeit',
           emoji: '👟',
           value: _movementSpeed,
-          minValue: -0.5,
-          maxValue: 0.5,
-          divisions: 100,
+          minValue: -1.0,
+          maxValue: 2.0,
+          divisions: 300,
           decimals: 2,
           suffix: '%',
           onChanged: (value) {
