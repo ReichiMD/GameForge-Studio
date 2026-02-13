@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:archive/archive.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
-import 'dart:io';
+import 'package:file_saver/file_saver.dart';
 import '../models/template_definition.dart';
 import 'template_parser_service.dart';
 
@@ -187,46 +186,23 @@ class TemplateBuilderService {
   }
 
   /// Speichert ZIP im Downloads-Ordner
-  /// Auf Android 10+ (API 29+) keine Permission nötig!
+  /// Nutzt FileSaver - funktioniert auf allen Android-Versionen ohne Permissions!
   Future<String> _saveToDownloads(Uint8List zipBytes, String projectName) async {
-    // Downloads-Ordner ermitteln
-    Directory? downloadsDir;
-    if (Platform.isAndroid) {
-      // Direkter Zugriff auf Downloads - funktioniert auf Android 10+ ohne Permission!
-      downloadsDir = Directory('/storage/emulated/0/Download');
-
-      // Ordner erstellen falls nicht existent
-      if (!downloadsDir.existsSync()) {
-        try {
-          downloadsDir.createSync(recursive: true);
-        } catch (e) {
-          throw Exception('Downloads-Ordner konnte nicht erstellt werden: $e');
-        }
-      }
-    } else {
-      downloadsDir = await getDownloadsDirectory();
-      if (downloadsDir == null) {
-        throw Exception('Downloads-Ordner nicht gefunden');
-      }
-    }
-
     // Dateiname generieren
     final sanitizedName = projectName
         .toLowerCase()
         .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
         .replaceAll(RegExp(r'^_+|_+$'), '');
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final fileName = '${sanitizedName}_$timestamp.mcaddon';
-    final filePath = '${downloadsDir.path}/$fileName';
 
-    // Datei schreiben
-    try {
-      final file = File(filePath);
-      await file.writeAsBytes(zipBytes);
-      print('✅ Datei gespeichert: $filePath');
-      return filePath;
-    } catch (e) {
-      throw Exception('Datei konnte nicht gespeichert werden: $e');
-    }
+    // Mit FileSaver speichern (kein Permission-Problem!)
+    final filePath = await FileSaver.instance.saveFile(
+      name: sanitizedName,
+      bytes: zipBytes,
+      ext: 'mcaddon',
+      mimeType: MimeType.other,
+    );
+
+    print('✅ Datei gespeichert: $filePath');
+    return filePath;
   }
 }
