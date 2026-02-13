@@ -585,7 +585,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         _buildAbilityToggle(
           label: 'Feueraspekt',
           emoji: '🔥',
-          description: '⚠️ Funktioniert nicht (benötigt Script API)',
+          description: 'Gegner brennen 5 Sekunden beim Treffen',
           value: _fireAspect,
           onChanged: (value) {
             setState(() {
@@ -597,7 +597,7 @@ class _WorkshopScreenState extends State<WorkshopScreen> {
         _buildAbilityToggle(
           label: 'Rückstoß',
           emoji: '💥',
-          description: '⚠️ Funktioniert nicht (benötigt Script API)',
+          description: 'Gegner werden beim Treffen weggeschleudert',
           value: _knockback,
           onChanged: (value) {
             setState(() {
