@@ -64,7 +64,8 @@ cleanup() {
 
 # Detect Bedrock version from wiki
 detect_version() {
-    log_info "Attempting to detect Bedrock version from wiki..."
+    # All log messages to stderr to avoid polluting return value
+    log_info "Attempting to detect Bedrock version from wiki..." >&2
 
     # Try to find version in common locations
     local version_file="$TEMP_DIR/$DOCS_SOURCE_DIR/meta/version.md"
@@ -96,7 +97,7 @@ detect_version() {
     fi
 
     # Fallback: Use current date
-    log_warning "Could not auto-detect version. Using date-based version."
+    log_warning "Could not auto-detect version. Using date-based version." >&2
     echo "1.21.$(date +%Y%m%d)"
 }
 
@@ -230,7 +231,7 @@ while IFS= read -r -d '' file; do
 
     ((file_count++))
 
-done < <(find "$TEMP_DIR/$DOCS_SOURCE_DIR" -name "*.md" -type f -print0 | sort -z)
+done < <(find "$TEMP_DIR/$DOCS_SOURCE_DIR" -name "*.md" -type f -print0 | sort -z) || true
 
 log_success "Processed $file_count documentation files"
 echo ""
