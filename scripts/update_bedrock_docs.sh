@@ -67,30 +67,36 @@ detect_version() {
     # All log messages to stderr to avoid polluting return value
     log_info "Attempting to detect Bedrock version from wiki..." >&2
 
-    # Try to find version in common locations
     local version_file="$TEMP_DIR/$DOCS_SOURCE_DIR/meta/version.md"
     local changelog_file="$TEMP_DIR/$DOCS_SOURCE_DIR/meta/changelog.md"
 
+    # Minecraft Bedrock versions: 1.20.x, 1.21.x (current range)
+    # IMPORTANT: Only match 1.20.x and 1.21.x to avoid false positives
+    # from unrelated version numbers (e.g. software libs like 1.26.10)
+    # Update this regex when Minecraft moves to 1.22.x!
+    local MC_REGEX='1\.2[01]\.[0-9]{1,3}'
+
     # Method 1: Check version.md if it exists
     if [ -f "$version_file" ]; then
-        version=$(grep -oP "(?<=1\.)\d+\.\d+" "$version_file" | head -1)
-        if [ -n "$version" ]; then
-            echo "1.$version"
-            return 0
-        fi
-    fi
-
-    # Method 2: Check changelog.md
-    if [ -f "$changelog_file" ]; then
-        version=$(grep -oP "1\.\d+\.\d+" "$changelog_file" | head -1)
+        version=$(grep -oP "$MC_REGEX" "$version_file" | sort -V | tail -1)
         if [ -n "$version" ]; then
             echo "$version"
             return 0
         fi
     fi
 
-    # Method 3: Search all .md files for version mentions
-    version=$(find "$TEMP_DIR/$DOCS_SOURCE_DIR" -name "*.md" -type f -exec grep -oP "1\.\d+\.\d+" {} \; | sort -V | tail -1)
+    # Method 2: Check changelog.md
+    if [ -f "$changelog_file" ]; then
+        version=$(grep -oP "$MC_REGEX" "$changelog_file" | sort -V | tail -1)
+        if [ -n "$version" ]; then
+            echo "$version"
+            return 0
+        fi
+    fi
+
+    # Method 3: Search all .md files but only for Minecraft versions (1.2X.XXX)
+    version=$(find "$TEMP_DIR/$DOCS_SOURCE_DIR" -name "*.md" -type f \
+        -exec grep -ohP "$MC_REGEX" {} + 2>/dev/null | sort -V | tail -1)
     if [ -n "$version" ]; then
         echo "$version"
         return 0
