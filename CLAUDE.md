@@ -1,7 +1,7 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 4.5 (Waffen-Editor Redesign!)
-**Letzte Aktualisierung:** 2026-02-12
+**Version:** 4.6 (Bedrock Docs Auto-Update System!)
+**Letzte Aktualisierung:** 2026-02-13
 **Status:** Phase 8 Komplett (✅ Fertig!) | Production-Ready 🎉
 
 ---
@@ -204,6 +204,66 @@ AppColors.background    // #1F2937 (Dark Gray)
 ---
 
 ## 📝 Letzte Session (für Kontext)
+
+**Session #36 - 2026-02-13 - Bedrock Docs Auto-Update System 📚**
+- ✅ **Automatisches Dokumentations-Update System implementiert**
+  * Script: `scripts/update_bedrock_docs.sh` - Lädt Bedrock Wiki von GitHub
+  * Workflow: `.github/workflows/update_bedrock_docs.yml` - GitHub Actions Integration
+  * Manueller Trigger mit Version-Input möglich
+  * Auto-Detection der Bedrock-Version aus Wiki
+- ✅ **Neue Datei-Struktur mit Versionsnummern**
+  * `master_index_1.21.132.txt` - Index aller Dokumentations-Dateien
+  * `docs_complete_1.21.132.txt` - Komplette Doku mit Datei-Markern
+  * `version.txt` - Aktuelle Version (für Script-Checks)
+  * Versionsnummern im Dateinamen für bessere Organisation
+- ✅ **Verbessertes Marker-System**
+  * ALTE Lösung: TAG-Nummern (`TAG:250`)
+  * NEUE Lösung: Datei-Pfade (`===== items/item-components.md =====`)
+  * Vorteil: Direktes Suchen nach Dateinamen statt abstrakter TAGs
+  * Vorteil: Kategorien sofort erkennbar (items/, entities/, etc.)
+  * Gleiche Token-Effizienz wie vorher!
+- ✅ **Intelligente Filterung**
+  * Filtert Web-spezifische Dateien (`_sidebar.md`, `_navbar.md`, etc.)
+  * Filtert Meta-Ordner (`/meta/`, `/contribute/`)
+  * Nur relevante Dokumentations-Dateien werden verarbeitet
+- ✅ **GitHub Actions Workflow**
+  * Manueller Trigger: Actions → "Update Bedrock Documentation" → Version eingeben
+  * Auto-Commit: Workflow committed neue Dateien automatisch
+  * Summary: Zeigt Version, Änderungen, Dateigrößen
+- ✅ **3 neue Dateien:**
+  * `scripts/update_bedrock_docs.sh` - Haupt-Script (Bash)
+  * `.github/workflows/update_bedrock_docs.yml` - GitHub Actions Workflow
+  * `scripts/README.md` - Dokumentation des Scripts
+- ✅ **CLAUDE.md aktualisiert**
+  * Version auf 4.6 erhöht
+  * Section "BEDROCK-DOKUMENTATION STRATEGIE" komplett überarbeitet
+  * Neue Section "Dokumentation aktualisieren" hinzugefügt
+  * Session #36 dokumentiert
+
+**Status:** ✅ Auto-Update System fertig! Bedrock-Doku kann jetzt mit einem Klick aktualisiert werden! 🎉
+
+**Wichtige Änderungen:**
+- Dokumentation kann jetzt automatisch auf neue Bedrock-Versionen aktualisiert werden
+- Kein manuelles Copy-Paste mehr nötig
+- Versionsnummern im Dateinamen verhindern Konflikte
+- Datei-Pfad-Marker sind viel intuitiver als TAG-Nummern
+
+**Technische Details:**
+- Script nutzt `git clone --depth 1 --branch wiki` für effizienten Download
+- Auto-Detection sucht in `version.md`, `changelog.md` oder allen .md Dateien nach Versionen
+- Fallback: Date-based Version wenn keine gefunden wird
+- Workflow committed nur wenn sich tatsächlich etwas geändert hat
+
+**Verwendung:**
+```bash
+# Manuell lokal
+./scripts/update_bedrock_docs.sh 1.21.132
+
+# Via GitHub Actions
+# GitHub → Actions → "Update Bedrock Documentation" → Run workflow
+```
+
+---
 
 **Session #35 - 2026-02-12 - Waffen-Editor Redesign 🗡️**
 - ✅ **Waffen-Kategorie nur noch Nahkampfwaffen**
@@ -693,22 +753,25 @@ static const String _baseUrl =
 **Ab jetzt ZUERST hier suchen:**
 
 **Dateien:**
-- `docs/bedrock-wiki/master_index.txt` (22 KB) - Index mit TAG-Nummern
-- `docs/bedrock-wiki/docs_complete.txt` (5.1 MB) - Komplette Bedrock Wiki Doku
+- `docs/bedrock-wiki/master_index_X.X.X.txt` - Index mit allen Datei-Pfaden
+- `docs/bedrock-wiki/docs_complete_X.X.X.txt` - Komplette Bedrock Wiki Doku
+- `docs/bedrock-wiki/version.txt` - Aktuelle Bedrock-Version
+
+**NEU:** Dateien enthalten jetzt die Version im Namen (z.B. `master_index_1.21.132.txt`)!
 
 **Workflow:**
-1. **Index durchsuchen:** Grep nach Thema (z.B. "item-components") → TAG-Nummer finden
-2. **TAG suchen:** Grep nach `TAG:XXX` in docs_complete.txt → Vollständigen Abschnitt lesen
+1. **Index durchsuchen:** Grep nach Thema (z.B. "item-components") → Datei-Pfad finden
+2. **Datei suchen:** Grep nach Datei-Pfad in docs_complete → Vollständigen Abschnitt lesen
 3. **Fertig!** - Schnell, präzise, token-effizient ⚡
 
 **Beispiel:**
 ```bash
-# 1. Finde TAG-Nummer
-grep "item-components" docs/bedrock-wiki/master_index.txt
-# → [TAG:250] item-components.md
+# 1. Finde Datei-Pfad im Index
+grep "item-components" docs/bedrock-wiki/master_index_1.21.132.txt
+# → items/item-components.md
 
-# 2. Lese Abschnitt
-grep -A 100 "TAG:250" docs/bedrock-wiki/docs_complete.txt
+# 2. Lese Abschnitt direkt
+grep -A 100 "items/item-components.md" docs/bedrock-wiki/docs_complete_1.21.132.txt
 # → Vollständige Item-Components Dokumentation
 ```
 
@@ -717,7 +780,37 @@ grep -A 100 "TAG:250" docs/bedrock-wiki/docs_complete.txt
 - Lokale Dateien: ~300-500 Tokens pro Suche ⚡
 - **Ersparnis: ~85-90%!** 🎉
 
-**Quelle:** https://github.com/ReichiMD/fabrik-library/tree/main/Doku (Bedrock Wiki Snapshot)
+**Quelle:** https://github.com/Bedrock-OSS/bedrock-wiki (Direkt vom Wiki-Repository)
+
+---
+
+### **🔄 Dokumentation aktualisieren**
+
+**Neue Bedrock-Version erschienen?** Kein Problem!
+
+**Methode 1: GitHub Actions (Empfohlen!)**
+1. Gehe zu: **Actions** → **Update Bedrock Documentation**
+2. Klicke: **Run workflow**
+3. Gib Version ein (z.B. `1.21.132`) oder lasse leer für Auto-Detect
+4. Klicke: **Run workflow**
+5. **Fertig!** - Workflow committed die neuen Dateien automatisch
+
+**Methode 2: Manuell (Lokal)**
+```bash
+# Mit Version
+./scripts/update_bedrock_docs.sh 1.21.132
+
+# Oder Auto-Detect
+./scripts/update_bedrock_docs.sh
+```
+
+**Was passiert:**
+- Script klont Bedrock Wiki von GitHub
+- Filtert Web-spezifische Dateien (`_sidebar.md`, etc.)
+- Erstellt neue Index + Docs Dateien mit Versionsnummer
+- GitHub Actions committed und pusht automatisch
+
+**Mehr Details:** Siehe `scripts/README.md`
 
 ---
 
