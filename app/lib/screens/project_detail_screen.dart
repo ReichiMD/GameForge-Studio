@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:file_saver/file_saver.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
@@ -123,14 +121,13 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
       final addonBytes = await AddonBuilderService.buildAddon(_currentProject);
       final filename = AddonBuilderService.getAddonFilename(_currentProject);
 
-      // Save directly to Downloads folder
-      final downloadsDir = Directory('/storage/emulated/0/Download');
-      if (!await downloadsDir.exists()) {
-        await downloadsDir.create(recursive: true);
-      }
-
-      final outputFile = File('${downloadsDir.path}/$filename');
-      await outputFile.writeAsBytes(addonBytes);
+      // Save to Downloads using FileSaver (works on all Android versions without permissions)
+      await FileSaver.instance.saveFile(
+        name: filename.replaceAll('.mcaddon', ''),
+        bytes: addonBytes,
+        ext: 'mcaddon',
+        mimeType: MimeType.other,
+      );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

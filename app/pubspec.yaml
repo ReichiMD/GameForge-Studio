@@ -56,6 +56,9 @@ dependencies:
   # Path provider for temporary files
   path_provider: ^2.1.5
 
+  # File saver for saving files to Downloads without permissions
+  file_saver: ^0.2.14
+
   # Storage permissions for saving files
   permission_handler: ^11.3.1
 
