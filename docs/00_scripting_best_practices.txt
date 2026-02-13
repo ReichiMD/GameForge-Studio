@@ -1,0 +1,66 @@
+============================================================
+MINECRAFT BEDROCK SCRIPTING: MARKETPLACE STANDARDS & RULES
+============================================================
+
+1. ENTITY-VALIDIERUNG (Stabilitäts-Regel #1)
+------------------------------------------------------------
+Problem: Entities können im selben Tick verschwinden (Despawn, Tod, Verlassen).
+Lösung: JEDER Zugriff auf Entity-Eigenschaften muss validiert werden.
+CODE:
+if (entity && entity.isValid()) {
+    // Sicherer Zugriff auf entity.nameTag, entity.location etc.
+}
+
+2. TICK-DROSSELUNG (Performance-Regel)
+------------------------------------------------------------
+Problem: 'world.afterEvents.tick' läuft 20x pro Sekunde und frisst CPU.
+Lösung: Nutze system.runInterval für unkritische Logik.
+CODE:
+system.runInterval(() => {
+    // Logik wird nur 1x pro Sekunde ausgeführt
+}, 20);
+
+3. NATIVE ENGINE-FILTER (Optimierungs-Regel)
+------------------------------------------------------------
+Problem: Große Listen in JavaScript zu filtern ist langsam.
+Lösung: Nutze die nativen Selektoren der Bedrock-Engine.
+CODE:
+// GUT:
+world.getDimension("overworld").getEntities({ type: "minecraft:zombie", maxDistance: 10 });
+// SCHLECHT:
+world.getAllPlayers().filter(p => p.hasTag("test"));
+
+4. FEHLER-KAPSELUNG (Crash-Prävention)
+------------------------------------------------------------
+Problem: Ein Fehler in einem Script stoppt das gesamte Add-On.
+Lösung: Umschließe JEDES Event-Abonnement mit try-catch.
+CODE:
+world.afterEvents.entityHitEntity.subscribe((event) => {
+    try {
+        // Logik hier
+    } catch (e) {
+        console.warn("Event Error: " + e.message);
+    }
+});
+
+5. SPEICHER-HYGIENE (Memory Leak Prävention)
+------------------------------------------------------------
+Problem: Das Speichern ganzer Entity-Objekte in Variablen verhindert, dass RAM frei wird.
+Lösung: Speichere IDs statt ganzer Objekte.
+CODE:
+let activeIds = []; 
+activeIds.push(entity.id); // Gut
+// activeEntities.push(entity); // Schlecht (Memory Leak Gefahr)
+
+6. STABLE VS. BETA MODULE
+------------------------------------------------------------
+Regel: Für Marketplace-Releases IMMER stabile Module in der manifest.json nutzen.
+CODE (manifest.json):
+"module_name": "@minecraft/server",
+"version": "1.13.0" // Keine Beta-Suffixe nutzen!
+
+7. COMMAND-LIMITIERUNG
+------------------------------------------------------------
+Regel: Nutze Script-Methoden (z.B. player.addEffect) anstatt system.runCommand, 
+da Commands deutlich langsamer in der Verarbeitung sind.
+============================================================
