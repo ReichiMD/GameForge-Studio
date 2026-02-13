@@ -19,6 +19,13 @@
       "minecraft:type_family": {
         "family": [ "defense_core", "inanimate" ]
       },
+      "minecraft:collision_box": {
+        "width": 1.0,
+        "height": 1.0
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1
+      },
       "minecraft:timer": {
         "time": {{SPAWN_DELAY}},
         "looping": true,
@@ -36,7 +43,8 @@
       "event:spawn_attacker": {
         "queue_command": {
           "command": [
-            "execute at @s run summon {{PROJECT_NAME}}:attacker_mob ^ ^ ^{{SPAWN_RADIUS}}"
+            "execute at @s run summon {{PROJECT_NAME}}:attacker_mob ~ ~ ~",
+            "execute at @s run spreadplayers ~ ~ 5 {{SPAWN_RADIUS}} @e[type={{PROJECT_NAME}}:attacker_mob,r=3,c=1]"
           ]
         }
       }
