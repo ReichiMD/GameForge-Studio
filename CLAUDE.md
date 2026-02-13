@@ -1,6 +1,6 @@
 # CLAUDE.md - Session Quick Start
 
-**Version:** 4.7 (Script API für Waffen-Abilities!)
+**Version:** 4.8 (Base Defense Fix + Index-Workflow!)
 **Letzte Aktualisierung:** 2026-02-13
 **Status:** Phase 8 Komplett (✅ Fertig!) | Production-Ready 🎉
 
@@ -206,6 +206,39 @@ AppColors.background    // #1F2937 (Dark Gray)
 ---
 
 ## 📝 Letzte Session (für Kontext)
+
+**Session #38 - 2026-02-13 - Base Defense Template Fix + Index-Workflow 🏰**
+- ✅ **6 Bugs im Base Defense Template behoben**
+  * Fix 1: Attacker griff ALLES mit Health an (auch Spieler!) → Jetzt nur noch `defense_core` als Ziel
+  * Fix 2: Turrets fehlten Movement/Navigation Components → Konnten keine Ziele finden/angreifen
+  * Fix 3: Attacker fehlte `type_family: "monster"` → Turrets konnten sie nicht identifizieren
+  * Fix 4: Fehlende `collision_box` bei Turret und Core
+  * Fix 5: Fehlende `knockback_resistance` bei Turret (wurde beim Treffen verschoben)
+  * Fix 6: Gegner spawnten immer in einer Richtung → Jetzt `spreadplayers` für zufällige Verteilung
+- ✅ **Root Cause "Spieler fliegt hoch":**
+  * Attacker zielte auf alles mit `minecraft:health` (Filter: `has_component`)
+  * Spieler und Attacker schlugen sich gegenseitig → Doppel-Knockback → Spieler flog hoch
+  * Fix: Targeting auf `is_family: defense_core` geändert
+- ✅ **Index-Workflow dokumentiert und getestet**
+  * Vergleich MIT vs OHNE Index im Workflow dokumentiert
+  * MIT Index: 3 gezielte Suchen, ~300-500 Tokens pro Suche
+  * OHNE Index: 5-8 breite Suchen, z.B. 536 Treffer für `is_family`
+  * CLAUDE.md Workflow-Section komplett überarbeitet mit Vergleichstabelle
+- ✅ **3 Template-Dateien geändert:**
+  * `attacker_mob.json` - Targeting auf defense_core, type_family, collision_box
+  * `defense_turret.json` - Movement, Navigation, type_family, collision_box, knockback_resistance
+  * `defense_core.json` - collision_box, knockback_resistance, spreadplayers Spawn
+- Branch: `claude/fix-minecraft-weapons-1IBqD`
+
+**Status:** ✅ Base Defense Template funktioniert jetzt korrekt! Spieler fliegt nicht mehr! 🎉
+
+**Wichtige Änderungen:**
+- Attacker greift nur noch den Defense Core an (nicht mehr den Spieler!)
+- Turrets können jetzt Ziele finden und beschießen (Movement/Navigation hinzugefügt)
+- Gegner spawnen in zufälligen Richtungen um den Core herum
+- Alle stationären Entities haben Knockback-Resistenz
+
+---
 
 **Session #37 - 2026-02-13 - Script API für Waffen-Abilities 🔥**
 - ✅ **Script API für alle Waffen-Fähigkeiten implementiert**
@@ -806,9 +839,19 @@ static const String _baseUrl =
 **NEU:** Dateien enthalten jetzt die Version im Namen (z.B. `master_index_1.21.132.txt`)!
 
 **Workflow:**
-1. **Index durchsuchen:** Grep nach Thema (z.B. "item-components") → Datei-Pfad finden
-2. **Datei suchen:** Grep nach Datei-Pfad in docs_complete → Vollständigen Abschnitt lesen
+
+**⚠️ IMMER den Index zuerst nutzen! NIEMALS direkt in docs_complete suchen!**
+
+1. **Index durchsuchen:** Grep nach Thema (z.B. "item-components") in `master_index` → Datei-Pfad finden
+2. **Abschnitt lesen:** Grep nach `===== dateiname.md =====` in `docs_complete` → Gezielt den Abschnitt lesen
 3. **Fertig!** - Schnell, präzise, token-effizient ⚡
+
+**Warum?** Vergleich aus Session #38:
+| | MIT Index | OHNE Index |
+|---|---|---|
+| Suchschritte | 3 gezielte Suchen | 5-8 breite Suchen nötig |
+| Ergebnis | Exakt der richtige Abschnitt | z.B. 536 Treffer für `is_family` |
+| Token-Verbrauch | ~300-500 pro Suche | ~3000-5000 pro Suche |
 
 **Beispiel:**
 ```bash
@@ -816,8 +859,8 @@ static const String _baseUrl =
 grep "item-components" docs/bedrock-wiki/master_index_1.21.132.txt
 # → items/item-components.md
 
-# 2. Lese Abschnitt direkt
-grep -A 100 "items/item-components.md" docs/bedrock-wiki/docs_complete_1.21.132.txt
+# 2. Lese Abschnitt direkt (mit ===== Marker!)
+grep -A 100 "===== items/item-components.md =====" docs/bedrock-wiki/docs_complete_1.21.132.txt
 # → Vollständige Item-Components Dokumentation
 ```
 
