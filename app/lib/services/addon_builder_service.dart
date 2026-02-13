@@ -8,7 +8,13 @@ import '../models/project.dart';
 import '../models/project_item.dart';
 
 /// Service for building complete Minecraft Bedrock Addons (.mcaddon files)
-/// with both Behavior Pack and Resource Pack
+/// with both Behavior Pack and Resource Pack.
+///
+/// Supports Script API for abilities that can't be done with JSON alone:
+/// - Fire Aspect (Custom Component onHitEntity → setOnFire)
+/// - Knockback (Custom Component onHitEntity → applyKnockback)
+/// - Fireball Shooter (Custom Component onCompleteUse → spawn fireball)
+/// - Movement Speed on weapons (runInterval → addEffect speed/slowness)
 class AddonBuilderService {
   static const _uuid = Uuid();
   static const _githubRawUrl = 'https://raw.githubusercontent.com/ReichiMD/fabrik-library/main';
@@ -23,11 +29,15 @@ class AddonBuilderService {
     // Create ZIP archive
     final archive = Archive();
 
-    // Generate UUIDs for both packs
+    // Generate UUIDs for both packs + script module
     final behaviorHeaderUuid = _uuid.v4();
     final behaviorModuleUuid = _uuid.v4();
     final resourceHeaderUuid = _uuid.v4();
     final resourceModuleUuid = _uuid.v4();
+    final scriptModuleUuid = _uuid.v4();
+
+    // Check if any item needs the Script API
+    final needsScript = _needsScriptAPI(project);
 
     // ========== BEHAVIOR PACK ==========
 
@@ -36,7 +46,9 @@ class AddonBuilderService {
       project,
       behaviorHeaderUuid,
       behaviorModuleUuid,
-      resourceHeaderUuid, // Dependency on resource pack
+      resourceHeaderUuid,
+      needsScript: needsScript,
+      scriptModuleUuid: scriptModuleUuid,
     );
     final behaviorManifestBytes = utf8.encode(behaviorManifestJson);
     archive.addFile(
@@ -49,7 +61,7 @@ class AddonBuilderService {
 
     // 2. Add behavior pack items/*.json
     for (final item in project.items) {
-      final itemJson = _exportItemToMinecraftJSON(item);
+      final itemJson = _exportItemToMinecraftJSON(item, needsScript: needsScript);
       final itemBytes = utf8.encode(itemJson);
       final itemFilename = 'behavior_pack/items/${_sanitizeIdentifier(item.name)}.json';
       archive.addFile(
@@ -57,7 +69,20 @@ class AddonBuilderService {
       );
     }
 
-    // 3. Add behavior pack pack_icon.png (optional)
+    // 3. Add script file if needed
+    if (needsScript) {
+      final scriptContent = _generateMainScript(project);
+      final scriptBytes = utf8.encode(scriptContent);
+      archive.addFile(
+        ArchiveFile(
+          'behavior_pack/scripts/main.js',
+          scriptBytes.length,
+          scriptBytes,
+        ),
+      );
+    }
+
+    // 4. Add behavior pack pack_icon.png (optional)
     try {
       final iconBytes = await rootBundle.load('assets/templates/pack_icon.png');
       archive.addFile(
@@ -73,7 +98,7 @@ class AddonBuilderService {
 
     // ========== RESOURCE PACK ==========
 
-    // 4. Add resource pack manifest.json
+    // 5. Add resource pack manifest.json
     final resourceManifestJson = await _generateResourceManifest(
       project,
       resourceHeaderUuid,
@@ -88,7 +113,7 @@ class AddonBuilderService {
       ),
     );
 
-    // 5. Add resource pack pack_icon.png (optional)
+    // 6. Add resource pack pack_icon.png (optional)
     try {
       final iconBytes = await rootBundle.load('assets/templates/pack_icon.png');
       archive.addFile(
@@ -102,7 +127,7 @@ class AddonBuilderService {
       // Icon not found - Minecraft will use a default icon
     }
 
-    // 6. Download and add item textures
+    // 7. Download and add item textures
     final textureData = <String, dynamic>{};
     for (final item in project.items) {
       final itemIdentifier = _sanitizeIdentifier(item.name);
@@ -128,7 +153,7 @@ class AddonBuilderService {
       }
     }
 
-    // 7. Add item_texture.json
+    // 8. Add item_texture.json
     final itemTextureJson = _generateItemTextureJson(textureData);
     final itemTextureBytes = utf8.encode(itemTextureJson);
     archive.addFile(
@@ -139,7 +164,7 @@ class AddonBuilderService {
       ),
     );
 
-    // 8. Add terrain_texture.json (required even if empty)
+    // 9. Add terrain_texture.json (required even if empty)
     final terrainTextureJson = _generateTerrainTextureJson();
     final terrainTextureBytes = utf8.encode(terrainTextureJson);
     archive.addFile(
@@ -160,6 +185,195 @@ class AddonBuilderService {
 
     return Uint8List.fromList(zipBytes);
   }
+
+  // ========== SCRIPT API ==========
+
+  /// Check if any item in the project needs the Script API
+  static bool _needsScriptAPI(Project project) {
+    for (final item in project.items) {
+      final effects = item.effects;
+      if (effects['fire_aspect'] == true ||
+          effects['knockback'] == true ||
+          effects['shoot_fireballs'] == true) {
+        return true;
+      }
+      // Movement speed on weapons needs script (attribute_modifiers only work on armor)
+      final movementSpeed = (item.customStats['movement_speed'] as num?)?.toDouble() ?? 0.0;
+      if (movementSpeed != 0.0 && item.category.toLowerCase() == 'waffen') {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Generate the scripts/main.js for the behavior pack
+  /// Only includes code blocks ("Bausteine") for abilities that are actually used.
+  /// Follows Marketplace best practices: Entity validation, try-catch, tick throttling.
+  static String _generateMainScript(Project project) {
+    final buffer = StringBuffer();
+
+    // Collect which abilities are needed across all items
+    bool needsFireAspect = false;
+    bool needsKnockback = false;
+    bool needsFireballs = false;
+    final speedItems = <String, double>{};
+
+    for (final item in project.items) {
+      final effects = item.effects;
+      final identifier = _sanitizeIdentifier(item.name);
+
+      if (effects['fire_aspect'] == true) needsFireAspect = true;
+      if (effects['knockback'] == true) needsKnockback = true;
+      if (effects['shoot_fireballs'] == true) needsFireballs = true;
+
+      final movementSpeed = (item.customStats['movement_speed'] as num?)?.toDouble() ?? 0.0;
+      if (movementSpeed != 0.0 && item.category.toLowerCase() == 'waffen') {
+        speedItems['custom:$identifier'] = movementSpeed;
+      }
+    }
+
+    // Header
+    buffer.writeln('// Auto-generated by GameForge Studio');
+    buffer.writeln('// Marketplace-konform: Entity-Validierung, try-catch, Tick-Drosselung');
+    buffer.writeln('import { world, system, EquipmentSlot } from "@minecraft/server";');
+    buffer.writeln();
+
+    // ===== BAUSTEIN: Feueraspekt =====
+    if (needsFireAspect) {
+      buffer.writeln('// ===== BAUSTEIN: Feueraspekt =====');
+      buffer.writeln('// Setzt getroffene Gegner für 5 Sekunden in Brand');
+      buffer.writeln('const FireAspectComponent = {');
+      buffer.writeln('    onHitEntity(event) {');
+      buffer.writeln('        try {');
+      buffer.writeln('            const { hitEntity } = event;');
+      buffer.writeln('            if (hitEntity && hitEntity.isValid()) {');
+      buffer.writeln('                hitEntity.setOnFire(5, true);');
+      buffer.writeln('            }');
+      buffer.writeln('        } catch (e) {');
+      buffer.writeln('            console.warn("FireAspect Error: " + e.message);');
+      buffer.writeln('        }');
+      buffer.writeln('    }');
+      buffer.writeln('};');
+      buffer.writeln();
+    }
+
+    // ===== BAUSTEIN: Rückstoß =====
+    if (needsKnockback) {
+      buffer.writeln('// ===== BAUSTEIN: Rückstoß =====');
+      buffer.writeln('// Schleudert getroffene Gegner kräftig zurück');
+      buffer.writeln('const KnockbackComponent = {');
+      buffer.writeln('    onHitEntity(event) {');
+      buffer.writeln('        try {');
+      buffer.writeln('            const { attackingEntity, hitEntity } = event;');
+      buffer.writeln('            if (hitEntity && hitEntity.isValid() && attackingEntity && attackingEntity.isValid()) {');
+      buffer.writeln('                const dir = hitEntity.location;');
+      buffer.writeln('                const src = attackingEntity.location;');
+      buffer.writeln('                const dx = dir.x - src.x;');
+      buffer.writeln('                const dz = dir.z - src.z;');
+      buffer.writeln('                const dist = Math.sqrt(dx * dx + dz * dz);');
+      buffer.writeln('                if (dist > 0) {');
+      buffer.writeln('                    hitEntity.applyKnockback(dx / dist, dz / dist, 2.0, 0.4);');
+      buffer.writeln('                }');
+      buffer.writeln('            }');
+      buffer.writeln('        } catch (e) {');
+      buffer.writeln('            console.warn("Knockback Error: " + e.message);');
+      buffer.writeln('        }');
+      buffer.writeln('    }');
+      buffer.writeln('};');
+      buffer.writeln();
+    }
+
+    // ===== BAUSTEIN: Feuerbälle =====
+    if (needsFireballs) {
+      buffer.writeln('// ===== BAUSTEIN: Feuerbälle =====');
+      buffer.writeln('// Schießt einen Feuerball in Blickrichtung wenn Item benutzt wird');
+      buffer.writeln('const FireballComponent = {');
+      buffer.writeln('    onCompleteUse(event) {');
+      buffer.writeln('        try {');
+      buffer.writeln('            const { source } = event;');
+      buffer.writeln('            if (!source || !source.isValid()) return;');
+      buffer.writeln('            const viewDir = source.getViewDirection();');
+      buffer.writeln('            const headLoc = source.getHeadLocation();');
+      buffer.writeln('            const spawnLoc = {');
+      buffer.writeln('                x: headLoc.x + viewDir.x * 2,');
+      buffer.writeln('                y: headLoc.y + viewDir.y * 2,');
+      buffer.writeln('                z: headLoc.z + viewDir.z * 2');
+      buffer.writeln('            };');
+      buffer.writeln('            const fireball = source.dimension.spawnEntity("minecraft:small_fireball", spawnLoc);');
+      buffer.writeln('            if (fireball && fireball.isValid()) {');
+      buffer.writeln('                fireball.applyImpulse({');
+      buffer.writeln('                    x: viewDir.x * 1.5,');
+      buffer.writeln('                    y: viewDir.y * 1.5,');
+      buffer.writeln('                    z: viewDir.z * 1.5');
+      buffer.writeln('                });');
+      buffer.writeln('            }');
+      buffer.writeln('        } catch (e) {');
+      buffer.writeln('            console.warn("Fireball Error: " + e.message);');
+      buffer.writeln('        }');
+      buffer.writeln('    }');
+      buffer.writeln('};');
+      buffer.writeln();
+    }
+
+    // Register all custom components at startup
+    if (needsFireAspect || needsKnockback || needsFireballs) {
+      buffer.writeln('// Custom Components beim Start registrieren');
+      buffer.writeln('system.beforeEvents.startup.subscribe(({ itemComponentRegistry }) => {');
+      if (needsFireAspect) {
+        buffer.writeln('    itemComponentRegistry.registerCustomComponent("custom:fire_aspect", FireAspectComponent);');
+      }
+      if (needsKnockback) {
+        buffer.writeln('    itemComponentRegistry.registerCustomComponent("custom:knockback", KnockbackComponent);');
+      }
+      if (needsFireballs) {
+        buffer.writeln('    itemComponentRegistry.registerCustomComponent("custom:shoot_fireballs", FireballComponent);');
+      }
+      buffer.writeln('});');
+      buffer.writeln();
+    }
+
+    // ===== BAUSTEIN: Geschwindigkeit =====
+    if (speedItems.isNotEmpty) {
+      buffer.writeln('// ===== BAUSTEIN: Geschwindigkeit =====');
+      buffer.writeln('// Gibt Speed/Slowness-Effekt basierend auf der gehaltenen Waffe');
+      buffer.writeln('// Tick-Drosselung: Läuft nur 1x pro Sekunde (nicht 20x!)');
+      buffer.writeln('const SPEED_ITEMS = {');
+      for (final entry in speedItems.entries) {
+        buffer.writeln('    "${entry.key}": ${entry.value},');
+      }
+      buffer.writeln('};');
+      buffer.writeln();
+      buffer.writeln('system.runInterval(() => {');
+      buffer.writeln('    try {');
+      buffer.writeln('        const players = world.getAllPlayers();');
+      buffer.writeln('        for (const player of players) {');
+      buffer.writeln('            if (!player || !player.isValid()) continue;');
+      buffer.writeln('            const equipment = player.getComponent("minecraft:equippable");');
+      buffer.writeln('            if (!equipment) continue;');
+      buffer.writeln('            const mainhand = equipment.getEquipment(EquipmentSlot.Mainhand);');
+      buffer.writeln('            if (!mainhand) continue;');
+      buffer.writeln('            const speedValue = SPEED_ITEMS[mainhand.typeId];');
+      buffer.writeln('            if (speedValue === undefined) continue;');
+      buffer.writeln('            if (speedValue > 0) {');
+      buffer.writeln('                // Speed-Effekt: +20% pro Stufe');
+      buffer.writeln('                const amplifier = Math.max(0, Math.round(speedValue / 0.2) - 1);');
+      buffer.writeln('                player.addEffect("speed", 40, { amplifier: amplifier, showParticles: false });');
+      buffer.writeln('            } else if (speedValue < 0) {');
+      buffer.writeln('                // Slowness-Effekt: -15% pro Stufe');
+      buffer.writeln('                const amplifier = Math.max(0, Math.round(Math.abs(speedValue) / 0.15) - 1);');
+      buffer.writeln('                player.addEffect("slowness", 40, { amplifier: amplifier, showParticles: false });');
+      buffer.writeln('            }');
+      buffer.writeln('        }');
+      buffer.writeln('    } catch (e) {');
+      buffer.writeln('        console.warn("SpeedBoost Error: " + e.message);');
+      buffer.writeln('    }');
+      buffer.writeln('}, 20); // 20 Ticks = 1 Sekunde');
+    }
+
+    return buffer.toString();
+  }
+
+  // ========== TEXTURE HELPERS ==========
 
   /// Download item texture from GitHub
   /// Uses custom icon if available, otherwise falls back to vanilla texture
@@ -186,28 +400,54 @@ class AddonBuilderService {
     }
   }
 
-  /// Generate behavior pack manifest.json from template
+  // ========== MANIFEST GENERATION ==========
+
+  /// Generate behavior pack manifest.json
+  /// When needsScript is true, adds script module + @minecraft/server dependency
   static Future<String> _generateBehaviorManifest(
     Project project,
     String headerUuid,
     String moduleUuid,
-    String resourcePackUuid,
-  ) async {
+    String resourcePackUuid, {
+    bool needsScript = false,
+    String? scriptModuleUuid,
+  }) async {
     // Load template
     final templateString = await rootBundle.loadString(
       'assets/templates/manifest_behavior.json',
     );
 
-    // Parse JSON to add dependency
+    // Parse JSON to modify programmatically
     final manifestMap = jsonDecode(templateString) as Map<String, dynamic>;
 
-    // Add dependency on resource pack
-    manifestMap['dependencies'] = [
+    // Dependencies: Resource Pack + optionally @minecraft/server
+    final dependencies = <Map<String, dynamic>>[
       {
         'uuid': resourcePackUuid,
         'version': [0, 0, 1],
       }
     ];
+
+    if (needsScript) {
+      dependencies.add({
+        'module_name': '@minecraft/server',
+        'version': '1.16.0',
+      });
+    }
+    manifestMap['dependencies'] = dependencies;
+
+    // Add script module if needed
+    if (needsScript && scriptModuleUuid != null) {
+      final modules = manifestMap['modules'] as List<dynamic>;
+      modules.add({
+        'description': 'GameForge Script Module',
+        'type': 'script',
+        'language': 'javascript',
+        'uuid': scriptModuleUuid,
+        'version': [0, 0, 1],
+        'entry': 'scripts/main.js',
+      });
+    }
 
     // Replace placeholders
     String manifestJson = jsonEncode(manifestMap);
@@ -243,6 +483,8 @@ class AddonBuilderService {
     return manifestJson;
   }
 
+  // ========== TEXTURE JSON ==========
+
   /// Generate item_texture.json
   static String _generateItemTextureJson(Map<String, dynamic> textureData) {
     final itemTextureJson = {
@@ -267,15 +509,17 @@ class AddonBuilderService {
     return encoder.convert(terrainTextureJson);
   }
 
+  // ========== ITEM JSON EXPORT ==========
+
   /// Export a single ProjectItem as Minecraft Bedrock Edition item JSON
-  /// Updated for format version 1.21.130 (compatible with 1.21.131)
+  /// Updated for format version 1.21.130+
   ///
-  /// Key changes in 1.21.130+:
-  /// - Icon format: textures: { default: "name" } instead of texture: "name"
-  /// - Attribute modifiers: New way to set attack_damage, armor, armor_toughness
-  /// - minecraft:armor component is deprecated - use attribute_modifiers instead
-  /// - menu_category: Defines creative inventory placement
-  static String _exportItemToMinecraftJSON(ProjectItem item) {
+  /// Abilities are implemented as "Bausteine" (building blocks):
+  /// - Fire Aspect → custom:fire_aspect component (Script API)
+  /// - Knockback → custom:knockback component (Script API)
+  /// - Fireballs → custom:shoot_fireballs component + use_modifiers (Script API)
+  /// - Movement Speed on weapons → handled by script interval (NOT attribute_modifiers!)
+  static String _exportItemToMinecraftJSON(ProjectItem item, {bool needsScript = false}) {
     final itemIdentifier = _sanitizeIdentifier(item.name);
     final menuCategory = _getMenuCategory(item.category);
 
@@ -288,8 +532,6 @@ class AddonBuilderService {
     final enchantability = (customStats['enchantability'] as num?)?.toInt() ?? 10;
     final movementSpeed = (customStats['movement_speed'] as num?)?.toDouble() ?? 0.0;
     final nameColor = customStats['name_color'] as String? ?? 'white';
-
-    // Advanced stats (noch nicht verwendet)
     final miningSpeed = (customStats['mining_speed'] as num?)?.toDouble() ?? 1.0;
 
     // Build components
@@ -326,22 +568,26 @@ class AddonBuilderService {
 
     // Damage (for weapons and tools) - Bedrock uses minecraft:damage component
     // Syntax: "minecraft:damage": value (direct number, NOT object!)
-    // Actual damage = value + 1 (base hand damage is 1)
     if (damage > 0) {
       components['minecraft:damage'] = damage.toInt();
     }
 
-    // Attribute modifiers (for armor, movement speed, etc.)
+    // Attribute modifiers (for armor and armor-only movement speed)
     final attributeModifiers = <Map<String, dynamic>>[];
 
-    // Movement speed modifier
-    if (movementSpeed != 0.0) {
-      attributeModifiers.add({
-        'attribute': 'minecraft:player.movement_speed',
-        'amount': movementSpeed,
-        'operation': 'add_value',
-        'slot': 'any',
-      });
+    // Movement speed modifier - ONLY for armor items!
+    // For weapons, movement speed is handled by Script API (addEffect)
+    // because attribute_modifiers with movement_speed don't work on held items.
+    if (movementSpeed != 0.0 && item.category.toLowerCase() != 'waffen') {
+      final armorSlot = _getArmorSlot(item.baseItem?.type);
+      if (armorSlot != null) {
+        attributeModifiers.add({
+          'attribute': 'minecraft:player.movement_speed',
+          'amount': movementSpeed,
+          'operation': 'add_multiplied_base',
+          'slot': armorSlot,
+        });
+      }
     }
 
     // Armor and toughness (for armor items)
@@ -406,61 +652,27 @@ class AddonBuilderService {
       }
     }
 
-    // Spezial-Fähigkeiten (NEU!)
+    // ===== SPEZIAL-FÄHIGKEITEN (Bausteine / Script API) =====
     final effects = item.effects;
 
-    // Feueraspekt - Setzt Gegner in Brand
-    // WICHTIG: Bedrock Edition hat KEINE native Component um Gegner beim Treffen zu verbrennen!
-    // minecraft:ignite_on_use verbrennt nur das Item selbst, NICHT Gegner.
-    // Fire Aspect funktioniert in Vanilla nur als Enchantment.
-    // Für Custom Fire Aspect braucht man Script API Custom Components (sehr komplex).
-    // Daher wird diese Fähigkeit NICHT exportiert.
-    if (effects['fire_aspect'] == true) {
-      // Fire Aspect wird nicht exportiert - siehe Kommentar oben
-      // HINWEIS: In einer späteren Version könnte man ein Enchantment-System
-      // über Script API implementieren, aber das ist sehr komplex.
+    // Feueraspekt - Custom Component (Script setzt Gegner in Brand)
+    if (effects['fire_aspect'] == true && needsScript) {
+      components['custom:fire_aspect'] = {};
     }
 
-    // Rückstoß - Mehr Knockback beim Treffen
-    // WICHTIG: minecraft:player.knockback_resistance beeinflusst nur den SPIELER,
-    // der die Rüstung trägt (verhindert dass ER zurückgestoßen wird).
-    // Es gibt KEIN Attribut um mehr Knockback beim TREFFEN von Gegnern zu verursachen!
-    // Das funktioniert in Vanilla nur als Enchantment (Knockback I/II).
-    // Für Custom Knockback braucht man Script API Custom Components.
-    // Daher wird diese Fähigkeit NICHT exportiert.
-    if (effects['knockback'] == true) {
-      // Knockback wird nicht exportiert - siehe Kommentar oben
+    // Rückstoß - Custom Component (Script schleudert Gegner weg)
+    if (effects['knockback'] == true && needsScript) {
+      components['custom:knockback'] = {};
     }
 
-    // Feuerbälle schießen beim Rechtsklick
-    // minecraft:shooter macht das Item zu einem Bogen/Armbrust (muss gezogen werden)
-    // Funktioniert für Nahkampfwaffen, aber verhält sich anders als erwartet.
-    if (effects['shoot_fireballs'] == true) {
-      // minecraft:use_modifiers ist PFLICHT für minecraft:shooter!
-      // use_duration muss >= max_draw_duration sein (wenn charge_on_draw true)
+    // Feuerbälle schießen - Custom Component + use_modifiers
+    // use_modifiers ist nötig damit onCompleteUse feuert
+    if (effects['shoot_fireballs'] == true && needsScript) {
       components['minecraft:use_modifiers'] = {
-        'use_duration': 0.5, // 0.5 Sekunden Ziehdauer (muss >= max_draw_duration)
-        'movement_modifier': 0.5, // Spieler läuft langsamer beim Ziehen
+        'use_duration': 0.5,
+        'movement_modifier': 0.5,
       };
-
-      // minecraft:shooter Component (korrekte Syntax aus Bedrock Wiki)
-      components['minecraft:shooter'] = {
-        // ammunition als Array von Objekten (NICHT ammunition_item!)
-        // Leeres Array = keine Munition nötig (funktioniert in Creative)
-        'ammunition': [],
-        'max_draw_duration': 0.5, // Wie lange kann gezogen werden (in Sekunden)
-        'charge_on_draw': false, // Sofort schießen beim Loslassen
-        'scale_power_by_draw_duration': false,
-      };
-
-      // Spawnt Feuerball-Entity
-      components['minecraft:projectile'] = {
-        'projectile_entity': 'minecraft:small_fireball',
-      };
-
-      // WARNUNG: Das Item verhält sich jetzt wie ein Bogen/Armbrust!
-      // Es muss gezogen werden (Rechtsklick halten + loslassen) um zu schießen.
-      // Für sofortiges Schießen beim Rechtsklick braucht man Script API Custom Components.
+      components['custom:shoot_fireballs'] = {};
     }
 
     // Legacy effects
@@ -488,9 +700,10 @@ class AddonBuilderService {
     return encoder.convert(itemJson);
   }
 
+  // ========== HELPER METHODS ==========
+
   /// Sanitize project name to valid Minecraft identifier
   static String _sanitizeIdentifier(String name) {
-    // Convert to lowercase and replace spaces/special chars with underscores
     return name
         .toLowerCase()
         .replaceAll(RegExp(r'[^a-z0-9_]'), '_')
@@ -557,8 +770,7 @@ class AddonBuilderService {
       case 'werkzeuge':
         return 'pickaxe';
       case 'rüstung':
-        // Determine armor slot based on item type
-        if (itemType == null) return 'armor_torso'; // Default to chestplate
+        if (itemType == null) return 'armor_torso';
 
         final type = itemType.toLowerCase();
         if (type.contains('helmet') || type.contains('helm')) {
@@ -570,9 +782,9 @@ class AddonBuilderService {
         } else if (type.contains('boots') || type.contains('stiefel')) {
           return 'armor_feet';
         }
-        return 'armor_torso'; // Default
+        return 'armor_torso';
       default:
-        return null; // No enchantability for other categories
+        return null;
     }
   }
 
@@ -598,7 +810,7 @@ class AddonBuilderService {
       case 'dark_purple':
         return '§5';
       default:
-        return '§f'; // Default: white
+        return '§f';
     }
   }
 
