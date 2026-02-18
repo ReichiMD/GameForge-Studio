@@ -209,6 +209,7 @@ class AddonBuilderService {
   /// Generate the scripts/main.js for the behavior pack
   /// Only includes code blocks ("Bausteine") for abilities that are actually used.
   /// Follows Marketplace best practices: Entity validation, try-catch, tick throttling.
+  /// Requires @minecraft/server 2.0.0+ (system.beforeEvents.startup API).
   static String _generateMainScript(Project project) {
     final buffer = StringBuffer();
 
@@ -431,7 +432,7 @@ class AddonBuilderService {
     if (needsScript) {
       dependencies.add({
         'module_name': '@minecraft/server',
-        'version': '1.16.0',
+        'version': '2.0.0',
       });
     }
     manifestMap['dependencies'] = dependencies;
