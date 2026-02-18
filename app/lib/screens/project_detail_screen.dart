@@ -2,12 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../models/project.dart';
 import '../models/project_item.dart';
 import '../services/project_service.dart';
 import '../services/addon_builder_service.dart';
+import '../services/debug_log_service.dart';
 import '../widgets/item_texture_widget.dart';
 import 'category_selection_screen.dart';
 import 'workshop_screen.dart';
@@ -107,8 +109,10 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
   Future<void> _handleExportProject() async {
     if (_currentProject.items.isEmpty) return;
 
+    final debugLog = DebugLogService();
+
     try {
-      // Show loading indicator
+      // Lade-Anzeige
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -119,18 +123,107 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
         );
       }
 
-      // Build .mcaddon file
+      debugLog.addLog(
+        level: 'INFO',
+        category: 'EXPORT',
+        message: 'Addon-Export gestartet',
+        data: {'projekt': _currentProject.name, 'items': _currentProject.items.length},
+      );
+
+      // === SCHRITT 1: Berechtigungen anfragen ===
+      if (Platform.isAndroid) {
+        // Für Android 11+ (API 30+): MANAGE_EXTERNAL_STORAGE
+        // Für Android 10 (API 29): requestLegacyExternalStorage im Manifest
+        // Für Android 9-: WRITE_EXTERNAL_STORAGE
+        var storageGranted = false;
+
+        // Erst normale Speicher-Berechtigung probieren
+        final storageStatus = await Permission.storage.request();
+        debugLog.addLog(
+          level: 'INFO',
+          category: 'PERMISSION',
+          message: 'WRITE_EXTERNAL_STORAGE: ${storageStatus.name}',
+        );
+        storageGranted = storageStatus.isGranted;
+
+        // Falls nicht gewährt: MANAGE_EXTERNAL_STORAGE für Android 11+
+        if (!storageGranted) {
+          final manageStatus = await Permission.manageExternalStorage.request();
+          debugLog.addLog(
+            level: manageStatus.isGranted ? 'INFO' : 'WARNING',
+            category: 'PERMISSION',
+            message: 'MANAGE_EXTERNAL_STORAGE: ${manageStatus.name}',
+          );
+          storageGranted = manageStatus.isGranted;
+        }
+
+        if (!storageGranted) {
+          debugLog.addLog(
+            level: 'ERROR',
+            category: 'PERMISSION',
+            message: 'Alle Speicher-Berechtigungen verweigert! Export nicht möglich.',
+          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  '❌ Keine Speicher-Berechtigung!\nGehe zu Einstellungen → Apps → GameForge Studio → Berechtigungen',
+                ),
+                backgroundColor: AppColors.error,
+                duration: Duration(seconds: 6),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      // === SCHRITT 2: Addon-ZIP erstellen ===
+      debugLog.addLog(
+        level: 'INFO',
+        category: 'EXPORT',
+        message: 'Baue Addon-ZIP...',
+      );
+
       final addonBytes = await AddonBuilderService.buildAddon(_currentProject);
       final filename = AddonBuilderService.getAddonFilename(_currentProject);
 
-      // Save directly to Downloads folder
+      debugLog.addLog(
+        level: 'INFO',
+        category: 'EXPORT',
+        message: 'Addon-ZIP erstellt',
+        data: {'dateiname': filename, 'groesseBytes': addonBytes.length},
+      );
+
+      // === SCHRITT 3: In Downloads speichern ===
       final downloadsDir = Directory('/storage/emulated/0/Download');
-      if (!await downloadsDir.exists()) {
+      final dirExists = await downloadsDir.exists();
+
+      debugLog.addLog(
+        level: 'INFO',
+        category: 'EXPORT',
+        message: 'Downloads-Ordner Status',
+        data: {'pfad': downloadsDir.path, 'existiert': dirExists},
+      );
+
+      if (!dirExists) {
         await downloadsDir.create(recursive: true);
+        debugLog.addLog(
+          level: 'INFO',
+          category: 'EXPORT',
+          message: 'Downloads-Ordner erstellt',
+        );
       }
 
       final outputFile = File('${downloadsDir.path}/$filename');
       await outputFile.writeAsBytes(addonBytes);
+
+      debugLog.addLog(
+        level: 'INFO',
+        category: 'EXPORT',
+        message: 'Addon erfolgreich gespeichert!',
+        data: {'vollPfad': outputFile.path, 'groesseBytes': addonBytes.length},
+      );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -141,7 +234,18 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
           ),
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      final stackStr = stackTrace.toString();
+      debugLog.addLog(
+        level: 'ERROR',
+        category: 'EXPORT',
+        message: 'Addon-Export FEHLGESCHLAGEN!',
+        data: {
+          'fehler': e.toString(),
+          'stackTrace': stackStr.length > 500 ? stackStr.substring(0, 500) : stackStr,
+        },
+      );
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
