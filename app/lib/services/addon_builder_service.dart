@@ -69,7 +69,7 @@ class AddonBuilderService {
       );
     }
 
-    // 3. Add script file if needed
+    // 3. Add script file + custom fireball entity if needed
     if (needsScript) {
       final scriptContent = _generateMainScript(project);
       final scriptBytes = utf8.encode(scriptContent);
@@ -80,6 +80,30 @@ class AddonBuilderService {
           scriptBytes,
         ),
       );
+
+      // Add custom fireball entity if any item shoots fireballs
+      // Vanilla minecraft:small_fireball has is_summonable: false → can't spawn via Script API
+      // Custom entity has is_summonable: true → works without experiments!
+      final needsFireballs = project.items.any(
+        (item) => item.effects['shoot_fireballs'] == true,
+      );
+      if (needsFireballs) {
+        final fireballBP = _generateFireballEntityBP();
+        final fireballBPBytes = utf8.encode(fireballBP);
+        archive.addFile(ArchiveFile(
+          'behavior_pack/entities/gameforge_fireball.json',
+          fireballBPBytes.length,
+          fireballBPBytes,
+        ));
+
+        final fireballRP = _generateFireballEntityRP();
+        final fireballRPBytes = utf8.encode(fireballRP);
+        archive.addFile(ArchiveFile(
+          'resource_pack/entity/gameforge_fireball.entity.json',
+          fireballRPBytes.length,
+          fireballRPBytes,
+        ));
+      }
     }
 
     // 4. Add behavior pack pack_icon.png (optional)
@@ -313,7 +337,7 @@ class AddonBuilderService {
       buffer.writeln('                y: headLoc.y + viewDir.y * 2,');
       buffer.writeln('                z: headLoc.z + viewDir.z * 2');
       buffer.writeln('            };');
-      buffer.writeln('            const fireball = player.dimension.spawnEntity("minecraft:small_fireball", spawnLoc);');
+      buffer.writeln('            const fireball = player.dimension.spawnEntity("custom:gameforge_fireball", spawnLoc);');
       buffer.writeln('            if (fireball && fireball.isValid()) {');
       buffer.writeln('                fireball.applyImpulse({');
       buffer.writeln('                    x: viewDir.x * 1.5,');
@@ -366,6 +390,60 @@ class AddonBuilderService {
     }
 
     return buffer.toString();
+  }
+
+  // ========== CUSTOM FIREBALL ENTITY ==========
+
+  /// Behavior Pack entity definition for the custom fireball projectile.
+  /// is_summonable: true allows spawning via Script API (unlike vanilla minecraft:small_fireball).
+  static String _generateFireballEntityBP() {
+    final entity = {
+      'format_version': '1.21.130',
+      'minecraft:entity': {
+        'description': {
+          'identifier': 'custom:gameforge_fireball',
+          'is_spawnable': false,
+          'is_summonable': true,
+        },
+        'components': {
+          'minecraft:collision_box': {'width': 0.3125, 'height': 0.3125},
+          'minecraft:fire_immune': {},
+          'minecraft:projectile': {
+            'on_hit': {
+              'impact_damage': {'damage': 6, 'knockback': true},
+              'ignite': {'fire_affected_by_griefing': false, 'duration': 5},
+              'remove_on_hit': {},
+            },
+            'gravity': 0.0,
+            'catch_fire': true,
+            'hit_sound': 'mob.ghast.fireball',
+          },
+          'minecraft:physics': {
+            'has_collision': true,
+            'has_gravity': false,
+          },
+        },
+      },
+    };
+    const encoder = JsonEncoder.withIndent('  ');
+    return encoder.convert(entity);
+  }
+
+  /// Resource Pack client entity definition - uses ghast fireball visuals.
+  static String _generateFireballEntityRP() {
+    final entity = {
+      'format_version': '1.10.0',
+      'minecraft:client_entity': {
+        'description': {
+          'identifier': 'custom:gameforge_fireball',
+          'textures': {'default': 'textures/entity/ghast/ghast_fireball'},
+          'geometry': {'default': 'geometry.fireball'},
+          'render_controllers': ['controller.render.default'],
+        },
+      },
+    };
+    const encoder = JsonEncoder.withIndent('  ');
+    return encoder.convert(entity);
   }
 
   // ========== TEXTURE HELPERS ==========
